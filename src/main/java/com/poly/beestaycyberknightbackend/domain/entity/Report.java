@@ -11,16 +11,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "roles")
 public class Report {
@@ -42,13 +40,15 @@ public class Report {
     @Enumerated(EnumType.STRING)
     ReportStatus status;
 
+
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    User user;
+
     public enum ReportStatus {
         PENDING,
         RESOLVED,
         REJECTED
     }
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    User user;
 }

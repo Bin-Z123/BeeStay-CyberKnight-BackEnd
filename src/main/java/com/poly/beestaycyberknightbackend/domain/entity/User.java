@@ -12,14 +12,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.AccessLevel;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -50,21 +48,21 @@ public class User {
     @Column(length = 100, nullable = false)
     String fullname;
 
-    public enum EBlacklist {
-        FIRST,
-        SECOND,
-        BLOCKED,
-        NONE
-    }
+
     
     @Enumerated(EnumType.STRING)
     EBlacklist eBlacklist = EBlacklist.NONE;
 
     int cccd;
 
-    int point;
+    int point = 0;
     
     @OneToMany(mappedBy = "user")
-    List<UserRole> roles;
-
+    List<UserRole> userRoles;
+    public enum EBlacklist {
+        FIRST,
+        SECOND,
+        BLOCKED,
+        NONE
+    }
 }
