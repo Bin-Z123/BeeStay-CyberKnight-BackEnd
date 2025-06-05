@@ -1,5 +1,8 @@
 package com.poly.beestaycyberknightbackend.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.poly.beestaycyberknightbackend.domain.User;
@@ -23,5 +26,15 @@ public class UserService {
         this.userRepository.deleteById(id);
     }
 
-    
+    public User fetchUserById(long id){
+        Optional<User> user = this.userRepository.findById(id);
+        if (user.isPresent()) {
+            return user.get();
+        }
+        return null;
+    }
+
+    public List<User> fetchAllUser(){
+        return this.userRepository.findAll();
+    }
 }
