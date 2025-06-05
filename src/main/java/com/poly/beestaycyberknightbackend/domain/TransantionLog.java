@@ -1,16 +1,13 @@
-package com.poly.beestaycyberknightbackend.domain.entity;
+package com.poly.beestaycyberknightbackend.domain;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,35 +17,26 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "roles")
-public class Report {
+public class TransantionLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     Long id;
 
     @Column(length = 100, nullable = false)
-    String reportType;
+    String actionType;
 
     @Column(nullable = false)
-    String description;
+    LocalDateTime logAt = LocalDateTime.now();
+
+    @Column(length = 100)
+    String ip;
 
     @Column(nullable = false)
-    LocalDateTime reportAt;
-
-
-    @Enumerated(EnumType.STRING)
-    ReportStatus status;
-
-
+    int amount;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     User user;
 
-    public enum ReportStatus {
-        PENDING,
-        RESOLVED,
-        REJECTED
-    }
 }

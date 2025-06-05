@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.domain.entity;
+package com.poly.beestaycyberknightbackend.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,7 +25,7 @@ import lombok.experimental.FieldDefaults;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    long id;
 
     @Column(nullable = false, unique = true)
     int phone;
@@ -38,7 +38,7 @@ public class User {
 
     Boolean gender;
 
-    LocalDate birthdate;
+    LocalDate birthday;
 
     @Column(nullable = false)
     LocalDateTime joinDate = LocalDateTime.now();

@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.domain.entity;
+package com.poly.beestaycyberknightbackend.domain;
 
 import java.io.Serializable;
 import jakarta.persistence.Embeddable;

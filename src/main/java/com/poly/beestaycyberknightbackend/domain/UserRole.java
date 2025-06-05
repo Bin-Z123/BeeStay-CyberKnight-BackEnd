@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.domain.entity;
+package com.poly.beestaycyberknightbackend.domain;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
