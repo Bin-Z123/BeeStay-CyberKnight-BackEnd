@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.service.UserService;
+import com.poly.beestaycyberknightbackend.service.error.IdInvalidException;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 
@@ -37,28 +40,30 @@ public class UserController {
     // }
 
     @PostMapping("/users")
-    public User createNewUser(@RequestBody User postManUser) {
+    public ResponseEntity<User> createNewUser(@RequestBody User postManUser) {
         User newUser = this.userService.handleCreateUser(postManUser);
-        return newUser;
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
     
     @DeleteMapping("/user/{id}")
-    public String deleteUser(@PathVariable("id") long id) {
+    public ResponseEntity<String> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
+        if (id >= 10000) {
+            throw new IdInvalidException("Id không lớn hơn 10000");
+        }
         this.userService.handleDeleteUser(id);
-        return "Delete successsuccess";
-
+        return ResponseEntity.status(HttpStatus.OK).body("Success");
     }
 
     @GetMapping("/user/{id}")
-    public User getUserById(@PathVariable("id") long id) {
-        return this.userService.fetchUserById(id);
-        // User fetchUser = this.userService.fetchUserById(id);
-        // return ResponseEntity.status(HttpStatus.OK).body(fetchUser);
+    public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
+        User fetchUser = this.userService.fetchUserById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(fetchUser);
     }
 
     @GetMapping("/users")
-    public List<User> getAllUser(){
-        return this.userService.fetchAllUser();
+    public ResponseEntity<List<User>> getAllUser(){
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUser());
     }
-    
+
+
 }

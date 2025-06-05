@@ -1,6 +1,10 @@
 package com.poly.beestaycyberknightbackend.domain;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,7 +31,8 @@ public class Role {
     @Column(length = 100, nullable = false)
     String roleName;
 
-    @OneToMany(mappedBy = "role")
-    List<UserRole> userRoles;
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<User> users;
 
 }
