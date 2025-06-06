@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.service.UserService;
-import com.poly.beestaycyberknightbackend.service.error.IdInvalidException;
+import com.poly.beestaycyberknightbackend.util.error.IdInvalidException;
 
 import java.util.List;
 

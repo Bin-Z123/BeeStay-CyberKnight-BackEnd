@@ -38,6 +38,7 @@ import jakarta.servlet.http.HttpServletResponse;
          if (body instanceof String ) {
             return body;
          }
+         
          if (status >= 400) {
              return body;
          } else {
