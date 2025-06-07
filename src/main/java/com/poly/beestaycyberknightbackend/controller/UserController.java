@@ -41,9 +41,7 @@ public class UserController {
     }
 
     
-    
 
-    
     @DeleteMapping("/userss/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
         if (id >= 10000) {
