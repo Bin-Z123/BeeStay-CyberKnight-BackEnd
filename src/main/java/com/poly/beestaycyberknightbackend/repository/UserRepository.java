@@ -7,6 +7,7 @@ import com.poly.beestaycyberknightbackend.domain.User;
 public interface UserRepository  extends JpaRepository<User, Long> {
 
     User findByEmail(String email);
-    
+
+    boolean existsById(Long id);
 
 }

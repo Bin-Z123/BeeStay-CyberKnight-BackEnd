@@ -1,14 +1,16 @@
 package com.poly.beestaycyberknightbackend.controller;
 
-
 import org.springframework.web.bind.annotation.RestController;
-
 import com.poly.beestaycyberknightbackend.domain.User;
+import com.poly.beestaycyberknightbackend.repository.UserRepository;
 import com.poly.beestaycyberknightbackend.service.UserService;
-import com.poly.beestaycyberknightbackend.util.error.IdInvalidException;
+
+import com.poly.beestaycyberknightbackend.service.error.IdInvalidException;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,18 +21,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
-
-
 @RestController
+@FieldDefaults(level = AccessLevel.PRIVATE ,makeFinal = true)
+@RequiredArgsConstructor
 public class UserController {
     
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
-    }
+    UserService userService;
+    UserRepository userRepository;
+
+  
+
 
     @PostMapping("/users")
     public ResponseEntity<User> createNewUser(@RequestBody User postManUser) {
@@ -44,11 +45,11 @@ public class UserController {
     
     @DeleteMapping("/userss/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
-        if (id >= 10000) {
-            throw new IdInvalidException("Id không lớn hơn 10000");
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
-        this.userService.handleDeleteUser(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Success");
+        userService.handleDeleteUser(id);
+        return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully. ID: " + id);
     }
 
     @GetMapping("/users/{id}")
