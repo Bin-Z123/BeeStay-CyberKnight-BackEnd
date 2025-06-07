@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.service.error;
+package com.poly.beestaycyberknightbackend.util.error;
 
 public class IdInvalidException extends Exception{
     public IdInvalidException(String message) {
