@@ -2,10 +2,8 @@ package com.poly.beestaycyberknightbackend.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -73,4 +71,13 @@ public class User {
         BLOCKED,
         NONE
     }
+
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "rank_id")
+    Rank rank;
+
+    @OneToMany
+    @JsonManagedReference
+    Voucher voucher;
 }
