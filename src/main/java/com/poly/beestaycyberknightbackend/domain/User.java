@@ -1,5 +1,6 @@
 package com.poly.beestaycyberknightbackend.domain;
 
+import java.lang.invoke.StringConcatFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,7 +34,7 @@ public class User {
     long id;
 
     @Column(nullable = false, unique = true)
-    int phone;
+    String phone;
 
     @Column(length = 100,nullable = false, unique = true)
     String email;
@@ -58,7 +59,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     EBlacklist eBlacklist = EBlacklist.NONE;
 
-    int cccd;
+    String cccd;
 
     int point = 0;
     

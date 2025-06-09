@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.domain.dto;
+package com.poly.beestaycyberknightbackend.domain.dto.response;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

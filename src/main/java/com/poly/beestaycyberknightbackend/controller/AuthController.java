@@ -6,8 +6,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.poly.beestaycyberknightbackend.domain.dto.LoginDTO;
-import com.poly.beestaycyberknightbackend.domain.dto.RestLoginDTO;
+import com.poly.beestaycyberknightbackend.domain.dto.request.RestLoginDTO;
+import com.poly.beestaycyberknightbackend.domain.dto.response.LoginDTO;
 import com.poly.beestaycyberknightbackend.util.SecurityUtil;
 
 import jakarta.validation.Valid;

@@ -2,13 +2,10 @@ package com.poly.beestaycyberknightbackend.controller;
 
 
 import org.springframework.web.bind.annotation.RestController;
-
 import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.service.UserService;
 import com.poly.beestaycyberknightbackend.util.error.IdInvalidException;
-
 import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,7 +39,7 @@ public class UserController {
 
     
 
-    @DeleteMapping("/userss/{id}")
+    @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
         if (id >= 10000) {
             throw new IdInvalidException("Id không lớn hơn 10000");

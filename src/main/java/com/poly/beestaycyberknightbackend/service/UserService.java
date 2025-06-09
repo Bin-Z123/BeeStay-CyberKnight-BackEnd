@@ -38,16 +38,16 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    // public User handleUpdateUser(User reqUser){
-    //     User currentUser = this.fetchUserById(reqUser.getId());
-    //     if (currentUser != null) {
-    //         currentUser.setFullname(reqUser.getFullname());
-    //         currentUser.setEmail(reqUser.getEmail());
-    //         currentUser.setPassword(reqUser.getPassword());
-    //         currentUser = this.userRepository.save(currentUser);
-    //     }
-    //     return currentUser;
-    // }
+    public User handleUpdateUser(User reqUser){
+        User currentUser = this.fetchUserById(reqUser.getId());
+        if (currentUser != null) {
+            currentUser.setFullname(reqUser.getFullname());
+            currentUser.setEmail(reqUser.getEmail());
+            currentUser.setPassword(reqUser.getPassword());
+            currentUser = this.userRepository.save(currentUser);
+        }
+        return currentUser;
+    }
 
     public User handleGetUserByUsername(String username) {
         return this.userRepository.findByEmail(username);
