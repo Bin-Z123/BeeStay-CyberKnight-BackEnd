@@ -1,5 +1,6 @@
 package com.poly.beestaycyberknightbackend.util;
 
+import com.poly.beestaycyberknightbackend.BeeStayCyberKnightBackEndApplication;
 import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeRequest;
 import com.poly.beestaycyberknightbackend.domain.dto.response.RestResponse;
 import com.poly.beestaycyberknightbackend.domain.dto.response.RoomTypeResponse;
@@ -18,6 +19,12 @@ import jakarta.servlet.http.HttpServletResponse;
 @ControllerAdvice
 public class FormatRestResponse implements ResponseBodyAdvice<Object> {
 
+    private final BeeStayCyberKnightBackEndApplication beeStayCyberKnightBackEndApplication;
+
+    FormatRestResponse(BeeStayCyberKnightBackEndApplication beeStayCyberKnightBackEndApplication) {
+        this.beeStayCyberKnightBackEndApplication = beeStayCyberKnightBackEndApplication;
+    }
+
     @Override
     public boolean supports(MethodParameter returnType, Class converterType) {
         return true;
@@ -35,7 +42,7 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
         int status = servletResponse.getStatus();
 
         // Không format nếu body là String hoặc status là 204 (No Content)
-        if (body instanceof String || status == HttpStatus.NO_CONTENT.value()) {
+        if (body instanceof  String || body instanceof byte[] || status == HttpStatus.NO_CONTENT.value()) {
             return body;
         }
 
