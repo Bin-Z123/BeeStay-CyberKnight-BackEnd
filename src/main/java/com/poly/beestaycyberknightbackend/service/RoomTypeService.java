@@ -1,5 +1,6 @@
 package com.poly.beestaycyberknightbackend.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -28,6 +29,10 @@ public class RoomTypeService {
     public RoomType fetchRoomTypeById(long id) {
         return roomTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Loại phòng với ID " + id + " không tồn tại"));
+    }
+
+    public List<RoomType> fetchAllRoomTypes() {
+        return this.roomTypeRepository.findAll();
     }
 
 }
