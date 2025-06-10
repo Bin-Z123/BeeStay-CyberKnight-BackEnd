@@ -3,7 +3,7 @@ package com.poly.beestaycyberknightbackend.service;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.domain.RoomType;
-import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeCreation;
+import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeRequest;
 import com.poly.beestaycyberknightbackend.domain.dto.response.RoomTypeResponse;
 import com.poly.beestaycyberknightbackend.mapper.RoomTypeMapper;
 import com.poly.beestaycyberknightbackend.repository.RoomTypeRepository;
@@ -18,8 +18,8 @@ public class RoomTypeService {
     private final RoomTypeRepository roomTypeRepository;
     private final RoomTypeMapper roomTypeMapper;
 
-    public RoomTypeResponse handleCreateRoomType(RoomTypeCreation roomTypeCreation) {
-        RoomType roomType = roomTypeMapper.toRoomType(roomTypeCreation);
+    public RoomTypeResponse handleCreateRoomType(RoomTypeRequest roomTypeRequest) {
+        RoomType roomType = roomTypeMapper.toRoomType(roomTypeRequest);
         return  roomTypeMapper.toRoomTypeResponse(roomTypeRepository.save(roomType));
     }
 
@@ -27,23 +27,24 @@ public class RoomTypeService {
         this.roomTypeRepository.deleteById(id);
     }
 
-    public RoomType fetchRoomTypeById(long id) {
+    public RoomTypeResponse fetchRoomTypeById(long id) {
         return roomTypeRepository.findById(id)
+                .map(roomTypeMapper::toRoomTypeResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("Loại phòng với ID " + id + " không tồn tại"));
     }
 
-    public List<RoomType> fetchAllRoomTypes() {
-        return this.roomTypeRepository.findAll();
+    public List<RoomTypeResponse> fetchAllRoomTypes() {
+        return roomTypeRepository.findAll()
+                .stream()
+                .map(roomTypeMapper::toRoomTypeResponse)
+                .toList();
     }
 
-    public RoomType handleUpdateRoomType(RoomType reqRoomType) {
-        RoomType currentRoomType = this.fetchRoomTypeById(reqRoomType.getId());
-        if (currentRoomType != null) {
-            currentRoomType.setName(reqRoomType.getName());
-            currentRoomType.setSize(reqRoomType.getSize());
-            currentRoomType.setPrice(reqRoomType.getPrice());
-            currentRoomType.setPeopleAbout(reqRoomType.getPeopleAbout());
-        }
-        return currentRoomType;
+    public RoomTypeResponse handleUpdateRoomType(RoomTypeRequest roomTypeRequest, long id) {
+        RoomType roomType = roomTypeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Loại phòng với ID " + id + " không tồn tại"));
+                roomTypeMapper.updateRoomType(roomTypeRequest, roomType);
+                return roomTypeMapper.toRoomTypeResponse(roomTypeRepository.save(roomType));
+        
     }
 }

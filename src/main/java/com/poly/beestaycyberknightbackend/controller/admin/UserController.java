@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.controller;
+package com.poly.beestaycyberknightbackend.controller.admin;
 
 
 import org.springframework.web.bind.annotation.RestController;

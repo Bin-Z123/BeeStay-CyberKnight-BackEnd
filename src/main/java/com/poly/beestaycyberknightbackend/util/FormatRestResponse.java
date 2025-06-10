@@ -1,6 +1,6 @@
 package com.poly.beestaycyberknightbackend.util;
 
-import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeCreation;
+import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeRequest;
 import com.poly.beestaycyberknightbackend.domain.dto.response.RestResponse;
 import com.poly.beestaycyberknightbackend.domain.dto.response.RoomTypeResponse;
 

@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class RoomTypeCreation {
-    private long id;
+public class RoomTypeRequest {
     private String name;
     private int size;
     private int price;

@@ -1,8 +1,8 @@
-package com.poly.beestaycyberknightbackend.controller;
+package com.poly.beestaycyberknightbackend.controller.admin;
 
 import org.springframework.web.bind.annotation.RestController;
 import com.poly.beestaycyberknightbackend.domain.RoomType;
-import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeCreation;
+import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeRequest;
 import com.poly.beestaycyberknightbackend.domain.dto.response.RoomTypeResponse;
 import com.poly.beestaycyberknightbackend.service.RoomTypeService;
 
@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 @RestController
@@ -26,8 +28,8 @@ public class RoomTypeController {
     private final RoomTypeService roomTypeService;
 
     @PostMapping("/roomTypes")
-    public ResponseEntity<RoomTypeResponse> createNewRoomType (@RequestBody RoomTypeCreation roomTypeCreation) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(roomTypeService.handleCreateRoomType(roomTypeCreation));
+    public ResponseEntity<RoomTypeResponse> createNewRoomType (@RequestBody RoomTypeRequest roomTypeRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(roomTypeService.handleCreateRoomType(roomTypeRequest));
     } 
     
     @DeleteMapping("/roomTypes/{id}")
@@ -38,10 +40,21 @@ public class RoomTypeController {
     }
 
     @GetMapping("/roomTypes")
-    public ResponseEntity<List<RoomType>> getAllRoomType() {
-        return ResponseEntity.status(HttpStatus.OK).body(this.roomTypeService.fetchAllRoomTypes());
+    public ResponseEntity<List<RoomTypeResponse>> getAllRoomType() {
+        return ResponseEntity.status(HttpStatus.OK).body(roomTypeService.fetchAllRoomTypes());
     }
+
+    @GetMapping("/roomTypes/{id}")
+    public ResponseEntity<RoomTypeResponse> getRoomTypeById(@PathVariable("id") long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(roomTypeService.fetchRoomTypeById(id));
+    }
+
+    @PutMapping("/roomTypes/{id}")
+    public ResponseEntity<RoomTypeResponse> handleUpdateRoomType (@PathVariable("id") long id, @RequestBody RoomTypeRequest roomTypeRequest) {
+        return ResponseEntity.ok(roomTypeService.handleUpdateRoomType(roomTypeRequest, id));
+    }
+}
 
     
 
-}
+
