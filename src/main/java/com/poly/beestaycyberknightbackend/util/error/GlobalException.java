@@ -13,7 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.poly.beestaycyberknightbackend.domain.RestResponse;
+import com.poly.beestaycyberknightbackend.domain.dto.response.RestResponse;
 
 
 @RestControllerAdvice

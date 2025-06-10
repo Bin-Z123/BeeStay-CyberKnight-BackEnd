@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.domain;
+package com.poly.beestaycyberknightbackend.domain.dto.response;
 
 public class RestResponse<T> {
     private int statusCode;
