@@ -42,9 +42,6 @@ public class RoomType {
     @Column(name = "people_about", nullable = false)
     private int peopleAbout;
 
-    @Column(name = "discount_id", nullable = false)
-    private int discountId;
-
     @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Room> rooms;

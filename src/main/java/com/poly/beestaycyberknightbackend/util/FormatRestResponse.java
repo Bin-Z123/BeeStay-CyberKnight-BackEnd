@@ -1,6 +1,9 @@
 package com.poly.beestaycyberknightbackend.util;
 
+import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeCreation;
 import com.poly.beestaycyberknightbackend.domain.dto.response.RestResponse;
+import com.poly.beestaycyberknightbackend.domain.dto.response.RoomTypeResponse;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,7 +53,7 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
             // Đặt message tùy theo loại tài nguyên
             if (body instanceof com.poly.beestaycyberknightbackend.domain.User) {
                 res.setMessage("Tạo user thành công");
-            } else if (body instanceof com.poly.beestaycyberknightbackend.domain.RoomType) {
+            } else if (body instanceof RoomTypeResponse) {
                 res.setMessage("Tạo roomtype thành công");
             } 
         } else {

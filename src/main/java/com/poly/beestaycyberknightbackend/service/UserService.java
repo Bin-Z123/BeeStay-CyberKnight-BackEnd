@@ -29,7 +29,7 @@ public class UserService {
 
     public User fetchUserById(long id){
         return this.userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User vớivới ID " + id + " không tồn tạitại"));
+                .orElseThrow(() -> new ResourceNotFoundException("User với ID " + id + " không tồn tại"));
     }
 
     public List<User> fetchAllUser(){

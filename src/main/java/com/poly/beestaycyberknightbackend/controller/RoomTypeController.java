@@ -1,11 +1,12 @@
 package com.poly.beestaycyberknightbackend.controller;
 
 import org.springframework.web.bind.annotation.RestController;
-
 import com.poly.beestaycyberknightbackend.domain.RoomType;
-import com.poly.beestaycyberknightbackend.domain.dto.response.RestResponse;
+import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeCreation;
+import com.poly.beestaycyberknightbackend.domain.dto.response.RoomTypeResponse;
 import com.poly.beestaycyberknightbackend.service.RoomTypeService;
-import com.poly.beestaycyberknightbackend.util.error.ResourceNotFoundException;
+
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
@@ -19,18 +20,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
+@RequiredArgsConstructor
 public class RoomTypeController {
     
     private final RoomTypeService roomTypeService;
 
-    public RoomTypeController(RoomTypeService roomTypeService) {
-        this.roomTypeService = roomTypeService;
-    }
-
     @PostMapping("/roomTypes")
-    public ResponseEntity<RoomType> createNewRoomType (@RequestBody RoomType roomtypes) {
-        RoomType roomType = this.roomTypeService.handleCreateRoomType(roomtypes);
-        return ResponseEntity.status(HttpStatus.CREATED).body(roomType);
+    public ResponseEntity<RoomTypeResponse> createNewRoomType (@RequestBody RoomTypeCreation roomTypeCreation) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(roomTypeService.handleCreateRoomType(roomTypeCreation));
     } 
     
     @DeleteMapping("/roomTypes/{id}")
@@ -44,5 +41,7 @@ public class RoomTypeController {
     public ResponseEntity<List<RoomType>> getAllRoomType() {
         return ResponseEntity.status(HttpStatus.OK).body(this.roomTypeService.fetchAllRoomTypes());
     }
+
+    
 
 }

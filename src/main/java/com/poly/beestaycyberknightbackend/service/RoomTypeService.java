@@ -1,25 +1,26 @@
 package com.poly.beestaycyberknightbackend.service;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
-
 import com.poly.beestaycyberknightbackend.domain.RoomType;
+import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeCreation;
+import com.poly.beestaycyberknightbackend.domain.dto.response.RoomTypeResponse;
+import com.poly.beestaycyberknightbackend.mapper.RoomTypeMapper;
 import com.poly.beestaycyberknightbackend.repository.RoomTypeRepository;
 import com.poly.beestaycyberknightbackend.util.error.ResourceNotFoundException;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class RoomTypeService {
     
     private final RoomTypeRepository roomTypeRepository;
+    private final RoomTypeMapper roomTypeMapper;
 
-    public RoomTypeService(RoomTypeRepository roomTypeRepository) {
-        this.roomTypeRepository = roomTypeRepository;
-    }
-
-    public RoomType handleCreateRoomType(RoomType roomType) {
-        return  this.roomTypeRepository.save(roomType);
+    public RoomTypeResponse handleCreateRoomType(RoomTypeCreation roomTypeCreation) {
+        RoomType roomType = roomTypeMapper.toRoomType(roomTypeCreation);
+        return  roomTypeMapper.toRoomTypeResponse(roomTypeRepository.save(roomType));
     }
 
     public void handleDeleteRoomType(long id) {
@@ -35,4 +36,14 @@ public class RoomTypeService {
         return this.roomTypeRepository.findAll();
     }
 
+    public RoomType handleUpdateRoomType(RoomType reqRoomType) {
+        RoomType currentRoomType = this.fetchRoomTypeById(reqRoomType.getId());
+        if (currentRoomType != null) {
+            currentRoomType.setName(reqRoomType.getName());
+            currentRoomType.setSize(reqRoomType.getSize());
+            currentRoomType.setPrice(reqRoomType.getPrice());
+            currentRoomType.setPeopleAbout(reqRoomType.getPeopleAbout());
+        }
+        return currentRoomType;
+    }
 }
