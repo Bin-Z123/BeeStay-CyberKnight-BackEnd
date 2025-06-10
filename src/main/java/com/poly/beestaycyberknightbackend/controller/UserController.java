@@ -40,12 +40,13 @@ public class UserController {
     
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
         if (id >= 10000) {
             throw new IdInvalidException("Id không lớn hơn 10000");
         }
-        this.userService.handleDeleteUser(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Success");
+        userService.fetchUserById(id);
+        userService.handleDeleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/users/{id}")

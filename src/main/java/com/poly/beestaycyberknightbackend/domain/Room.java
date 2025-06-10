@@ -25,19 +25,19 @@ import lombok.experimental.FieldDefaults;
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    private long id;
+
+    @Column(name = "roomnumber", nullable = false)
+    private int roomNumber;
+
+    @Column(name = "roomstatus", length = 100, nullable = false)
+    private String roomStatus;
 
     @Column(nullable = false)
-    int roomNumber;
-
-    @Column(length = 100, nullable = false)
-    String roomStatus;
-
-    @Column(nullable = false)
-    int floor;
+    private int floor;
 
     @ManyToOne
-    @JoinColumn(name = "roomType_id", nullable = false)
+    @JoinColumn(name = "roomtype_id", nullable = false)
     @JsonBackReference
     private RoomType roomType;
 }
