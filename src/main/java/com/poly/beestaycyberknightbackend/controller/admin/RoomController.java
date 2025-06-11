@@ -1,5 +1,7 @@
 package com.poly.beestaycyberknightbackend.controller.admin;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +15,9 @@ import com.poly.beestaycyberknightbackend.domain.dto.response.RoomResponse;
 import com.poly.beestaycyberknightbackend.service.RoomService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -31,5 +36,11 @@ public class RoomController {
         roomService.handleDeleteRoom(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/rooms")
+    public ResponseEntity<List<RoomResponse>> getAllRoom() {
+        return ResponseEntity.status(HttpStatus.OK).body(roomService.fetchAllRooms());
+    }
+    
 
 }
