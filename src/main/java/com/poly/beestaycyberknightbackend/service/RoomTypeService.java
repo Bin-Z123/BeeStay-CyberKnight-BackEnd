@@ -3,11 +3,11 @@ package com.poly.beestaycyberknightbackend.service;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.domain.RoomType;
-import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeRequest;
-import com.poly.beestaycyberknightbackend.domain.dto.response.RoomTypeResponse;
+import com.poly.beestaycyberknightbackend.dto.request.RoomTypeRequest;
+import com.poly.beestaycyberknightbackend.dto.response.RoomTypeResponse;
+import com.poly.beestaycyberknightbackend.exception.ResourceNotFoundException;
 import com.poly.beestaycyberknightbackend.mapper.RoomTypeMapper;
 import com.poly.beestaycyberknightbackend.repository.RoomTypeRepository;
-import com.poly.beestaycyberknightbackend.util.error.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 

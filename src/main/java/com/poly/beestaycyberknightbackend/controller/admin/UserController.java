@@ -3,8 +3,9 @@ package com.poly.beestaycyberknightbackend.controller.admin;
 
 import org.springframework.web.bind.annotation.RestController;
 import com.poly.beestaycyberknightbackend.domain.User;
+import com.poly.beestaycyberknightbackend.exception.IdInvalidException;
 import com.poly.beestaycyberknightbackend.service.UserService;
-import com.poly.beestaycyberknightbackend.util.error.IdInvalidException;
+
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

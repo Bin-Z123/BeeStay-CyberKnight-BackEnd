@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.domain.dto.response;
+package com.poly.beestaycyberknightbackend.dto.response;
 
 import java.util.List;
 import lombok.AllArgsConstructor;

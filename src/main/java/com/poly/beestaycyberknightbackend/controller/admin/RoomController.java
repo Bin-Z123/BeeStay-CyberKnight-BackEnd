@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.poly.beestaycyberknightbackend.domain.dto.request.RoomRequest;
-import com.poly.beestaycyberknightbackend.domain.dto.response.RoomResponse;
+import com.poly.beestaycyberknightbackend.dto.request.RoomRequest;
+import com.poly.beestaycyberknightbackend.dto.response.RoomResponse;
 import com.poly.beestaycyberknightbackend.service.RoomService;
 
 import lombok.RequiredArgsConstructor;

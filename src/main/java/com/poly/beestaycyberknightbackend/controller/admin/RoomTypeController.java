@@ -2,8 +2,8 @@ package com.poly.beestaycyberknightbackend.controller.admin;
 
 import org.springframework.web.bind.annotation.RestController;
 import com.poly.beestaycyberknightbackend.domain.RoomType;
-import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeRequest;
-import com.poly.beestaycyberknightbackend.domain.dto.response.RoomTypeResponse;
+import com.poly.beestaycyberknightbackend.dto.request.RoomTypeRequest;
+import com.poly.beestaycyberknightbackend.dto.response.RoomTypeResponse;
 import com.poly.beestaycyberknightbackend.service.RoomTypeService;
 
 import lombok.RequiredArgsConstructor;

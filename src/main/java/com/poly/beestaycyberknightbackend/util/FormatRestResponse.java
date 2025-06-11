@@ -1,9 +1,9 @@
 package com.poly.beestaycyberknightbackend.util;
 
 import com.poly.beestaycyberknightbackend.BeeStayCyberKnightBackEndApplication;
-import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeRequest;
-import com.poly.beestaycyberknightbackend.domain.dto.response.RestResponse;
-import com.poly.beestaycyberknightbackend.domain.dto.response.RoomTypeResponse;
+import com.poly.beestaycyberknightbackend.dto.request.RoomTypeRequest;
+import com.poly.beestaycyberknightbackend.dto.response.RestResponse;
+import com.poly.beestaycyberknightbackend.dto.response.RoomTypeResponse;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;

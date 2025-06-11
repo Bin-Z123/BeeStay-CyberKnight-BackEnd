@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.poly.beestaycyberknightbackend.domain.User;
+import com.poly.beestaycyberknightbackend.exception.ResourceNotFoundException;
 import com.poly.beestaycyberknightbackend.repository.UserRepository;
-import com.poly.beestaycyberknightbackend.util.error.ResourceNotFoundException;
 
 @Service
 public class UserService {

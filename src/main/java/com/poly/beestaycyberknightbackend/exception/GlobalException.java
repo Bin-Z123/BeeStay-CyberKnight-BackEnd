@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.util.error;
+package com.poly.beestaycyberknightbackend.exception;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,7 +13,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.poly.beestaycyberknightbackend.domain.dto.response.RestResponse;
+import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
+import com.poly.beestaycyberknightbackend.dto.response.RestResponse;
 
 
 @RestControllerAdvice
@@ -53,5 +54,16 @@ public class GlobalException {
         res.setMessage(errors.size() > 1 ? errors : errors.get(0));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+
+    //Bắt lỗi trong dự tính
+    @ExceptionHandler(value = AppException.class)
+    public ResponseEntity<ApiResponse> handlingAppException(AppException e){
+        ErrorCode errorCode = e.getErrorCode();
+
+        ApiResponse apiResponse = new ApiResponse<>();
+        apiResponse.setCode(errorCode.getCode());
+        apiResponse.setMessage(errorCode.getMessage());
+        return ResponseEntity.badRequest().body(apiResponse);
     }
 }

@@ -5,8 +5,8 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
 import com.poly.beestaycyberknightbackend.domain.Room;
-import com.poly.beestaycyberknightbackend.domain.dto.request.RoomRequest;
-import com.poly.beestaycyberknightbackend.domain.dto.response.RoomResponse;
+import com.poly.beestaycyberknightbackend.dto.request.RoomRequest;
+import com.poly.beestaycyberknightbackend.dto.response.RoomResponse;
 
 @Mapper(componentModel = "spring")
 public interface RoomMapper {

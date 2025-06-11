@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.domain.dto.request;
+package com.poly.beestaycyberknightbackend.dto.request;
 
 import lombok.Data;
 
