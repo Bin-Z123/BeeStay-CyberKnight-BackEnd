@@ -30,7 +30,7 @@ public class RoomImage {
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     @JsonBackReference
-    private Room room;
+    private Room room;  
 
     @Column(name = "url", length = 255, nullable = false)
     private String url;

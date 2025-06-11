@@ -46,11 +46,11 @@ public class Room {
     @JsonBackReference
     private RoomType roomType;
 
-    @OneToMany(mappedBy = "room ", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Stay> stays;
 
-    @OneToMany(mappedBy = "room ", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<RoomImage> roomImage;
+    private List<RoomImage> roomImages;
 }

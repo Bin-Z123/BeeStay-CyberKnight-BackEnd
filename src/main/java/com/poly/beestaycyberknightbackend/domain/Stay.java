@@ -50,5 +50,5 @@ public class Stay {
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     @JsonBackReference
-    private Room rooms;
+    private Room room;
 }
