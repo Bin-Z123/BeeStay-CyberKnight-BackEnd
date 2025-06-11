@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/rank")
+@RequestMapping("/admin/rank")
 public class RankController {
     RankService rankService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ApiResponse<Rank> create(@RequestBody RankRequest request) {
         ApiResponse response = new ApiResponse<>();
         response.setResult(rankService.createRank(request));
