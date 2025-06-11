@@ -1,5 +1,6 @@
 package com.poly.beestaycyberknightbackend.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.domain.Room;
 import com.poly.beestaycyberknightbackend.domain.RoomImage;
 import com.poly.beestaycyberknightbackend.domain.RoomType;
+import com.poly.beestaycyberknightbackend.domain.dto.request.RoomImageRequest;
 import com.poly.beestaycyberknightbackend.domain.dto.request.RoomRequest;
 import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeRequest;
 import com.poly.beestaycyberknightbackend.domain.dto.response.RoomResponse;
@@ -15,6 +17,7 @@ import com.poly.beestaycyberknightbackend.mapper.RoomMapper;
 import com.poly.beestaycyberknightbackend.repository.RoomRepository;
 import com.poly.beestaycyberknightbackend.repository.RoomTypeRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,48 +28,40 @@ public class RoomService {
     private final RoomMapper roomMapper;
     private final RoomTypeRepository roomTypeRepository;
 
-    public RoomResponse handleCreateRoom(RoomRequest request) {
+    @Transactional
+public RoomResponse handleCreateRoom(RoomRequest roomRequest) {
     Room room = new Room();
-    room.setRoomNumber(request.getRoomNumber());
-    room.setRoomStatus(request.getRoomStatus());
-    room.setFloor(request.getFloor());
+    room.setRoomNumber(roomRequest.getRoomNumber());
+    room.setRoomStatus(roomRequest.getRoomStatus());
+    room.setFloor(roomRequest.getFloor());
 
-    // ✅ Tìm RoomType nếu đã có, nếu chưa thì tạo mới
-    RoomTypeRequest roomTypeReq = request.getRoomType();
-
-    RoomType roomType = roomTypeRepository
-        .findByNameAndSizeAndPriceAndPeopleAbout(
-            roomTypeReq.getName(),
-            roomTypeReq.getSize(),
-            roomTypeReq.getPrice(),
-            roomTypeReq.getPeopleAbout()
-        )
-        .orElseGet(() -> {
-            // Tạo mới nếu không tìm thấy
-            RoomType newType = new RoomType();
-            newType.setName(roomTypeReq.getName());
-            newType.setSize(roomTypeReq.getSize());
-            newType.setPrice(roomTypeReq.getPrice());
-            newType.setPeopleAbout(roomTypeReq.getPeopleAbout());
-            return roomTypeRepository.save(newType); // Lưu trước để có ID
-        });
-
+    // Gán RoomType
+    RoomType roomType = roomTypeRepository.findById(roomRequest.getRoomTypeId())
+        .orElseThrow(() -> new RuntimeException("RoomType not found"));
     room.setRoomType(roomType);
 
-    // ✅ Xử lý danh sách ảnh
-    if (request.getRoomImages() != null) {
-        List<RoomImage> images = request.getRoomImages().stream().map(imageRequest -> {
-            RoomImage image = new RoomImage();
-            image.setUrl(imageRequest.getUrl());
-            image.setRoom(room); // Liên kết 2 chiều
-            return image;
-        }).collect(Collectors.toList());
-        room.setRoomImages(images);
+    // B1: Lưu Room trước để sinh ra ID
+    Room savedRoom = roomRepository.save(room);
+
+    // B2: Lưu RoomImages kèm theo Room đã có ID
+    List<RoomImage> roomImages = new ArrayList<>();
+    for (RoomImageRequest imageRequest : roomRequest.getRoomImages()) {
+        RoomImage image = new RoomImage();
+        image.setUrl(imageRequest.getUrl());
+        image.setAltext(imageRequest.getAltext());
+        image.setIsThum(imageRequest.getIsThum());
+        image.setRoom(savedRoom); // GÁN ROOM TẠI ĐÂY
+        roomImages.add(image);
     }
 
-    Room savedRoom = roomRepository.save(room);
-    return roomMapper.toRoomResponse(savedRoom);
-    }
+    // B3: Gán list RoomImages vào Room và lưu lại nếu cần cascade
+    savedRoom.setRoomImages(roomImages);
+    Room finalRoom = roomRepository.save(savedRoom);
+
+    return roomMapper.toRoomResponse(finalRoom);
+}
+
+
 
 
 

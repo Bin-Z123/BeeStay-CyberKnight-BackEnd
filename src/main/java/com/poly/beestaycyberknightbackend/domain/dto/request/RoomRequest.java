@@ -14,8 +14,7 @@ public class RoomRequest {
     private String roomStatus;    
     private int floor;           
 
-    private RoomTypeRequest roomType;    
-
+    private long roomTypeId;    
     private List<RoomImageRequest> roomImages;
 
 }

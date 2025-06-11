@@ -21,7 +21,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "roomImages")
+@Table(name = "roomimages")
 public class RoomImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
