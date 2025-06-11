@@ -1,8 +1,8 @@
 package com.poly.beestaycyberknightbackend.exception;
 
 public enum ErrorCode {
-    RANK_EXISTED(409, "Rank already exists")
-    
+    RANK_EXISTED(409, "Rank already exists"),
+    RANK_NOT_EXISTED(404, "Rank not exists")
     ;
 
     private final int code;

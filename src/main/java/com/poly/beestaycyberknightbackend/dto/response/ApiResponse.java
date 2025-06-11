@@ -17,5 +17,5 @@ import lombok.AccessLevel;
 public class ApiResponse <T>{
     int code = 201;
     String message;
-    T result;
+    T data;
 }
