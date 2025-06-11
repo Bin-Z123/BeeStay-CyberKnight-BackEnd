@@ -28,38 +28,37 @@ public class RoomService {
     private final RoomMapper roomMapper;
     private final RoomTypeRepository roomTypeRepository;
 
-    @Transactional
-public RoomResponse handleCreateRoom(RoomRequest roomRequest) {
-    Room room = new Room();
-    room.setRoomNumber(roomRequest.getRoomNumber());
-    room.setRoomStatus(roomRequest.getRoomStatus());
-    room.setFloor(roomRequest.getFloor());
+    public RoomResponse handleCreateRoom(RoomRequest roomRequest) {
+        Room room = new Room();
+        room.setRoomNumber(roomRequest.getRoomNumber());
+        room.setRoomStatus(roomRequest.getRoomStatus());
+        room.setFloor(roomRequest.getFloor());
 
-    // Gán RoomType
-    RoomType roomType = roomTypeRepository.findById(roomRequest.getRoomTypeId())
-        .orElseThrow(() -> new RuntimeException("RoomType not found"));
-    room.setRoomType(roomType);
+        // Gán RoomType
+        RoomType roomType = roomTypeRepository.findById(roomRequest.getRoomTypeId())
+            .orElseThrow(() -> new RuntimeException("RoomType not found"));
+        room.setRoomType(roomType);
 
-    // B1: Lưu Room trước để sinh ra ID
-    Room savedRoom = roomRepository.save(room);
+        // B1: Lưu Room trước để sinh ra ID
+        Room savedRoom = roomRepository.save(room);
 
-    // B2: Lưu RoomImages kèm theo Room đã có ID
-    List<RoomImage> roomImages = new ArrayList<>();
-    for (RoomImageRequest imageRequest : roomRequest.getRoomImages()) {
-        RoomImage image = new RoomImage();
-        image.setUrl(imageRequest.getUrl());
-        image.setAltext(imageRequest.getAltext());
-        image.setIsThum(imageRequest.getIsThum());
-        image.setRoom(savedRoom); // GÁN ROOM TẠI ĐÂY
-        roomImages.add(image);
+        // B2: Lưu RoomImages kèm theo Room đã có ID
+        List<RoomImage> roomImages = new ArrayList<>();
+        for (RoomImageRequest imageRequest : roomRequest.getRoomImages()) {
+            RoomImage image = new RoomImage();
+            image.setUrl(imageRequest.getUrl());
+            image.setAltext(imageRequest.getAltext());
+            image.setIsThum(imageRequest.getIsThum());
+            image.setRoom(savedRoom); // GÁN ROOM TẠI ĐÂY
+            roomImages.add(image);
+        }
+
+        // B3: Gán list RoomImages vào Room và lưu lại nếu cần cascade
+        savedRoom.setRoomImages(roomImages);
+        Room finalRoom = roomRepository.save(savedRoom);
+
+        return roomMapper.toRoomResponse(finalRoom);
     }
-
-    // B3: Gán list RoomImages vào Room và lưu lại nếu cần cascade
-    savedRoom.setRoomImages(roomImages);
-    Room finalRoom = roomRepository.save(savedRoom);
-
-    return roomMapper.toRoomResponse(finalRoom);
-}
 
 
 

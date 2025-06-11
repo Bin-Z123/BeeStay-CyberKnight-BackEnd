@@ -2,6 +2,8 @@ package com.poly.beestaycyberknightbackend.domain.dto.response;
 
 
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,4 +17,6 @@ public class RoomTypeResponse {
     private int size;
     private int price;
     private int peopleAbout;
+    
+    private List<RoomResponse> rooms;
 }

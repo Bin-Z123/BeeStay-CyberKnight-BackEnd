@@ -8,7 +8,7 @@ import com.poly.beestaycyberknightbackend.domain.RoomType;
 import com.poly.beestaycyberknightbackend.domain.dto.request.RoomTypeRequest;
 import com.poly.beestaycyberknightbackend.domain.dto.response.RoomTypeResponse;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {RoomMapper.class})
 public interface RoomTypeMapper {
     RoomTypeMapper INSTANCE = Mappers.getMapper(RoomTypeMapper.class);
     RoomTypeResponse toRoomTypeResponse(RoomType roomType);
