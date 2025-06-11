@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.poly.beestaycyberknightbackend.domain.User;
-import com.poly.beestaycyberknightbackend.exception.ResourceNotFoundException;
 import com.poly.beestaycyberknightbackend.repository.UserRepository;
 
 @Service
@@ -29,7 +28,7 @@ public class UserService {
 
     public User fetchUserById(long id){
         return this.userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User với ID " + id + " không tồn tại"));
+                .orElseThrow();
     }
 
     public List<User> fetchAllUser(){

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.domain.RoomType;
 import com.poly.beestaycyberknightbackend.dto.request.RoomTypeRequest;
 import com.poly.beestaycyberknightbackend.dto.response.RoomTypeResponse;
-import com.poly.beestaycyberknightbackend.exception.ResourceNotFoundException;
 import com.poly.beestaycyberknightbackend.mapper.RoomTypeMapper;
 import com.poly.beestaycyberknightbackend.repository.RoomTypeRepository;
 
@@ -30,7 +29,7 @@ public class RoomTypeService {
     public RoomTypeResponse fetchRoomTypeById(long id) {
         return roomTypeRepository.findById(id)
                 .map(roomTypeMapper::toRoomTypeResponse)
-                .orElseThrow(() -> new ResourceNotFoundException("Loại phòng với ID " + id + " không tồn tại"));
+                .orElseThrow();
     }
 
     public List<RoomTypeResponse> fetchAllRoomTypes() {
@@ -42,7 +41,7 @@ public class RoomTypeService {
 
     public RoomTypeResponse handleUpdateRoomType(RoomTypeRequest roomTypeRequest, long id) {
         RoomType roomType = roomTypeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Loại phòng với ID " + id + " không tồn tại"));
+                .orElseThrow();
                 roomTypeMapper.updateRoomType(roomTypeRequest, roomType);
                 return roomTypeMapper.toRoomTypeResponse(roomTypeRepository.save(roomType));
         
