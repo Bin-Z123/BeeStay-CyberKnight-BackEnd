@@ -28,22 +28,19 @@ public class RoomType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    long id;
+    private long id;
 
     @Column(length = 50, nullable = false)
-    String name;
+    private String name;
 
     @Column(nullable = false)
-    int size;
+    private int size;
 
     @Column(nullable = false)
-    int price;
+    private int price;
 
     @Column(name = "people_about", nullable = false)
-    int peopleAbout;
-
-    @Column(name = "discount_id", nullable = false)
-    int discountId;
+    private int peopleAbout;
 
     @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL)
     @JsonManagedReference

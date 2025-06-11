@@ -40,8 +40,6 @@ public class Report {
     @Enumerated(EnumType.STRING)
     ReportStatus status;
 
-
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     User user;
