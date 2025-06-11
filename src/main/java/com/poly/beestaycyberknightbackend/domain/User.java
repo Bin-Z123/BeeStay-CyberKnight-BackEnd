@@ -2,20 +2,13 @@ package com.poly.beestaycyberknightbackend.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -64,7 +57,12 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "role_id")
     @JsonBackReference
-    private Role role;
+    Role role;
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    List<Voucher> vouchers;
+
 
     public enum EBlacklist {
         FIRST,
