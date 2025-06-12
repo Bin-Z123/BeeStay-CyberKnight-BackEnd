@@ -1,8 +1,11 @@
-package com.poly.beestaycyberknightbackend.domain.entity;
+package com.poly.beestaycyberknightbackend.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,7 +13,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,10 +29,10 @@ import lombok.experimental.FieldDefaults;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    long id;
 
     @Column(nullable = false, unique = true)
-    int phone;
+    String phone;
 
     @Column(length = 100,nullable = false, unique = true)
     String email;
@@ -38,7 +42,7 @@ public class User {
 
     Boolean gender;
 
-    LocalDate birthdate;
+    LocalDate birthday;
 
     @Column(nullable = false)
     LocalDateTime joinDate = LocalDateTime.now();
@@ -53,12 +57,15 @@ public class User {
     @Enumerated(EnumType.STRING)
     EBlacklist eBlacklist = EBlacklist.NONE;
 
-    int cccd;
+    String cccd;
 
     int point = 0;
     
-    @OneToMany(mappedBy = "user")
-    List<UserRole> userRoles;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    @JsonBackReference
+    private Role role;
+
     public enum EBlacklist {
         FIRST,
         SECOND,

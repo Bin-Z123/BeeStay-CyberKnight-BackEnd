@@ -1,0 +1,64 @@
+package com.poly.beestaycyberknightbackend.controller.admin;
+
+import org.springframework.web.bind.annotation.RestController;
+import com.poly.beestaycyberknightbackend.domain.RoomType;
+import com.poly.beestaycyberknightbackend.dto.request.RoomTypeRequest;
+import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
+import com.poly.beestaycyberknightbackend.dto.response.RoomTypeResponse;
+import com.poly.beestaycyberknightbackend.service.RoomTypeService;
+
+import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+
+
+
+@RestController
+@RequiredArgsConstructor
+public class RoomTypeController {
+    
+    private final RoomTypeService roomTypeService;
+
+    @PostMapping("/roomTypes")
+    public ApiResponse<RoomTypeResponse> createNewRoomType (@RequestBody RoomTypeRequest roomTypeRequest) {
+        ApiResponse response = new ApiResponse<>();
+        response.setCode(201);
+        response.setData(roomTypeService.handleCreateRoomType(roomTypeRequest));
+        return response;
+    } 
+    
+    @DeleteMapping("/roomTypes/{id}")
+    public ResponseEntity<Void> deleteRoomType(@PathVariable("id") long id) {
+        roomTypeService.fetchRoomTypeById(id);
+        roomTypeService.handleDeleteRoomType(id);
+        return ResponseEntity.noContent().build(); // Trả về 204 No Content, không có body
+    }
+
+    @GetMapping("/roomTypes")
+    public ResponseEntity<List<RoomTypeResponse>> getAllRoomType() {
+        return ResponseEntity.status(HttpStatus.OK).body(roomTypeService.fetchAllRoomTypes());
+    }
+
+    @GetMapping("/roomTypes/{id}")
+    public ResponseEntity<RoomTypeResponse> getRoomTypeById(@PathVariable("id") long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(roomTypeService.fetchRoomTypeById(id));
+    }
+
+    @PutMapping("/roomTypes/{id}")
+    public ResponseEntity<RoomTypeResponse> handleUpdateRoomType (@PathVariable("id") long id, @RequestBody RoomTypeRequest roomTypeRequest) {
+        return ResponseEntity.ok(roomTypeService.handleUpdateRoomType(roomTypeRequest, id));
+    }
+}
+
+    
+
+
