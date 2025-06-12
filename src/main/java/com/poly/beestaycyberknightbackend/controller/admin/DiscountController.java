@@ -55,4 +55,11 @@ public class DiscountController {
         ApiResponse response = new ApiResponse<>(200, null, discountService.deleteDiscount(id));
         return response;
     }
+
+    @GetMapping("/discountbyroomtypeid/{id}")
+    public ApiResponse<List<Discount>> listDiscountByRoomTypeId(@PathVariable Long id) {
+        ApiResponse response = new ApiResponse<>(200, null, discountService.findDiscountByRoomTypeId(id));
+        return response;
+    }
+    
 }
