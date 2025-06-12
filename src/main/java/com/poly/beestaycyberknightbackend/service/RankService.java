@@ -19,13 +19,13 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 public class RankService {
     RankRepository rankRepository;
-    RankMapper mapper;
+    RankMapper rankMapper;
 
     public Rank createRank(RankRequest rankRequest) {
         if (rankRepository.existsBynameRank(rankRequest.getNameRank())){
             throw new AppException(ErrorCode.RANK_EXISTED);
         }
-        Rank rank = mapper.toRank(rankRequest);
+        Rank rank = rankMapper.toRank(rankRequest);
         return rankRepository.save(rank);
     }
 
@@ -43,7 +43,7 @@ public class RankService {
 
     public Rank updateRank(Integer id, RankRequest request){
         Rank rank = rankRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.RANK_NOT_EXISTED));
-        mapper.updateRank(rank, request);
+        rankMapper.updateRank(rank, request);
         return rankRepository.save(rank);
     }
 
