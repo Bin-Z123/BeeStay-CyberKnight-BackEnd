@@ -2,7 +2,9 @@ package com.poly.beestaycyberknightbackend.exception;
 
 public enum ErrorCode {
     RANK_EXISTED(409, "Rank already exists"),
-    RANK_NOT_EXISTED(404, "Rank not exists")
+    RANK_NOT_EXISTED(404, "Rank not exists"),
+    VOUCHER_EXISTED(409, "VoucherCode already exists"),
+    VOUCHER_NOT_EXISTED(404, "Voucher not found")
     ;
 
     private final int code;
