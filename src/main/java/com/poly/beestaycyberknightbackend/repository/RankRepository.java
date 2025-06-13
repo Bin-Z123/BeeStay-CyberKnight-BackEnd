@@ -8,4 +8,7 @@ import com.poly.beestaycyberknightbackend.domain.Rank;
 @Repository
 public interface RankRepository extends JpaRepository<Rank,Integer>{
     boolean existsBynameRank(String nameRank);
+
+    boolean existsById(int id);
+
 }

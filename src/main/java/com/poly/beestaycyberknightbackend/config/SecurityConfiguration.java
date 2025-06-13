@@ -5,12 +5,15 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.security.config.Customizer;
+
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -19,6 +22,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
+
 import org.springframework.security.web.SecurityFilterChain;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
@@ -37,6 +41,7 @@ public class SecurityConfiguration {
     private String jwtKey;
 
     @Bean
+
     public SecurityFilterChain filterChain(
                 HttpSecurity http,
                 CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
@@ -85,13 +90,16 @@ public class SecurityConfiguration {
     }
 
     @Bean
+
     public JwtEncoder jwtEncoder() {
         return new NimbusJwtEncoder(new ImmutableSecret<>(getSecretKey()));
     }
 
     private SecretKey getSecretKey() {
         byte[] keyBytes = Base64.from(jwtKey).decode();
+
         return new SecretKeySpec(keyBytes, 0, keyBytes.length,
                 SecurityUtil.JWT_ALGORITHM.getName());
     }
+
 }
