@@ -1,24 +1,30 @@
 package com.poly.beestaycyberknightbackend.exception;
 
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 
 @RestControllerAdvice
 public class GlobalException {
-    // @ExceptionHandler(value = {
-    //         IdInvalidException.class,
-    //         UsernameNotFoundException.class,
-    //         BadCredentialsException.class
-    // })
-    // public ResponseEntity<RestResponse<Object>> handleIdException(IdInvalidException idException) {
-    //     RestResponse<Object> res = new RestResponse<Object>();
-    //     res.setStatusCode(HttpStatus.BAD_REQUEST.value());
-    //     res.setError(idException.getMessage());
-    //     res.setMessage("Exception occurs...");
-    //     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
-    // }
+
+    @ExceptionHandler(value = {      
+            UsernameNotFoundException.class,
+            BadCredentialsException.class
+    })
+    public ResponseEntity<ApiResponse> handleIdException(Exception ex) {
+        ApiResponse res = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
+        // res.setCode(HttpStatus.BAD_REQUEST.value());
+        // res.setError(ex.getMessage());
+        // res.setMessage("Exception occurs...");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+
 
     // @ExceptionHandler(ResourceNotFoundException.class)
     // public ResponseEntity<RestResponse<Object>> handleResourceNotFoundException(ResourceNotFoundException ex) {

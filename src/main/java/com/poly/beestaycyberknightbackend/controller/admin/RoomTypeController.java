@@ -3,7 +3,9 @@ package com.poly.beestaycyberknightbackend.controller.admin;
 import org.springframework.web.bind.annotation.RestController;
 import com.poly.beestaycyberknightbackend.domain.RoomType;
 import com.poly.beestaycyberknightbackend.dto.request.RoomTypeRequest;
+
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
+
 import com.poly.beestaycyberknightbackend.dto.response.RoomTypeResponse;
 import com.poly.beestaycyberknightbackend.service.RoomTypeService;
 
@@ -29,11 +31,13 @@ public class RoomTypeController {
     private final RoomTypeService roomTypeService;
 
     @PostMapping("/roomTypes")
+
     public ApiResponse<RoomTypeResponse> createNewRoomType (@RequestBody RoomTypeRequest roomTypeRequest) {
         ApiResponse response = new ApiResponse<>();
         response.setCode(201);
         response.setData(roomTypeService.handleCreateRoomType(roomTypeRequest));
         return response;
+
     } 
     
     @DeleteMapping("/roomTypes/{id}")
