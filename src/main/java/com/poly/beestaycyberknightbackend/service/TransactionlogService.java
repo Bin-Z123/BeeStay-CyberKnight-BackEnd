@@ -24,7 +24,7 @@ public class TransactionlogService {
     UserRepository userRepository;
     
     public List<TransactionLog> getTransactionLogs(){
-        return logRepository.findAll();
+        return logRepository.findAllWithUser();
     }
 
     public List<TransactionLog> getTransactionLogByUser(Long userid){

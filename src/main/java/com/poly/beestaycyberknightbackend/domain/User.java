@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
@@ -69,8 +70,8 @@ public class User {
     @JsonBackReference
     Role role;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
     List<TransactionLog> transantionLog;
 
     public enum EBlacklist {
