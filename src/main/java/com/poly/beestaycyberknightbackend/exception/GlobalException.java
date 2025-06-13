@@ -14,11 +14,11 @@ public class GlobalException {
             UsernameNotFoundException.class,
             BadCredentialsException.class
     })
-    public ResponseEntity<ApiResponse<Object>> handleIdException(Exception ex) {
-        ApiResponse<Object> res = new ApiResponse<Object>();
-        res.setCode(HttpStatus.BAD_REQUEST.value());
-        res.setError(ex.getMessage());
-        res.setMessage("Exception occurs...");
+    public ResponseEntity<ApiResponse> handleIdException(Exception ex) {
+        ApiResponse res = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
+        // res.setCode(HttpStatus.BAD_REQUEST.value());
+        // res.setError(ex.getMessage());
+        // res.setMessage("Exception occurs...");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 

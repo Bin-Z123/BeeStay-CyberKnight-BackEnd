@@ -33,10 +33,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         this.delegate.commence(request, response, authException);
         response.setContentType("application/json;charset=UTF-8");
 
-        ApiResponse<Object> res = new ApiResponse<Object>();
-        res.setCode(HttpStatus.UNAUTHORIZED.value());
-        res.setError(authException.getCause().getMessage());
-        res.setMessage("Token không hợp lệ (hết hạn, không đúng định dạng, hoặc không truyền JWT ở header)...");
+        ApiResponse res = new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), authException.getCause().getMessage(), null);
+        // res.setCode(HttpStatus.UNAUTHORIZED.value());
+        // res.setError(authException.getCause().getMessage());
+        // res.setMessage("Token không hợp lệ (hết hạn, không đúng định dạng, hoặc không truyền JWT ở header)...");
 
         mapper.writeValue(response.getWriter(), res);
     }
