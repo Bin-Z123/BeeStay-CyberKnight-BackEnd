@@ -14,4 +14,5 @@ public interface TransactionLogRepository extends JpaRepository<TransactionLog, 
 
     @Query("SELECT t FROM TransactionLog t JOIN FETCH t.user")
     List<TransactionLog> findAllWithUser();
+    
 }
