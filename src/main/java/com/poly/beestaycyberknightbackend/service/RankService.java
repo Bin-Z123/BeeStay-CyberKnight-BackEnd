@@ -3,6 +3,7 @@ package com.poly.beestaycyberknightbackend.service;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.domain.Rank;
 import com.poly.beestaycyberknightbackend.dto.request.RankRequest;
@@ -26,6 +27,7 @@ public class RankService {
             throw new AppException(ErrorCode.RANK_EXISTED);
         }
         Rank rank = mapper.toRank(rankRequest);
+
         return rankRepository.save(rank);
     }
 
@@ -52,4 +54,5 @@ public class RankService {
         rankRepository.delete(rank);
         return rank;
     }
+
 }
