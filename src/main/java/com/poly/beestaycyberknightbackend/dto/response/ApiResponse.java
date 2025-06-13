@@ -15,7 +15,7 @@ import lombok.AccessLevel;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ApiResponse <T>{
-    int code = 201;
+    int code = 200;
     String message;
     T data;
 }
