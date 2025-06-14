@@ -4,18 +4,14 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.poly.beestaycyberknightbackend.dto.request.RoomRequest;
 import com.poly.beestaycyberknightbackend.dto.response.RoomResponse;
 import com.poly.beestaycyberknightbackend.service.RoomService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +20,8 @@ public class RoomController {
     private final RoomService roomService;
 
     @PostMapping("/rooms")
-    public ResponseEntity<RoomResponse> createNewRoom(@RequestBody RoomRequest roomRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(roomService.handleCreateRoom(roomRequest));
+    public ResponseEntity<RoomResponse> createNewRoom(@RequestPart(name = "rooms") RoomRequest roomRequest, @RequestPart(name = "file", required = false)List<MultipartFile> multipartFiles) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(roomService.handleCreateRoom(roomRequest, multipartFiles));
     }
 
     @DeleteMapping("/rooms/{id}")
