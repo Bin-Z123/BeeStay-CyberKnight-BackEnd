@@ -5,17 +5,22 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.poly.beestaycyberknightbackend.domain.Role;
 import com.poly.beestaycyberknightbackend.domain.User;
+import com.poly.beestaycyberknightbackend.exception.AppException;
+import com.poly.beestaycyberknightbackend.exception.ErrorCode;
+import com.poly.beestaycyberknightbackend.repository.RoleRepository;
 import com.poly.beestaycyberknightbackend.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
     
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final RoleRepository roleRepository;
 
     
     public User handleCreateUser(User user){
@@ -48,5 +53,15 @@ public class UserService {
 
     public User handleGetUserByUsername(String username) {
         return this.userRepository.findByEmail(username);
+    }
+
+    public User updateRoleforUser(Long userId, Long roleId){
+        Role role = roleRepository.findById(roleId).orElseThrow(()-> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+        
+        User user = userRepository.findById(userId).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        user.setRole(role);
+
+        return userRepository.save(user);
     }
 }

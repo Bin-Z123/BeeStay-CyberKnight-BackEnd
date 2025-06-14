@@ -2,8 +2,11 @@ package com.poly.beestaycyberknightbackend.controller.admin;
 
 import org.springframework.web.bind.annotation.RestController;
 import com.poly.beestaycyberknightbackend.domain.User;
+import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.service.UserService;
 import java.util.List;
+
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,12 +15,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
-
-
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 public class UserController {
-    
+
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
@@ -33,8 +35,6 @@ public class UserController {
         User user = this.userService.handleCreateUser(postManUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
-
-    
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") long id) {
@@ -58,7 +58,13 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public String home(){
+    public String home() {
         return "hello";
+    }
+
+    @PutMapping("/updateUserRole/{userId}/{roleId}")
+    public ApiResponse<User> updateUserRole(@PathVariable Long userId, @PathVariable Long roleId) {
+        User updatedUser = userService.updateRoleforUser(userId, roleId);
+        return new ApiResponse<>(200, null, updatedUser);
     }
 }
