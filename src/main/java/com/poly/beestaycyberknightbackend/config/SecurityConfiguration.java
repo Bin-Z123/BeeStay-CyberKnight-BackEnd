@@ -27,6 +27,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
 import com.poly.beestaycyberknightbackend.util.SecurityUtil;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
@@ -44,13 +49,13 @@ public class SecurityConfiguration {
 
     public SecurityFilterChain filterChain(
                 HttpSecurity http,
-                CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
+                CustomAuthenticationEntryPoint customAuthenticationEntryPoint, CorsConfigurationSource corsConfigurationSource) throws Exception {
             http
                     .csrf(c -> c.disable())
+                    .cors(cors -> cors.configurationSource(corsConfigurationSource))
                     .authorizeHttpRequests(
                             authz -> authz
-                                    .requestMatchers("/", "/login").permitAll()
-                                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                    .requestMatchers("/**", "/login").permitAll()
                                     .anyRequest().authenticated())
                     .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())
                             .authenticationEntryPoint(customAuthenticationEntryPoint))
@@ -102,5 +107,16 @@ public class SecurityConfiguration {
         return new SecretKeySpec(keyBytes, 0, keyBytes.length,
                 SecurityUtil.JWT_ALGORITHM.getName());
     }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        corsConfiguration.setAllowedHeaders(List.of("*"));
+        corsConfiguration.setAllowCredentials(true);
 
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return source;
+    }
 }
