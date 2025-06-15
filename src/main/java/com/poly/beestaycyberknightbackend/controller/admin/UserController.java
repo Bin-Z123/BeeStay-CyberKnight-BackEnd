@@ -3,6 +3,7 @@ package com.poly.beestaycyberknightbackend.controller.admin;
 import org.springframework.web.bind.annotation.RestController;
 import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
+import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
 import com.poly.beestaycyberknightbackend.service.UserService;
 import java.util.List;
 
@@ -53,8 +54,9 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUser() {
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUser());
+    public ApiResponse<List<UserResponse>> getAllUser() {
+        ApiResponse response = new ApiResponse<>(200, null, userService.fetchAllUser());
+        return response;
     }
 
     @GetMapping("/")
