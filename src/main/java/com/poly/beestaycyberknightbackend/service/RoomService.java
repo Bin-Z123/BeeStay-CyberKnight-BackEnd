@@ -84,6 +84,7 @@ public RoomResponse handleCreateRoom(RoomRequest roomRequest, List<MultipartFile
 
 
 
+
     public void handleDeleteRoom(long id) {
         this.roomRepository.deleteById(id);
     }
