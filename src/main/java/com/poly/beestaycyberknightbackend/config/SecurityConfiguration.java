@@ -55,12 +55,7 @@ public class SecurityConfiguration {
                     .cors(cors -> cors.configurationSource(corsConfigurationSource))
                     .authorizeHttpRequests(
                             authz -> authz
-<<<<<<< HEAD
                                     .requestMatchers("/**", "/login").permitAll()
-=======
-                                    .requestMatchers("/", "/login").permitAll()
-                                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
->>>>>>> aa46cadd5dd34253c67690c7afd07d5415c1189b
                                     .anyRequest().authenticated())
                     .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())
                             .authenticationEntryPoint(customAuthenticationEntryPoint))
