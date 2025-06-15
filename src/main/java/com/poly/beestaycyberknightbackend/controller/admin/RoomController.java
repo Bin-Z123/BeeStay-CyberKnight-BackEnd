@@ -2,7 +2,10 @@ package com.poly.beestaycyberknightbackend.controller.admin;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +22,11 @@ public class RoomController {
     
     private final RoomService roomService;
 
-    @PostMapping("/rooms")
-    public ResponseEntity<RoomResponse> createNewRoom(@RequestPart(name = "rooms") RoomRequest roomRequest, @RequestPart(name = "file", required = false)List<MultipartFile> multipartFiles) {
+    @PostMapping(value = "/rooms",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<RoomResponse> createNewRoom(@RequestPart(name = "rooms") RoomRequest roomRequest, @RequestPart(name = "file", required = false)List<MultipartFile> multipartFiles) throws JsonProcessingException {
+        System.out.println("rooms: " + roomRequest); // xem JSON tới chưa
+        System.out.println("files: " + multipartFiles.size());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(roomService.handleCreateRoom(roomRequest, multipartFiles));
     }
 
