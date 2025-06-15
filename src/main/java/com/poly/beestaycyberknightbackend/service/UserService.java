@@ -1,14 +1,18 @@
 package com.poly.beestaycyberknightbackend.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.poly.beestaycyberknightbackend.domain.Role;
 import com.poly.beestaycyberknightbackend.domain.User;
+import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
 import com.poly.beestaycyberknightbackend.exception.AppException;
 import com.poly.beestaycyberknightbackend.exception.ErrorCode;
+import com.poly.beestaycyberknightbackend.mapper.UserMapper;
 import com.poly.beestaycyberknightbackend.repository.RoleRepository;
 import com.poly.beestaycyberknightbackend.repository.UserRepository;
 
@@ -21,6 +25,8 @@ public class UserService {
     private final UserRepository userRepository;
 
     private final RoleRepository roleRepository;
+
+    private final UserMapper userMapper;
 
     
     public User handleCreateUser(User user){
@@ -36,8 +42,10 @@ public class UserService {
                 .orElseThrow();
     }
 
-    public List<User> fetchAllUser(){
-        return this.userRepository.findAll();
+    public List<UserResponse> fetchAllUser(){
+        List<User> list = userRepository.findAll();
+        List<UserResponse> responses = list.stream().map(userlist -> userMapper.toUserResponse(userlist)).collect(Collectors.toList());
+        return  responses;
     }
 
     public User handleUpdateUser(User reqUser){
