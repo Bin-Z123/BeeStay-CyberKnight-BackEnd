@@ -3,15 +3,17 @@ package com.poly.beestaycyberknightbackend.exception;
 public enum ErrorCode {
 
     RANK_EXISTED(409, "Rank already exists"),
-    RANK_NOT_EXISTED(404, "Rank not exists"),
-    VOUCHER_EXISTED(409, "VoucherCode already exists"),
+    RANK_NOT_EXISTED(404, "Rank does not exist"),
+    VOUCHER_EXISTED(409, "Voucher code already exists"),
     VOUCHER_NOT_EXISTED(404, "Voucher not found"),
-    ROOMTYPE_NOT_EXISTED(404, "RoomType not found"),
+    ROOMTYPE_NOT_EXISTED(404, "Room type not found"),
     DISCOUNT_NOT_EXISTED(404, "Discount not found"),
     USER_NOT_EXISTED(404, "User not found"),
-    NOT_LOG(204, "Not log"),
-    ROLE_NOT_EXISTED(404, "Role not found")
-
+    NOT_LOG(204, "User not logged in"),
+    ROLE_NOT_EXISTED(404, "Role not found"),
+    FACILITIES_EXISTED(409, "Facility already exists"),
+    FACILITIES_NOT_EXISTED(404, "Facility not found")
+    
     ;
 
     private final int code;
