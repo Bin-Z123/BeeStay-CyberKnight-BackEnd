@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.poly.beestaycyberknightbackend.dto.request.RoomUpdateRequest;
+import com.poly.beestaycyberknightbackend.repository.RoomImageRepository;
 import com.poly.beestaycyberknightbackend.util.CloudinaryUtil;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,7 @@ public class RoomService {
     private final RoomMapper roomMapper;
     private final RoomTypeRepository roomTypeRepository;
     private final CloudinaryUtil cloudinaryUtil;
+    private final RoomImageRepository roomImageRepository;
 
     @Transactional
 public RoomResponse handleCreateRoom(RoomRequest roomRequest, List<MultipartFile> multipartFiles) {
@@ -52,8 +55,8 @@ public RoomResponse handleCreateRoom(RoomRequest roomRequest, List<MultipartFile
     Room savedRoom = roomRepository.save(room);
 
     // B2: Lưu RoomImages kèm theo Room đã có ID
-//        String imageUrl = null;
-        String publicId = null;
+
+      String publicId = null;
     List<RoomImage> roomImages = new ArrayList<>();
     List<RoomImageRequest> roomImageRequests = roomRequest.getRoomImages();
 
@@ -102,10 +105,39 @@ public RoomResponse handleCreateRoom(RoomRequest roomRequest, List<MultipartFile
                 .toList();
     }
 
-    public RoomResponse handleUpdateRoom(RoomRequest roomRequest, long id) {
+    public RoomResponse handleUpdateRoom(RoomUpdateRequest roomUpdateRequest, long id, List<MultipartFile> files) {
         Room room = roomRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Phòng với ID " + id + " không tồn tại"));
-        roomMapper.updateRoom(roomRequest, room);
-        return roomMapper.toRoomResponse(roomRepository.save(room));
+        //Xóa ảnh
+        for (String publicId: roomUpdateRequest.getDeletedRoomImageIds()){
+            cloudinaryUtil.deleteFile(publicId);
+            roomImageRepository.deleteByUrl(publicId);
+        }
+        roomMapper.updateRoom(roomUpdateRequest, room);
+        Room getSavedRoom = roomRepository.save(room);
+        // Lưu RoomImages mới
+        String publicId = null;
+        List<RoomImage> newRoomImages = new ArrayList<>();
+        List<RoomImageRequest> roomImageRequests = roomUpdateRequest.getRoomImages();
+
+        for (int i = 0 ; i < roomImageRequests.size(); i++) {
+            MultipartFile file = files.get(i);
+            if (file != null && !file.isEmpty()) {
+                Map uploadResults = cloudinaryUtil.uploadFile(file);
+//            imageUrl = (String) uploadResult.get("secure_url");
+                publicId = (String) uploadResults.get("public_id");
+
+                RoomImage image = new RoomImage();
+                image.setUrl(publicId);
+                image.setAltext(roomImageRequests.get(i).getAltext());
+                image.setIsThum(roomImageRequests.get(i).getIsThum());
+                image.setRoom(getSavedRoom); // GÁN ROOM TẠI ĐÂY
+                newRoomImages.add(image);
+            }
+        }
+        if(!newRoomImages.isEmpty()){
+            getSavedRoom.getRoomImages().addAll(newRoomImages);
+        }
+        return roomMapper.toRoomResponse(roomRepository.save(getSavedRoom));
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.poly.beestaycyberknightbackend.dto.request.RoomUpdateRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,5 +46,13 @@ public class RoomController {
     @GetMapping("/rooms/{id}")
     public ResponseEntity<RoomResponse> getRoomById(@PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.OK).body(roomService.fetchRoomById(id));
+    }
+    @PutMapping(value = "/rooms/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<RoomResponse> updateRoom(@PathVariable("id") long  id, @RequestPart(name = "rooms") RoomUpdateRequest roomUpdateRequest, @RequestPart(name = "file", required = false)List<MultipartFile> multipartFiles) {
+        System.out.println("rooms: " + roomUpdateRequest);
+        System.out.println("room id: " + id);
+
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(roomService.handleUpdateRoom(roomUpdateRequest,id, multipartFiles));
     }
 }
