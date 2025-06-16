@@ -1,7 +1,9 @@
-package com.poly.beestaycyberknightbackend.dto.response;
+package com.poly.beestaycyberknightbackend.dto.request;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.poly.beestaycyberknightbackend.domain.User.EBlacklist;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,20 +12,20 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse {
-    Long id;
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PACKAGE)
+public class UserRequest {
     String phone;
     String email;
+    String password;
     Boolean gender;
     LocalDate birthday;
-    LocalDateTime joinDate;
+    LocalDateTime updateDate = LocalDateTime.now();
     String fullname;
+    int eBlacklist;
     String cccd;
-    int point;
-    String eBlacklist;
-    RoleResponse role;
-    RankResponse rank;
+    int point = 0;
+    Long roleId;
+    int rankId;
 }
