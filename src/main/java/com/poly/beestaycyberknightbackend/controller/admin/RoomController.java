@@ -51,8 +51,6 @@ public class RoomController {
     public ResponseEntity<RoomResponse> updateRoom(@PathVariable("id") long  id, @RequestPart(name = "rooms") RoomUpdateRequest roomUpdateRequest, @RequestPart(name = "file", required = false)List<MultipartFile> multipartFiles) {
         System.out.println("rooms: " + roomUpdateRequest);
         System.out.println("room id: " + id);
-
-
         return ResponseEntity.status(HttpStatus.CREATED).body(roomService.handleUpdateRoom(roomUpdateRequest,id, multipartFiles));
     }
 }
