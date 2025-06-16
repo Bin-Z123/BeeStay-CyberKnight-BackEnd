@@ -1,6 +1,8 @@
 package com.poly.beestaycyberknightbackend.service;
 
 import java.util.List;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.domain.Rank;
 import com.poly.beestaycyberknightbackend.domain.Role;
@@ -23,6 +25,7 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final RankRepository rankRepository;
+    private final PasswordEncoder passwordEncoder;
 
     
     public UserResponse handleCreateUser(UserRequest userRequest) {
@@ -88,8 +91,10 @@ public class UserService {
         Role role = roleRepository.findById(request.getRoleId()).orElseThrow(()-> new AppException(ErrorCode.ROLE_NOT_EXISTED));
         Rank rank = rankRepository.findById(request.getRankId()).orElseThrow(()-> new AppException(ErrorCode.RANK_NOT_EXISTED));
         userMapper.updateUser(user, request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(role);
         user.setRank(rank);
+        
         return userRepository.save(user);
     }
 
