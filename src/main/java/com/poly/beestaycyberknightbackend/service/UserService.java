@@ -24,9 +24,6 @@ public class UserService {
     private final UserMapper userMapper;
     private final RankRepository rankRepository;
 
-
-    private final RankRepository rankRepository;
-
     
     public UserResponse handleCreateUser(UserRequest userRequest) {
         User user = userMapper.toUser(userRequest);
