@@ -13,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+
 public class UserRequest {
     String phone;
     String email;
@@ -26,5 +27,6 @@ public class UserRequest {
     int point = 0;
     Long roleId;
     Integer rankId;
+
 
 }

@@ -17,6 +17,7 @@ public interface UserMapper {
     User toUser(UserRequest request);
 
 
+
     @Mapping(source = "EBlacklist", target = "EBlacklist", qualifiedByName = "mapEBlacklist")
     void updateUser(@MappingTarget User user, UserRequest request);
 
