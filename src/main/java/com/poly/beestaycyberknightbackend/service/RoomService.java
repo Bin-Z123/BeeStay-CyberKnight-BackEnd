@@ -33,43 +33,43 @@ public class RoomService {
     private final CloudinaryUtil cloudinaryUtil;
 
     @Transactional
-public RoomResponse handleCreateRoom(RoomRequest roomRequest, List<MultipartFile> multipartFiles) {
-    Room room = new Room();
-    room.setRoomNumber(roomRequest.getRoomNumber());
-    room.setRoomStatus(roomRequest.getRoomStatus());
-    int floor = roomRequest.getFloor();
-    if (floor > 8 || floor < 1) {
-        throw new RuntimeException("Floor must be between 1 and 8");
-    }
-    room.setFloor(roomRequest.getFloor());
+    public RoomResponse handleCreateRoom(RoomRequest roomRequest, List<MultipartFile> multipartFiles) {
+        Room room = new Room();
+        room.setRoomNumber(roomRequest.getRoomNumber());
+        room.setRoomStatus(roomRequest.getRoomStatus());
+        int floor = roomRequest.getFloor();
+        if (floor > 8 || floor < 1) {
+            throw new RuntimeException("Floor must be between 1 and 8");
+        }
+        room.setFloor(roomRequest.getFloor());
 
-    // Gán RoomType
-    RoomType roomType = roomTypeRepository.findById(roomRequest.getRoomTypeId())
-        .orElseThrow(() -> new RuntimeException("RoomType not found"));
-    room.setRoomType(roomType);
+        // Gán RoomType
+        RoomType roomType = roomTypeRepository.findById(roomRequest.getRoomTypeId())
+            .orElseThrow(() -> new RuntimeException("RoomType not found"));
+        room.setRoomType(roomType);
 
-    // B1: Lưu Room trước để sinh ra ID
-    Room savedRoom = roomRepository.save(room);
+        // B1: Lưu Room trước để sinh ra ID
+        Room savedRoom = roomRepository.save(room);
 
-    // B2: Lưu RoomImages kèm theo Room đã có ID
-//        String imageUrl = null;
-        String publicId = null;
-    List<RoomImage> roomImages = new ArrayList<>();
-    List<RoomImageRequest> roomImageRequests = roomRequest.getRoomImages();
+        // B2: Lưu RoomImages kèm theo Room đã có ID
+    //        String imageUrl = null;
+            String publicId = null;
+        List<RoomImage> roomImages = new ArrayList<>();
+        List<RoomImageRequest> roomImageRequests = roomRequest.getRoomImages();
 
-    for (int i = 0 ; i < roomImageRequests.size(); i++) {
-        MultipartFile file = multipartFiles.get(i);
-        if (file != null && !file.isEmpty()){
-            Map uploadResult = cloudinaryUtil.uploadFile(file);
-//            imageUrl = (String) uploadResult.get("secure_url");
-            publicId = (String) uploadResult.get("public_id");
+        for (int i = 0 ; i < roomImageRequests.size(); i++) {
+            MultipartFile file = multipartFiles.get(i);
+            if (file != null && !file.isEmpty()){
+                Map uploadResult = cloudinaryUtil.uploadFile(file);
+    //            imageUrl = (String) uploadResult.get("secure_url");
+                publicId = (String) uploadResult.get("public_id");
 
-            RoomImage image = new RoomImage();
-            image.setUrl(publicId);
-            image.setAltext(roomImageRequests.get(i).getAltext());
-            image.setIsThum(roomImageRequests.get(i).getIsThum());
-            image.setRoom(savedRoom); // GÁN ROOM TẠI ĐÂY
-            roomImages.add(image);
+                RoomImage image = new RoomImage();
+                image.setUrl(publicId);
+                image.setAltext(roomImageRequests.get(i).getAltext());
+                image.setIsThum(roomImageRequests.get(i).getIsThum());
+                image.setRoom(savedRoom); // GÁN ROOM TẠI ĐÂY
+                roomImages.add(image);
         }
 
     }

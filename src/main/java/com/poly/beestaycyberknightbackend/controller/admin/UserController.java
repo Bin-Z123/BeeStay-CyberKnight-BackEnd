@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,40 +31,48 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping("/users")
-    public ResponseEntity<User> createNewUser(@RequestBody User postManUser) {
-        String hashPassword = this.passwordEncoder.encode(postManUser.getPassword());
-        postManUser.setPassword(hashPassword);
-        User user = this.userService.handleCreateUser(postManUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    @PostMapping(value = "/users", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponse<UserResponse> createNewUser(@RequestBody UserRequest userRequest) {
+        ApiResponse response = new ApiResponse<>();
+        String hashPassword = this.passwordEncoder.encode(userRequest.getPassword());
+        userRequest.setPassword(hashPassword);
+        response.setCode(201);
+        response.setData(userService.handleCreateUser(userRequest));
+        return response;
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") long id) {
+    public ApiResponse<Void> deleteUser(@PathVariable("id") long id) {
         if (id >= 10000) {
             throw new RuntimeException("Id không lớn hơn 10000");
         }
         userService.fetchUserById(id);
         userService.handleDeleteUser(id);
-        return ResponseEntity.noContent().build();
+        return new ApiResponse<>(204, null, null);
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
-        User fetchUser = this.userService.fetchUserById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(fetchUser);
+    public ApiResponse<UserResponse> getUserById(@PathVariable("id") long id) {
+        ApiResponse response = new ApiResponse<>();
+        response.setCode(200);
+        response.setData(userService.fetchUserById(id));
+        return response;
     }
 
     @GetMapping("/users")
     public ApiResponse<List<UserResponse>> getAllUser() {
-        ApiResponse response = new ApiResponse<>(200, null, userService.fetchAllUser());
+        ApiResponse response = new ApiResponse<>();
+        response.setCode(200);
+        response.setData(userService.fetchAllUser());
         return response;
     }
 
-    @GetMapping("/")
-    public String home() {
-        return "hello";
-    }
+    // @DeleteMapping("/users/{id}")
+    // public ApiResponse<Void> deleteUser(@PathVariable("id") long id) {
+    //     userService.fetchUserById(id);
+    //     userService.handleDeleteUser(id);
+    //     return new ApiResponse<>(204, null, null);
+    // }
 
     @PutMapping("/updateUserRole/{userId}/{roleId}")
     public ApiResponse<User> updateUserRole(@PathVariable Long userId, @PathVariable Long roleId) {
