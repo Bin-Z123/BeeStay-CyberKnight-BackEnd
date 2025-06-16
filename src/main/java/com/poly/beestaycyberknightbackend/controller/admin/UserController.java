@@ -2,6 +2,7 @@ package com.poly.beestaycyberknightbackend.controller.admin;
 
 import org.springframework.web.bind.annotation.RestController;
 import com.poly.beestaycyberknightbackend.domain.User;
+import com.poly.beestaycyberknightbackend.dto.request.UserRequest;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
 import com.poly.beestaycyberknightbackend.service.UserService;
@@ -68,5 +69,10 @@ public class UserController {
     public ApiResponse<User> updateUserRole(@PathVariable Long userId, @PathVariable Long roleId) {
         User updatedUser = userService.updateRoleforUser(userId, roleId);
         return new ApiResponse<>(200, null, updatedUser);
+    }
+
+    @PutMapping("/updateUser/{id}")
+    public ApiResponse<User> updateUser(@PathVariable Long id, @RequestBody UserRequest request) {
+        return new ApiResponse<>(200, null, userService.updateUser(id, request));
     }
 }

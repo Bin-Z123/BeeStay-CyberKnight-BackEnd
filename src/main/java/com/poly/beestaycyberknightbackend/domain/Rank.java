@@ -1,10 +1,16 @@
 package com.poly.beestaycyberknightbackend.domain;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -31,6 +37,10 @@ public class Rank {
 
     @Column(nullable = true)
     int discount_percent;
+
+    @OneToMany(mappedBy = "rank", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    List<User> User;
 
     
 

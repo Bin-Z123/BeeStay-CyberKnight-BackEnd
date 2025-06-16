@@ -56,7 +56,7 @@ public class User {
 
     
     @Enumerated(EnumType.STRING)
-    EBlacklist eBlacklist = EBlacklist.NONE;
+    EBlacklist eBlacklist = EBlacklist.NORM;
 
     String cccd;
 
@@ -72,11 +72,15 @@ public class User {
     @JsonIgnore
     List<TransactionLog> transantionLog;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "rank_id")
+    @JsonBackReference
+    Rank rank;
 
     public enum EBlacklist {
-        FIRST,
-        SECOND,
-        BLOCKED,
+        NORM,
+        WARN,
+        BANN,
         NONE
     }
 }

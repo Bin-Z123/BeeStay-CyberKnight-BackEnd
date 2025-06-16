@@ -7,12 +7,15 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.poly.beestaycyberknightbackend.domain.Rank;
 import com.poly.beestaycyberknightbackend.domain.Role;
 import com.poly.beestaycyberknightbackend.domain.User;
+import com.poly.beestaycyberknightbackend.dto.request.UserRequest;
 import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
 import com.poly.beestaycyberknightbackend.exception.AppException;
 import com.poly.beestaycyberknightbackend.exception.ErrorCode;
 import com.poly.beestaycyberknightbackend.mapper.UserMapper;
+import com.poly.beestaycyberknightbackend.repository.RankRepository;
 import com.poly.beestaycyberknightbackend.repository.RoleRepository;
 import com.poly.beestaycyberknightbackend.repository.UserRepository;
 
@@ -27,6 +30,8 @@ public class UserService {
     private final RoleRepository roleRepository;
 
     private final UserMapper userMapper;
+
+    private final RankRepository rankRepository;
 
     
     public User handleCreateUser(User user){
@@ -70,6 +75,16 @@ public class UserService {
 
         user.setRole(role);
 
+        return userRepository.save(user);
+    }
+
+    public User updateUser(Long id,UserRequest request){
+        User user = userRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Role role = roleRepository.findById(request.getRoleId()).orElseThrow(()-> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+        Rank rank = rankRepository.findById(request.getRankId()).orElseThrow(()-> new AppException(ErrorCode.RANK_NOT_EXISTED));
+        userMapper.updateUser(user, request);
+        user.setRole(role);
+        user.setRank(rank);
         return userRepository.save(user);
     }
 }
