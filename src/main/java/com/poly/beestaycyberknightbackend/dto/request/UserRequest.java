@@ -2,7 +2,7 @@ package com.poly.beestaycyberknightbackend.dto.request;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
+import com.poly.beestaycyberknightbackend.domain.User.EBlacklist;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,4 +26,5 @@ public class UserRequest {
     int point = 0;
     Long roleId;
     Integer rankId;
+
 }
