@@ -24,7 +24,6 @@ public class UserService {
     private final UserMapper userMapper;
     private final RankRepository rankRepository;
 
-    private final RankRepository rankRepository;
 
     
     public UserResponse handleCreateUser(UserRequest userRequest) {
@@ -95,13 +94,5 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateUser(Long id,UserRequest request){
-        User user = userRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
-        Role role = roleRepository.findById(request.getRoleId()).orElseThrow(()-> new AppException(ErrorCode.ROLE_NOT_EXISTED));
-        Rank rank = rankRepository.findById(request.getRankId()).orElseThrow(()-> new AppException(ErrorCode.RANK_NOT_EXISTED));
-        userMapper.updateUser(user, request);
-        user.setRole(role);
-        user.setRank(rank);
-        return userRepository.save(user);
-    }
+
 }
