@@ -28,4 +28,12 @@ public class CloudinaryUtil {
             throw new RuntimeException("Upload Failed", e);
         }
     }
+
+    public Map deleteFile(String publicId){
+        try {
+            return cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+        }catch (IOException e) {
+            throw new RuntimeException("Delete Failed", e);
+        }
+    }
 }
