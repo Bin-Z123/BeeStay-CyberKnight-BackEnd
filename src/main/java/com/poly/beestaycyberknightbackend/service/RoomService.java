@@ -108,18 +108,18 @@ public RoomResponse handleCreateRoom(RoomRequest roomRequest, List<MultipartFile
         public RoomResponse handleUpdateRoom(RoomUpdateRequest roomUpdateRequest, long id, List<MultipartFile> files) {
             Room room = roomRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Phòng với ID " + id + " không tồn tại"));
-            //Xóa ảnh
+            //Xóa ảnh cũ
             for (String publicId: roomUpdateRequest.getDeletedRoomImageIds()){
                 cloudinaryUtil.deleteFile(publicId);
                 roomImageRepository.deleteByUrl(publicId);
             }
             roomMapper.updateRoom(roomUpdateRequest, room);
-            room.setRoomImages(new ArrayList<>());// Xóa ảnh tạm thời
+            room.setRoomImages(new ArrayList<>());// Xóa list ảnh tạm thời để lưu phòng
             Room getSavedRoom = roomRepository.save(room);
-            // Lưu RoomImages mới
+            // Lưu RoomImages mới nếu có file
             String publicId = null;
             List<RoomImage> newRoomImages = new ArrayList<>();
-            List<RoomImageRequest> roomImageRequests = roomUpdateRequest.getRoomImages();
+            List<RoomImageRequest> roomImageRequests = roomUpdateRequest.getRoomImages(); // Lấy ảnh mới từ request
             if(files != null && !files.isEmpty()){
                 int fileIndex = 0;
                 for (RoomImageRequest req: roomImageRequests) {
