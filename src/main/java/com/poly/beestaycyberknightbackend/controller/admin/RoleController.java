@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/admin/role")
+@RequestMapping("/api/admin/role")
 public class RoleController {
     RoleService roleService;
 

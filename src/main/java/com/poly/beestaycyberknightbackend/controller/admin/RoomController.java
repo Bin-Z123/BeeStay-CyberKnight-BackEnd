@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/admin")
 public class RoomController {
     
     private final RoomService roomService;

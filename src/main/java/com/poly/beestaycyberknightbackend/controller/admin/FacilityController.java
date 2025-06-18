@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @FieldDefaults(level = AccessLevel.PACKAGE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/admin/facility")
+@RequestMapping("/api/admin/facility")
 public class FacilityController {
     FacilityService service;
 

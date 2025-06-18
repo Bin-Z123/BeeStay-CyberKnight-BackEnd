@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/admin/voucher")
+@RequestMapping("/api/admin/voucher")
 public class VoucherController {
     VoucherService service;
 

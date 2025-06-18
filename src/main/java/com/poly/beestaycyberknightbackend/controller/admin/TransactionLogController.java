@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/admin/log")
+@RequestMapping("/api/admin/log")
 public class TransactionLogController {
     TransactionlogService service;
     
