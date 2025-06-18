@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/admin/discount")
+@RequestMapping("/api/admin/discount")
 public class DiscountController {
     DiscountService discountService;
 

@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/admin/rank")
+@RequestMapping("/api/admin/rank")
 public class RankController {
     RankService rankService;
 
