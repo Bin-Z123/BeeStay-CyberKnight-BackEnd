@@ -6,10 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.util.List;
 
 @Entity
 @Data
@@ -21,7 +19,7 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    long id;
 
     @Column(name = "check_in_date", nullable = false)
     LocalDateTime checkInDate;
@@ -47,6 +45,10 @@ public class Booking {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     User user;
+
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
+    List<BookingDetail> bookingDetails;
+
 
     // @ManyToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "review_id")
