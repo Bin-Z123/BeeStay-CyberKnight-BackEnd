@@ -1,6 +1,8 @@
 package com.poly.beestaycyberknightbackend.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.repository.BookingRepository;
 import com.poly.beestaycyberknightbackend.repository.RoomRepository;
@@ -61,8 +63,9 @@ public class StatisticsService {
         return roomRepository.countByRoomStatus("INACTIVE");
     }
 
-
-
+    public List<Object[]> getRevenueByYearAndMonthForYear(String year) {
+        return bookingRepository.getRevenueByYearAndMonthForYear(year);
+    }
 
 
 
