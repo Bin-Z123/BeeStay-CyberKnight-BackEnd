@@ -23,7 +23,7 @@ public class UserResponse {
     String fullname;
     String cccd;
     int point;
-    String eBlacklist;
+    int eBlacklist;
     RoleResponse role;
     RankResponse rank;
 }

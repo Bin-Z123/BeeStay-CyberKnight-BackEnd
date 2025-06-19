@@ -1,11 +1,11 @@
 package com.poly.beestaycyberknightbackend.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
-
-
 import com.poly.beestaycyberknightbackend.repository.BookingRepository;
 import com.poly.beestaycyberknightbackend.repository.RoomRepository;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -40,6 +40,34 @@ public class StatisticsService {
 
         return Math.round(percentCanceled * 100.0) / 100.0; 
     }
+
+    public Long getcheckInTodayBookings(){
+        LocalDateTime start = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = start.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        return bookingRepository.countByCheckInDateBetween(start, end);
+    }
+
+    public Long getCheckOutTodayBookings(){
+        LocalDateTime start = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = start.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        return bookingRepository.countByCheckOutDateBetween(start, end);
+    }
+
+    public Long getCountRoomActive() {
+        return roomRepository.countByRoomStatus("ACTIVE");
+    }
+    
+    public Long getCountRoomInactive() {
+        return roomRepository.countByRoomStatus("INACTIVE");
+    }
+
+    public List<Object[]> getRevenueByYearAndMonthForYear(String year) {
+        return bookingRepository.getRevenueByYearAndMonthForYear(year);
+    }
+
+
+
+
 }
-
-

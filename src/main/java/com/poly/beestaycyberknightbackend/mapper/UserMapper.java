@@ -13,17 +13,23 @@ import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-    UserResponse toUserResponse(User user);
+
     User toUser(UserRequest request);
-
-
 
     @Mapping(source = "EBlacklist", target = "EBlacklist", qualifiedByName = "mapEBlacklist")
     void updateUser(@MappingTarget User user, UserRequest request);
 
     @Named("mapEBlacklist")
-    default EBlacklist mapEBlacklist(int idBlacklist){
+    default EBlacklist mapEBlacklist(int idBlacklist) {
         return EBlacklist.values()[idBlacklist];
     }
-    
+
+    @Mapping(source = "EBlacklist", target = "EBlacklist", qualifiedByName = "mapEBlacklistToInt")
+    UserResponse toUserResponse(User user);
+
+    @Named("mapEBlacklistToInt")
+    default int mapEBlacklistToInt(EBlacklist eBlacklist) {
+        return eBlacklist.ordinal(); // Map EBlacklist enum về đúng giá trị int
+    }
+
 }

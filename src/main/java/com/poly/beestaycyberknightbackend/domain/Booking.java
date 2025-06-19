@@ -9,6 +9,8 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -42,7 +44,7 @@ public class Booking {
     @Column(name = "num_guest", nullable = false)
     Integer numGuest;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     User user;
 
