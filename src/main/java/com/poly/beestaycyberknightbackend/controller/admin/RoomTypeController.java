@@ -43,20 +43,26 @@ public class RoomTypeController {
     } 
     
     @DeleteMapping("/roomTypes/{id}")
-    public ResponseEntity<Void> deleteRoomType(@PathVariable("id") long id) {
+    public ApiResponse<Void> deleteRoomType(@PathVariable("id") long id) {
         roomTypeService.fetchRoomTypeById(id);
         roomTypeService.handleDeleteRoomType(id);
-        return ResponseEntity.noContent().build(); // Trả về 204 No Content, không có body
+        return new ApiResponse<>(204,null,null); // Trả về 204 No Content, không có body
     }
 
     @GetMapping("/roomTypes")
-    public ResponseEntity<List<RoomTypeResponse>> getAllRoomType() {
-        return ResponseEntity.status(HttpStatus.OK).body(roomTypeService.fetchAllRoomTypes());
+    public ApiResponse<List<RoomTypeResponse>> getAllRoomType() {
+        ApiResponse response = new ApiResponse<>();
+        response.setCode(200);
+        response.setData(roomTypeService.fetchAllRoomTypes());
+        return response;
     }
 
     @GetMapping("/roomTypes/{id}")
-    public ResponseEntity<RoomTypeResponse> getRoomTypeById(@PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(roomTypeService.fetchRoomTypeById(id));
+    public ApiResponse<RoomTypeResponse> getRoomTypeById(@PathVariable("id") long id) {
+        ApiResponse response = new ApiResponse<>();
+        response.setCode(200);
+        response.setData(roomTypeService.fetchRoomTypeById(id));
+        return response;
     }
 
     @PutMapping("/roomTypes/{id}")
