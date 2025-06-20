@@ -56,4 +56,7 @@ public class RoomType {
     @JsonBackReference
     private List<Discount> discounts;
 
+    @OneToMany(mappedBy = "roomType")
+    @JsonManagedReference
+    List<BookingDetail> bookingDetails;
 }

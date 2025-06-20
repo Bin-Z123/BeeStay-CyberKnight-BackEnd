@@ -1,9 +1,31 @@
 package com.poly.beestaycyberknightbackend.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.domain.Booking;
-import com.poly.beestaycyberknightbackend.repository.BookingRepository;
+import com.poly.beestaycyberknightbackend.domain.BookingDetail;
+import com.poly.beestaycyberknightbackend.domain.BookingFacility;
+import com.poly.beestaycyberknightbackend.domain.GuestBooking;
+import com.poly.beestaycyberknightbackend.domain.InfoGuest;
+import com.poly.beestaycyberknightbackend.domain.Stay;
+import com.poly.beestaycyberknightbackend.domain.User;
+import com.poly.beestaycyberknightbackend.dto.request.BookingDetailRequest;
+import com.poly.beestaycyberknightbackend.dto.request.BookingFacilityRequest;
+import com.poly.beestaycyberknightbackend.dto.request.BookingRequest;
+import com.poly.beestaycyberknightbackend.dto.request.GuestBookingRequest;
+import com.poly.beestaycyberknightbackend.dto.request.StayRequest;
+import com.poly.beestaycyberknightbackend.exception.AppException;
+import com.poly.beestaycyberknightbackend.exception.ErrorCode;
+import com.poly.beestaycyberknightbackend.mapper.BookingDetailMapper;
+import com.poly.beestaycyberknightbackend.mapper.BookingFacilityMapper;
+import com.poly.beestaycyberknightbackend.mapper.BookingMapper;
+import com.poly.beestaycyberknightbackend.mapper.GuestBookingMapper;
+import com.poly.beestaycyberknightbackend.mapper.InfoGuestMapper;
+import com.poly.beestaycyberknightbackend.mapper.StayMapper;
+import com.poly.beestaycyberknightbackend.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -12,9 +34,131 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class BookingService {
+
+    InfoGuestRepository infoGuestRepository;
     BookingRepository bookingRepository;
+    BookingMapper bookingMapper;
+    GuestBookingMapper guestBookingMapper;
+    GuestBookingRepository guestBookingRepository;
+    UserRepository userRepository;
+    BookingDetailMapper bookingDetailMapper;
+    BookingDetailRepository bookingDetailRepository;
+    BookingFacilityMapper bookingFacilityMapper;
+    BookingFacilityRepository bookingFacilityRepository;
+    FacilityRepository facilityRepository;
+    StayMapper stayMapper;
+    StayRepository stayRepository;
+    RoomRepository roomRepository;
+    RoomTypeRepository roomTypeRepository;
+    InfoGuestMapper infoGuestMapper;
 
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
+    }
+
+    @Transactional
+    public Booking orderBooking(GuestBookingRequest guestBookingRequest, BookingRequest bookingRequest,
+            List<BookingDetailRequest> bookingDetailRequest, List<BookingFacilityRequest> bookingFacilityRequest,
+            List<StayRequest> stayRequest) {
+
+        User user = null;
+        GuestBooking guestBooking = null;
+
+        if (guestBookingRequest != null) { // Kiểm tra xem có thông tin khách đặt phòng không
+            if (guestBookingRepository.findByPhone(guestBookingRequest.getPhone()) != null) {
+                guestBooking = guestBookingRepository.findByPhone(guestBookingRequest.getPhone());
+            } else {
+                guestBooking = guestBookingRepository.save(guestBookingMapper.toGuestBooking(guestBookingRequest));
+            }
+        } else if (bookingRequest.getUserId() != null) { // Nếu không có thông tin khách đặt phòng, kiểm tra xem có
+                                                         // thông tin người dùng không
+            user = userRepository.findById(bookingRequest.getUserId())
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        } else {
+            throw new AppException(ErrorCode.NO_USER_INFORMATION);
+        }
+
+        Booking booking = bookingMapper.toBooking(bookingRequest); // Chuyển đổi BookingRequest thành Booking entity
+        if (guestBooking != null) { // Nếu có thông tin khách đặt phòng, gán vào booking
+            booking.setGuestBooking(guestBooking);
+        } else {
+            guestBooking = null;
+        }
+
+        if (user != null) { // Nếu không có thông tin khách đặt phòng, gán thông tin người dùng vào booking
+            booking.setUser(user);
+        } else {
+            user = null;
+        }
+        Booking booking1 = bookingRepository.save(booking); // Lưu booking vào cơ sở dữ liệu
+
+        List<BookingDetail> bookingDetails = new ArrayList<>();
+        if (bookingDetailRequest != null) { // Kiểm tra xem có thông tin booking detail không
+            bookingDetails = bookingDetailRequest.stream() // Sài lambda đổi danh sách BookingDetailRequest thành danh
+                                                           // sách BookingDetail
+                    .map(detailRequest -> {
+                        BookingDetail detail = bookingDetailMapper.toEntity(detailRequest);
+                        detail.setBooking(booking1);
+                        detail.setRoomType(roomTypeRepository.findById(detailRequest.getRoomTypeId())
+                                .orElseThrow(() -> new AppException(ErrorCode.ROOMTYPE_NOT_EXISTED))); // Gán bookingID
+                                                                                                       // cho từng
+                                                                                                       // booking detail
+                        return detail;
+                    })
+                    .collect(Collectors.toList());
+        }
+        bookingDetailRepository.saveAll(bookingDetails); // Lưu tất cả cái đó vào cơ sở dữ liệu
+
+        List<BookingFacility> bookingFacilities = new ArrayList<>();
+        if (bookingFacilityRequest != null) { // Kiểm tra xem có thông tin booking facility không
+            // Sài lambda đổi danh sách BookingFacilityRequest thành danh sách
+            // BookingFacility
+            bookingFacilities = bookingFacilityRequest.stream()
+                    .map(facilityRequest -> {
+                        BookingFacility facility = bookingFacilityMapper.toEntity(facilityRequest);
+                        facility.setBooking(booking1);
+                        facility.setFacility(facilityRepository.findById(facilityRequest.getFacilityId())
+                                .orElseThrow(() -> new AppException(ErrorCode.FACILITIES_NOT_EXISTED))); // Lấy facility
+                                                                                                         // từ cơ sở dữ
+                                                                                                         // liệu
+                        return facility;
+                    })
+                    .collect(Collectors.toList());
+        }
+        bookingFacilityRepository.saveAll(bookingFacilities);// Lưu tất cả dịch vụ blabla bla vào cơ sở dữ liệu
+
+        if (stayRequest != null) {
+            stayRequest.forEach(stayRequestItem -> {
+                Stay stayEntity = stayMapper.toEntity(stayRequestItem);
+                stayEntity.setBooking(booking1);
+                stayEntity.setRoom(roomRepository.findByRoomNumber(stayRequestItem.getRoomNumber()));
+
+                // Set InfoGuests vào Stay trước khi save
+                List<InfoGuest> infoGuests = stayRequestItem.getInfoGuests().stream()
+                        .map(infoGuestRequest -> {
+                            InfoGuest infoGuest = infoGuestMapper.toEntity(infoGuestRequest);
+                            infoGuest.setStay(stayEntity); // Gán lại quan hệ ngược vì Stay đang sài cascade = CascadeType.ALL
+                            return infoGuest;
+                        }).toList();
+
+                stayEntity.setInfoGuests(infoGuests);
+
+                
+                stayRepository.save(stayEntity); // Lưu Stay vào cơ sở dữ liệu, không cần phải lưu lại
+                                                  // InfoGuest vì đã gán quan hệ ngược, và trong Stay đang sài
+                                                    // cascade = CascadeType.ALL nên sẽ tự động lưu InfoGuest
+            });
+        }
+
+        Integer totalPrice = bookingRepository.sumTotalPrice(booking1.getId());
+        Booking booking2 = bookingRepository.findById(booking1.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+        booking2.setTotalAmount(totalPrice); // Cập nhật tổng tiền cho booking
+
+        bookingRepository.save(booking2); // Lưu lại booking đã cập nhật tổng tiền
+        bookingRepository.flush(); // Đẩy xuống lưu vào trước để lấy lên lại liền
+
+        return bookingRepository.findById(booking2.getId()) // Trả về booking đã được cập nhật
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED)); 
     }
 }

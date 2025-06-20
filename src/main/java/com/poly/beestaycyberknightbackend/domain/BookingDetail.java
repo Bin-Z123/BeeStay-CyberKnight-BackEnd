@@ -1,11 +1,13 @@
 package com.poly.beestaycyberknightbackend.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "BookingDetails")
+@Table(name = "bookingdetail")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,12 +18,14 @@ public class BookingDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     @JoinColumn(name = "booking_id", nullable = false)
     Booking booking;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "roomtype_id", nullable = false)
+    @JsonBackReference
+    @JoinColumn(name = "room_type_id", nullable = false)
     RoomType roomType;
 
     @Column(nullable = false)

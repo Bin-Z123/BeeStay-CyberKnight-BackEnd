@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Data
@@ -39,7 +38,7 @@ public class Booking {
     String bookingStatus;
 
     @Column(name = "booking_date", nullable = false)
-    LocalDateTime bookingDate;
+    LocalDateTime bookingDate = LocalDateTime.now();
 
     @Column(name = "num_guest", nullable = false)
     Integer numGuest;
@@ -48,9 +47,22 @@ public class Booking {
     @JoinColumn(name = "user_id")
     User user;
 
-    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
-    List<BookingDetail> bookingDetails;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "guest_id")
+    @JsonManagedReference
+    GuestBooking guestBooking;
 
+    @OneToMany(mappedBy = "booking", fetch = FetchType.EAGER)
+    @JsonManagedReference
+    List<BookingDetail> bookingDetails;
+    
+    @OneToMany(mappedBy = "booking", fetch = FetchType.EAGER)
+    @JsonManagedReference
+    List<BookingFacility> bookingFacilities;
+
+    @OneToMany(mappedBy = "booking", fetch = FetchType.EAGER) 
+    @JsonManagedReference
+    List<Stay> stay;
 
     // @ManyToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "review_id")
@@ -60,8 +72,6 @@ public class Booking {
     // @JoinColumn(name = "group_booking_id")
     // GroupBooking groupBooking;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "guest_id")
-    // GuestBooking guest;
+
 
 }

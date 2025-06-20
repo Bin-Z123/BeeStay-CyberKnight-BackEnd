@@ -1,10 +1,8 @@
 package com.poly.beestaycyberknightbackend.dto.request;
 
+import java.time.LocalDateTime;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -13,14 +11,15 @@ import java.util.List;
 public class BookingRequest {
 
     LocalDateTime checkInDate;
-    LocalDateTime checkOutDate;
-    Integer totalAmount;
-    Boolean isDeposit;
-    String bookingStatus;
-    LocalDateTime bookingDate;
-    Integer numGuest;
-    long userId;
 
-    // Danh sách phòng được đặt
-    List<BookingDetailRequest> bookingDetails;
+    LocalDateTime checkOutDate;
+
+    Boolean isDeposit;
+
+    String bookingStatus;
+
+    Integer numGuest;
+
+    Long userId;
+
 }
