@@ -1,28 +1,20 @@
 package com.poly.beestaycyberknightbackend.controller.admin;
 
+import java.time.LocalDate;
 import java.util.List;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.poly.beestaycyberknightbackend.domain.Booking;
-import com.poly.beestaycyberknightbackend.dto.request.BookingDetailRequest;
-import com.poly.beestaycyberknightbackend.dto.request.BookingFacilityRequest;
-import com.poly.beestaycyberknightbackend.dto.request.BookingRequest;
-import com.poly.beestaycyberknightbackend.dto.request.GuestBookingRequest;
-import com.poly.beestaycyberknightbackend.dto.request.InfoGuestRequest;
 import com.poly.beestaycyberknightbackend.dto.request.OrderBookingWrapper;
-import com.poly.beestaycyberknightbackend.dto.request.StayRequest;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.service.BookingService;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
@@ -45,4 +37,14 @@ public class BookingController {
                 request.getStayRequest()));
     }
 
+    @GetMapping("/bookingbycheckin")
+    public ApiResponse<List<Booking>> getBookingsByGuest(@RequestParam LocalDate checkInDate) {
+        return new ApiResponse<>(200, null, bookingService.getBookingByCheckInDate(checkInDate));
+    }
+
+    @GetMapping("/availableRoomsTypeAndDate")
+    public ApiResponse<Long> countAvailableRooms(@RequestParam String nameRoomType, @RequestParam LocalDate date) {
+        return new ApiResponse<>(200, null, bookingService.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date));
+    }
+    
 }

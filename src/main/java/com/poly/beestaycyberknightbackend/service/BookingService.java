@@ -1,8 +1,12 @@
 package com.poly.beestaycyberknightbackend.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.BookingDetail;
@@ -161,4 +165,16 @@ public class BookingService {
         return bookingRepository.findById(booking2.getId()) // Trả về booking đã được cập nhật
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED)); 
     }
+
+    public List<Booking> getBookingByCheckInDate(LocalDate checkInDate) {
+        LocalDateTime startDateTime = checkInDate.atTime(0, 0, 0, 0);
+        LocalDateTime end = startDateTime.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        return bookingRepository.findByCheckInDateBetween(startDateTime, end);
+    }
+
+    public Long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDate date) {
+        return bookingRepository.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date);
+    }
+
 }

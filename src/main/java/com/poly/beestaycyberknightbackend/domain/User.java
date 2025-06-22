@@ -79,8 +79,8 @@ public class User {
     @JsonBackReference
     Rank rank;
 
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonBackReference
     List<Booking> booking;
 
     public enum EBlacklist {

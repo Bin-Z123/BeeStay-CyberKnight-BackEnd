@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import com.poly.beestaycyberknightbackend.domain.Booking;
 import java.util.List;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Repository
@@ -17,6 +18,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     long countByCheckInDateBetween(LocalDateTime start, LocalDateTime end);
 
     long countByCheckOutDateBetween(LocalDateTime start, LocalDateTime end);
+
+    List<Booking> findByCheckInDateBetween(LocalDateTime start, LocalDateTime end);
 
     @Query(value = """
                     SELECT YEAR(b.booking_date) AS BookingYear, NULL AS BookingMonth, SUM(b.total_amount) AS Revenue, 'TOTAL YEAR' AS Type FROM Bookings b
@@ -38,4 +41,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                         WHERE b.id = :bookingId;
                         """, nativeQuery = true)
     int sumTotalPrice(Long bookingId);
+
+
+    @Query(value = """
+        SELECT COUNT(DISTINCT r.id) FROM Rooms r JOIN RoomTypes rt on r.roomtype_id = rt.id
+									LEFT JOIN Stays s on r.id = s.room_id
+									LEFT JOIN Bookings b on s.booking_id = b.id
+									WHERE rt.name LIKE CONCAT('%',:nameRoomType,'%') 
+									AND (:date NOT BETWEEN CAST(b.check_in_date AS DATE) AND CAST(b.check_out_date AS DATE) OR b.id IS NULL)
+									AND NOT EXISTS(SELECT 1 FROM Stays s JOIN Bookings b on s.booking_id = b.id 
+													WHERE s.room_id = r.id AND (:date BETWEEN CAST(s.actualcheckin AS DATE) AND CAST(s.actualcheckout AS DATE)))
+									AND r.roomstatus NOT LIKE '%FIX%'
+        """, nativeQuery = true)
+    long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDate date);
 }
