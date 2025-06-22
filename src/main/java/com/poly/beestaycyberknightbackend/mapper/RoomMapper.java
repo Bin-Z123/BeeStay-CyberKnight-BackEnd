@@ -12,6 +12,8 @@ import com.poly.beestaycyberknightbackend.dto.response.RoomResponse;
 @Mapper(componentModel = "spring")
 public interface RoomMapper {
     RoomTypeMapper INSTANCE = Mappers.getMapper(RoomTypeMapper.class);
+
+    
     RoomResponse toRoomResponse(Room room); 
     Room toRoom(RoomRequest roomreq);
     void updateRoom(RoomUpdateRequest req, @MappingTarget Room room);

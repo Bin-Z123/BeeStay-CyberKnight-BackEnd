@@ -1,6 +1,7 @@
 package com.poly.beestaycyberknightbackend.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
