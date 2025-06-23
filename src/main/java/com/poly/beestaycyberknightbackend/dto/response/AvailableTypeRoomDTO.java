@@ -14,6 +14,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AvailableTypeRoomDTO {
     Long roomTypeId;
+    String nameRoomType;
+    int price;
     int totalRooms;
     int fixRooms;
     int usedRooms;
