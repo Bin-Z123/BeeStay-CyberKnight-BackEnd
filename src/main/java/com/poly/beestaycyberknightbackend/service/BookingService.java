@@ -1,5 +1,6 @@
 package com.poly.beestaycyberknightbackend.service;
 
+import java.text.ParsePosition;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ import com.poly.beestaycyberknightbackend.dto.request.BookingFacilityRequest;
 import com.poly.beestaycyberknightbackend.dto.request.BookingRequest;
 import com.poly.beestaycyberknightbackend.dto.request.GuestBookingRequest;
 import com.poly.beestaycyberknightbackend.dto.request.StayRequest;
+import com.poly.beestaycyberknightbackend.dto.response.AvailableRoomDTO;
+import com.poly.beestaycyberknightbackend.dto.response.AvailableTypeRoomDTO;
 import com.poly.beestaycyberknightbackend.exception.AppException;
 import com.poly.beestaycyberknightbackend.exception.ErrorCode;
 import com.poly.beestaycyberknightbackend.mapper.BookingDetailMapper;
@@ -141,16 +144,16 @@ public class BookingService {
                 List<InfoGuest> infoGuests = stayRequestItem.getInfoGuests().stream()
                         .map(infoGuestRequest -> {
                             InfoGuest infoGuest = infoGuestMapper.toEntity(infoGuestRequest);
-                            infoGuest.setStay(stayEntity); // Gán lại quan hệ ngược vì Stay đang sài cascade = CascadeType.ALL
+                            infoGuest.setStay(stayEntity); // Gán lại quan hệ ngược vì Stay đang sài cascade =
+                                                           // CascadeType.ALL
                             return infoGuest;
                         }).toList();
 
                 stayEntity.setInfoGuests(infoGuests);
 
-                
                 stayRepository.save(stayEntity); // Lưu Stay vào cơ sở dữ liệu, không cần phải lưu lại
-                                                  // InfoGuest vì đã gán quan hệ ngược, và trong Stay đang sài
-                                                    // cascade = CascadeType.ALL nên sẽ tự động lưu InfoGuest
+                                                 // InfoGuest vì đã gán quan hệ ngược, và trong Stay đang sài
+                                                 // cascade = CascadeType.ALL nên sẽ tự động lưu InfoGuest
             });
         }
 
@@ -163,7 +166,7 @@ public class BookingService {
         bookingRepository.flush(); // Đẩy xuống lưu vào trước để lấy lên lại liền
 
         return bookingRepository.findById(booking2.getId()) // Trả về booking đã được cập nhật
-                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED)); 
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
     }
 
     public List<Booking> getBookingByCheckInDate(LocalDate checkInDate) {
@@ -175,6 +178,31 @@ public class BookingService {
 
     public Long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDate date) {
         return bookingRepository.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date);
+    }
+
+    public List<AvailableTypeRoomDTO> getAvailableRooms(LocalDate fromDate, LocalDate toDate){
+        List<Object[]> objs = bookingRepository.getAvailableRooms(fromDate, toDate);
+
+        List<AvailableTypeRoomDTO> roomDTOs = objs.stream().map((Object[] row) -> {
+            Long typeId = Long.parseLong(( row[0]).toString());
+            Integer field1 = Integer.parseInt((row[1]).toString());
+            Integer field2 = Integer.parseInt((row[2]).toString());
+            Integer field3 = Integer.parseInt((row[3]).toString());
+            Integer field4 = Integer.parseInt((row[4]).toString());
+            
+            List<Object[]> objrooms = roomRepository.getRoomsAvailable(typeId.intValue());
+            
+                List<AvailableRoomDTO> rooms = objrooms.stream().map((Object[] ObjRoom)-> new AvailableRoomDTO(
+                    Long.parseLong(( ObjRoom[0]).toString()),
+                    ((String) ObjRoom[1]).toString(),
+                    Integer.parseInt((row[2]).toString()),
+                    ((String) ObjRoom[3]).toString(),
+                    Integer.parseInt((row[4]).toString())
+                )).collect(Collectors.toList());
+            return new AvailableTypeRoomDTO(typeId, field1, field2, field3, field4, rooms);
+        }).collect(Collectors.toList());
+
+        return roomDTOs;
     }
 
 }

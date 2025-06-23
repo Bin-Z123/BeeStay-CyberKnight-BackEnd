@@ -2,6 +2,7 @@
 
 import com.poly.beestaycyberknightbackend.dto.request.RoomUpdateRequest;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
