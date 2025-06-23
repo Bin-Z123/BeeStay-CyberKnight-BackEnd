@@ -16,6 +16,8 @@ public class AvailableTypeRoomDTO {
     Long roomTypeId;
     String nameRoomType;
     int price;
+    int peopleAbout;
+    int size;
     int totalRooms;
     int fixRooms;
     int usedRooms;

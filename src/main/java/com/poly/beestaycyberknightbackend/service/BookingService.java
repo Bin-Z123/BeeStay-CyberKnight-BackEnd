@@ -187,10 +187,12 @@ public class BookingService {
             Long typeId = Long.parseLong(( row[0]).toString());
             String nameRoomType = ((String) row[1]).toString();
             Integer price = Integer.parseInt((row[2]).toString());
-            Integer field1 = Integer.parseInt((row[3]).toString());
-            Integer field2 = Integer.parseInt((row[4]).toString());
-            Integer field3 = Integer.parseInt((row[5]).toString());
-            Integer field4 = Integer.parseInt((row[6]).toString());
+            Integer peopleAbout = Integer.parseInt((row[3]).toString());
+            Integer size = Integer.parseInt((row[4]).toString());
+            Integer field1 = Integer.parseInt((row[5]).toString());
+            Integer field2 = Integer.parseInt((row[6]).toString());
+            Integer field3 = Integer.parseInt((row[7]).toString());
+            Integer field4 = Integer.parseInt((row[8]).toString());
             
             List<Object[]> objrooms = roomRepository.getRoomsAvailable(typeId.intValue());
             
@@ -201,7 +203,7 @@ public class BookingService {
                     ((String) ObjRoom[3]).toString(),
                     Integer.parseInt((row[4]).toString())
                 )).collect(Collectors.toList());
-            return new AvailableTypeRoomDTO(typeId, nameRoomType, price, field1, field2, field3, field4, rooms);
+            return new AvailableTypeRoomDTO(typeId, nameRoomType, price, peopleAbout, size , field1, field2, field3, field4, rooms);
         }).collect(Collectors.toList());
 
         return roomDTOs;
