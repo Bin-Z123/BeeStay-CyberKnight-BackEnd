@@ -108,7 +108,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
             -- 6. Kết quả
             SELECT
-                rt.id AS roomtype_id, rt.name AS nameroomtype, rt.price AS price,
+                rt.id AS roomtype_id, rt.name AS nameroomtype, rt.price AS price,rt.people_about AS peopleabout,  rt.size AS size,
                 ISNULL(ar.total_rooms, 0) AS total_rooms,
                 ISNULL(fr.fix_rooms, 0) AS fix_rooms,
                 COUNT(DISTINCT ur.room_id) AS used_rooms,
@@ -117,7 +117,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             LEFT JOIN AllRooms ar ON rt.id = ar.roomtype_id
             LEFT JOIN FixRooms fr ON rt.id = fr.roomtype_id
             LEFT JOIN UsedRooms ur ON rt.id = ur.roomtype_id
-            GROUP BY rt.id, ar.total_rooms, fr.fix_rooms, rt.name, rt.price
+            GROUP BY rt.id, ar.total_rooms, fr.fix_rooms, rt.name, rt.price, rt.people_about, rt.size
 
                         """, nativeQuery = true)
     List<Object[]> getAvailableRooms(LocalDate checkIn, LocalDate checkOut);
