@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import com.poly.beestaycyberknightbackend.domain.Booking;
 import java.util.List;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Repository
@@ -18,6 +19,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     long countByCheckOutDateBetween(LocalDateTime start, LocalDateTime end);
 
+    List<Booking> findByCheckInDateBetween(LocalDateTime start, LocalDateTime end);
+
     @Query(value = """
                     SELECT YEAR(b.booking_date) AS BookingYear, NULL AS BookingMonth, SUM(b.total_amount) AS Revenue, 'TOTAL YEAR' AS Type FROM Bookings b
             WHERE YEAR(b.booking_date) = :year
@@ -29,4 +32,94 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             ORDER BY BookingMonth;
                 """, nativeQuery = true)
     List<Object[]> getRevenueByYearAndMonthForYear(String year);
+
+    @Query(value = """
+                  SELECT (SUM(rt.price) + SUM(f.price)) AS TOTAL FROM RoomTypes rt join BookingDetail bd ON rt.id = bd.room_type_id
+            join Bookings b ON bd.booking_id = b.id
+            join BookingFacilities bf ON b.id = bf.booking_id
+            join Facilities f ON bf.facility_id = f.id
+                  WHERE b.id = :bookingId;
+                  """, nativeQuery = true)
+    int sumTotalPrice(Long bookingId);
+
+    @Query(value = """
+            SELECT COUNT(DISTINCT r.id) FROM Rooms r JOIN RoomTypes rt on r.roomtype_id = rt.id
+            	LEFT JOIN Stays s on r.id = s.room_id
+            	LEFT JOIN Bookings b on s.booking_id = b.id
+            	WHERE rt.name LIKE CONCAT('%',:nameRoomType,'%')
+            	AND (:date NOT BETWEEN CAST(b.check_in_date AS DATE) AND CAST(b.check_out_date AS DATE) OR b.id IS NULL)
+            	AND NOT EXISTS(SELECT 1 FROM Stays s JOIN Bookings b on s.booking_id = b.id
+            					WHERE s.room_id = r.id AND (:date BETWEEN CAST(s.actualcheckin AS DATE) AND CAST(s.actualcheckout AS DATE)))
+            	AND r.roomstatus NOT LIKE '%FIX%'
+            """, nativeQuery = true)
+    long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDate date);
+
+    @Query(value = """
+            DECLARE @fromDate DATE = :checkIn;
+            DECLARE @toDate DATE = :checkOut;
+
+            -- 1. Phòng đã bị đặt bởi booking CONFIRMED trùng ngày
+            WITH BookedRooms AS (
+                SELECT DISTINCT r.id AS room_id, r.roomtype_id
+                FROM Rooms r
+                JOIN Stays s ON s.room_id = r.id
+                JOIN Bookings b ON b.id = s.booking_id
+                WHERE
+                    b.e_booking_status = 'CONFIRMED'
+                    AND @fromDate <= CAST(b.check_out_date AS DATE)
+                    AND @toDate >= CAST(b.check_in_date AS DATE)
+            ),
+
+            -- 2. Phòng đang ở NOW, trùng ngày, không nằm trong booking CONFIRMED
+            StayNowRooms AS (
+                SELECT DISTINCT r.id AS room_id, r.roomtype_id
+                FROM Rooms r
+                JOIN Stays s ON s.room_id = r.id
+                WHERE
+                    s.staystatus = 'NOW'
+                    AND @fromDate <= CAST(s.actualcheckout AS DATE)
+                    AND @toDate >= CAST(s.actualcheckin AS DATE)
+                    AND NOT EXISTS (
+                        SELECT 1 FROM BookedRooms br WHERE br.room_id = r.id
+                    )
+            ),
+
+            -- 3. Tổng tất cả phòng theo loại
+            AllRooms AS (
+                SELECT roomtype_id, COUNT(*) AS total_rooms
+                FROM Rooms
+                GROUP BY roomtype_id
+            ),
+
+            -- 4. Phòng đang bị FIX
+            FixRooms AS (
+                SELECT roomtype_id, COUNT(*) AS fix_rooms
+                FROM Rooms
+                WHERE roomstatus = 'FIX'
+                GROUP BY roomtype_id
+            ),
+
+            -- 5. Phòng đã bị chiếm
+            UsedRooms AS (
+                SELECT * FROM BookedRooms
+                UNION
+                SELECT * FROM StayNowRooms
+            )
+
+            -- 6. Kết quả
+            SELECT
+                rt.id AS roomtype_id,
+                ISNULL(ar.total_rooms, 0) AS total_rooms,
+                ISNULL(fr.fix_rooms, 0) AS fix_rooms,
+                COUNT(DISTINCT ur.room_id) AS used_rooms,
+                ISNULL(ar.total_rooms, 0) - ISNULL(fr.fix_rooms, 0) - COUNT(DISTINCT ur.room_id) AS available_rooms
+            FROM RoomTypes rt
+            LEFT JOIN AllRooms ar ON rt.id = ar.roomtype_id
+            LEFT JOIN FixRooms fr ON rt.id = fr.roomtype_id
+            LEFT JOIN UsedRooms ur ON rt.id = ur.roomtype_id
+            GROUP BY rt.id, ar.total_rooms, fr.fix_rooms
+
+                        """, nativeQuery = true)
+    List<Object[]> getAvailableRooms(LocalDate checkIn, LocalDate checkOut);
+    
 }

@@ -10,12 +10,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.poly.beestaycyberknightbackend.domain.Room;
 import com.poly.beestaycyberknightbackend.dto.request.RoomRequest;
+import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.RoomResponse;
 import com.poly.beestaycyberknightbackend.service.RoomService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -54,4 +59,10 @@ public class RoomController {
         System.out.println("room id: " + id);
         return ResponseEntity.status(HttpStatus.CREATED).body(roomService.handleUpdateRoom(roomUpdateRequest,id, multipartFiles));
     }
+
+    @GetMapping("/roomsinactive")
+    public ApiResponse<List<Room>> getInactiveRooms(@RequestParam String roomType) {
+        return new ApiResponse<>(200,null, roomService.getInactiveLuxuryRooms(roomType));
+    }
+    
 }

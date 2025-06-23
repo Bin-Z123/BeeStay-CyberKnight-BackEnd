@@ -12,8 +12,9 @@ public enum ErrorCode {
     NOT_LOG(204, "User not logged in"),
     ROLE_NOT_EXISTED(404, "Role not found"),
     FACILITIES_EXISTED(409, "Facility already exists"),
-    FACILITIES_NOT_EXISTED(404, "Facility not found")
-    
+    FACILITIES_NOT_EXISTED(404, "Facility not found"),
+    NO_USER_INFORMATION(400, "No user information found"),
+    BOOKING_NOT_EXISTED(404, "Booking not found"),
     ;
 
     private final int code;

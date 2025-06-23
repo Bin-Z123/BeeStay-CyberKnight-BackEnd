@@ -12,8 +12,7 @@ public class RoomResponse {
     private long id;
     private String roomNumber;    
     private String roomStatus;    
-    private int floor;           
-
-    private RoomTypeResponse roomType;    
+    private int floor;     
+    private RoomTypeResponseNotlistRoom roomType;        
     private List<RoomImageResponse> roomImages;
 }

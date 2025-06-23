@@ -47,10 +47,10 @@ public class Room {
     private RoomType roomType;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonBackReference
     private List<Stay> stays;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonBackReference
     private List<RoomImage> roomImages;
 }

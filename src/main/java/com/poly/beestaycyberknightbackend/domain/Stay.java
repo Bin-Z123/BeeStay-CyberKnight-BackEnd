@@ -1,54 +1,49 @@
 package com.poly.beestaycyberknightbackend.domain;
 
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import java.time.LocalDateTime;
-
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.FieldDefaults;
-
 @Entity
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "stays")
+@Table(name = "Stays")
 public class Stay {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    int id;
 
-    @Column(name = "booking_id", nullable = false)
-    private long bookingId;
-
-    @Column(name = "actualcheckin", nullable = false)
-    private LocalDateTime actualCheckIn;
-
-    @Column(name = "actualcheckout", nullable = false)
-    private LocalDateTime actualCheckOut;
-
-    @Column(name = "staystatus", length = 30, nullable = false)
-    private String stayStatus;
-
-    @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt;
-
-    @Column(name = "note", columnDefinition = "TEXT")
-    private String note;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
     @JsonBackReference
-    private Room room;
+    Room room;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "booking_id")
+    @JsonBackReference
+    Booking booking;
+
+    @Column(name = "actualcheckin", nullable = false)
+    LocalDateTime actualCheckIn;
+
+    @Column(name = "actualcheckout", nullable = false)
+    LocalDateTime actualCheckOut;
+
+    @Column(name = "staystatus", length = 30, nullable = false)
+    String stayStatus;
+
+    @Column(name = "create_at", nullable = false)
+    LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "note", columnDefinition = "TEXT")
+    String note;
+
+    @OneToMany(mappedBy = "stay", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    List<InfoGuest> infoGuests;
 }
