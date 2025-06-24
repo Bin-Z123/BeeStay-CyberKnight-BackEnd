@@ -34,10 +34,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Object[]> getRevenueByYearAndMonthForYear(String year);
 
     @Query(value = """
-                  SELECT (SUM(rt.price) + SUM(f.price)) AS TOTAL FROM RoomTypes rt join BookingDetail bd ON rt.id = bd.room_type_id
+                  SELECT COALESCE(SUM(rt.price), 0) + COALESCE(SUM(f.price), 0) AS TOTAL FROM RoomTypes rt join BookingDetail bd ON rt.id = bd.room_type_id
             join Bookings b ON bd.booking_id = b.id
-            join BookingFacilities bf ON b.id = bf.booking_id
-            join Facilities f ON bf.facility_id = f.id
+            left join BookingFacilities bf ON b.id = bf.booking_id
+            left join Facilities f ON bf.facility_id = f.id
                   WHERE b.id = :bookingId;
                   """, nativeQuery = true)
     int sumTotalPrice(Long bookingId);

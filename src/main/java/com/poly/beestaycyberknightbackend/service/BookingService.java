@@ -200,7 +200,7 @@ public class BookingService {
                     ((String) ObjRoom[0]).toString(),
                     Long.parseLong(( ObjRoom[1]).toString()),
                     ((String) ObjRoom[2]).toString(),
-                    Integer.parseInt((row[3]).toString()),
+                    Integer.parseInt((row[0]).toString()),
                     ((String) ObjRoom[4]).toString(),
                     Integer.parseInt((row[5]).toString())
                 )).collect(Collectors.toList());

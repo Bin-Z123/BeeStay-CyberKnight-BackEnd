@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StayRequest {
 
+    long roomId;
     String roomNumber;
 
     LocalDateTime actualCheckIn;
