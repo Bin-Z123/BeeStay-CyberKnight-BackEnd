@@ -24,7 +24,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     List<Room> findInactiveRoomsByRoomType(String roomType);
 
     @Query(value = """
-                        SELECT DISTINCT r.* FROM Rooms r LEFT JOIN Stays s ON r.id = s.room_id
+                        SELECT DISTINCT rt.name, r.* FROM Rooms r LEFT JOIN Stays s ON r.id = s.room_id
             									JOIN RoomTypes rt ON r.roomtype_id = rt.id
             									WHERE r.roomstatus NOT LIKE '%FIX%' AND rt.id = :roomTypeId
             									AND NOT EXISTS (
