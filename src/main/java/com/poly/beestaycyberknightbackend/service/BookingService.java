@@ -197,11 +197,12 @@ public class BookingService {
             List<Object[]> objrooms = roomRepository.getRoomsAvailable(typeId.intValue());
             
                 List<AvailableRoomDTO> rooms = objrooms.stream().map((Object[] ObjRoom)-> new AvailableRoomDTO(
-                    Long.parseLong(( ObjRoom[0]).toString()),
-                    ((String) ObjRoom[1]).toString(),
-                    Integer.parseInt((row[2]).toString()),
-                    ((String) ObjRoom[3]).toString(),
-                    Integer.parseInt((row[4]).toString())
+                    ((String) ObjRoom[0]).toString(),
+                    Long.parseLong(( ObjRoom[1]).toString()),
+                    ((String) ObjRoom[2]).toString(),
+                    Integer.parseInt((row[3]).toString()),
+                    ((String) ObjRoom[4]).toString(),
+                    Integer.parseInt((row[5]).toString())
                 )).collect(Collectors.toList());
             return new AvailableTypeRoomDTO(typeId, nameRoomType, price, peopleAbout, size , field1, field2, field3, field4, rooms);
         }).collect(Collectors.toList());
