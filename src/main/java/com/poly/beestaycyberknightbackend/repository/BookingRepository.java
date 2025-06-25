@@ -47,12 +47,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             	LEFT JOIN Stays s on r.id = s.room_id
             	LEFT JOIN Bookings b on s.booking_id = b.id
             	WHERE rt.name LIKE CONCAT('%',:nameRoomType,'%')
-            	AND (:date NOT BETWEEN CAST(b.check_in_date AS DATE) AND CAST(b.check_out_date AS DATE) OR b.id IS NULL)
+            	AND (:date NOT BETWEEN b.check_in_date  AND b.check_out_date  OR b.id IS NULL)
             	AND NOT EXISTS(SELECT 1 FROM Stays s JOIN Bookings b on s.booking_id = b.id
-            					WHERE s.room_id = r.id AND (:date BETWEEN CAST(s.actualcheckin AS DATE) AND CAST(s.actualcheckout AS DATE)))
+            					WHERE s.room_id = r.id AND (:date BETWEEN s.actualcheckin  AND s.actualcheckout))
             	AND r.roomstatus NOT LIKE '%FIX%'
             """, nativeQuery = true)
-    long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDate date);
+    long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDateTime date);
 
     @Query(value = """
             DECLARE @fromDate DATETIME = :checkIn;
@@ -120,7 +120,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             GROUP BY rt.id, ar.total_rooms, fr.fix_rooms, rt.name, rt.price, rt.people_about, rt.size
 
                         """, nativeQuery = true)
-    List<Object[]> getAvailableRooms(LocalDate checkIn, LocalDate checkOut);
+    List<Object[]> getAvailableRooms(LocalDateTime checkIn, LocalDateTime checkOut);
 
     @Query(value = """
             SELECT DISTINCT rt.name, bd.quantity FROM RoomTypes rt join BookingDetail bd ON rt.id = bd.room_type_id

@@ -176,11 +176,11 @@ public class BookingService {
         return bookingRepository.findByCheckInDateBetween(startDateTime, end);
     }
 
-    public Long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDate date) {
+    public Long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDateTime date) {
         return bookingRepository.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date);
     }
 
-    public List<AvailableTypeRoomDTO> getAvailableRooms(LocalDate fromDate, LocalDate toDate){
+    public List<AvailableTypeRoomDTO> getAvailableRooms(LocalDateTime fromDate, LocalDateTime toDate){
         List<Object[]> objs = bookingRepository.getAvailableRooms(fromDate, toDate);
 
         List<AvailableTypeRoomDTO> roomDTOs = objs.stream().map((Object[] row) -> {

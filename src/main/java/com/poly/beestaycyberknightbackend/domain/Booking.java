@@ -63,6 +63,9 @@ public class Booking {
     @JsonManagedReference
     List<Stay> stay;
 
+    @Column(name = "numberofnights")
+    Integer numberOfNights;
+
     // @ManyToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "review_id")
     // Review review;
