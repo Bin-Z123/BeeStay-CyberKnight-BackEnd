@@ -39,7 +39,6 @@ public class UserController {
         return response;
     }
  
-    
     @DeleteMapping("/users/{id}")
     public ApiResponse<Void> deleteUser(@PathVariable("id") long id) {
         if (id >= 10000) {
