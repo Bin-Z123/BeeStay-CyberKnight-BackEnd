@@ -12,8 +12,6 @@ import com.poly.beestaycyberknightbackend.service.RoomTypeService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
