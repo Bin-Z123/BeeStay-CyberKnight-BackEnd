@@ -6,6 +6,10 @@ import com.poly.beestaycyberknightbackend.dto.request.UserRequest;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
 import com.poly.beestaycyberknightbackend.service.UserService;
+
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+
 import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/api/admin")
 public class UserController {
 
