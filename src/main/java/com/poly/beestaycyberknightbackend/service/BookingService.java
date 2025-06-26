@@ -139,7 +139,7 @@ public class BookingService {
                 Stay stayEntity = stayMapper.toEntity(stayRequestItem);
                 stayEntity.setBooking(booking1);
                 stayEntity.setRoom(roomRepository.findByRoomNumber(stayRequestItem.getRoomNumber()));
-
+                stayEntity.setStayStatus("NOW");
                 // Set InfoGuests vào Stay trước khi save
                 List<InfoGuest> infoGuests = stayRequestItem.getInfoGuests().stream()
                         .map(infoGuestRequest -> {

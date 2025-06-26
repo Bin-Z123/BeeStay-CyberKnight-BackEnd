@@ -43,9 +43,9 @@ public class PaymentPayOSController {
         return new ApiResponse<>(200, null, osService.cancelOrder(Id));
     }
 
-    @PostMapping("/confirm-webhook")
-    public ApiResponse<PaymentPayOSResponse> confirmWebhook(@RequestBody Map<String, String> requestBody) {
-        return new ApiResponse<>(200, null, osService.confirmWebhook(requestBody));
-    }
+    // @PostMapping("/confirm-webhook")
+    // public ApiResponse<PaymentPayOSResponse> confirmWebhook(@RequestBody Map<String, String> requestBody) {
+    //     return new ApiResponse<>(200, null, osService.confirmWebhook(requestBody));
+    // }
 
 }

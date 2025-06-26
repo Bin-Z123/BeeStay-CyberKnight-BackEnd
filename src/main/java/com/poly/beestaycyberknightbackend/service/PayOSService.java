@@ -120,15 +120,15 @@ public class PayOSService {
         }
     }
 
-    public PaymentPayOSResponse confirmWebhook( Map<String, String> requestBody) {
+    // public PaymentPayOSResponse confirmWebhook( Map<String, String> requestBody) {
        
-        try {
-            String str = payOS.confirmWebhook(requestBody.get("webhookUrl"));
+    //     try {
+    //         String str = payOS.confirmWebhook(requestBody.get("webhookUrl"));
             
-            return new PaymentPayOSResponse<>(0, "ok", str);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new PaymentPayOSResponse(-1, e.getMessage(), null);
-        }
-    }
+    //         return new PaymentPayOSResponse<>(0, "ok", str);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         return new PaymentPayOSResponse(-1, e.getMessage(), null);
+    //     }
+    // }
 }

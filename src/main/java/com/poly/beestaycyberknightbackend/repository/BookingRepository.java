@@ -34,12 +34,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Object[]> getRevenueByYearAndMonthForYear(String year);
 
     @Query(value = """
-                  SELECT COALESCE(SUM(rt.price), 0) + COALESCE(SUM(f.price), 0) AS TOTAL FROM RoomTypes rt join BookingDetail bd ON rt.id = bd.room_type_id
-            join Bookings b ON bd.booking_id = b.id
-            left join BookingFacilities bf ON b.id = bf.booking_id
-            left join Facilities f ON bf.facility_id = f.id
-                  WHERE b.id = :bookingId;
-                  """, nativeQuery = true)
+            SELECT COALESCE((SUM(DISTINCT rt.price * bd.quantity) * b.numberOfNights), 0) + COALESCE(SUM(DISTINCT f.price * bf.quanlity), 0) AS totalamount 
+            FROM RoomTypes rt JOIN BookingDetail bd ON rt.id = bd.room_type_id
+						 JOIN Bookings b ON bd.booking_id = b.id
+						 JOIN BookingFacilities bf ON b.id = bf.booking_id
+						 JOIN Facilities f ON bf.facility_id = f.id
+						 WHERE b.id = :bookingId
+						 GROUP BY b.id, b.numberOfNights
+                              """, nativeQuery = true)
     int sumTotalPrice(Long bookingId);
 
     @Query(value = """
@@ -65,7 +67,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                 JOIN Stays s ON s.room_id = r.id
                 JOIN Bookings b ON b.id = s.booking_id
                 WHERE
-                    b.e_booking_status = 'CONFIRMED'
+                    b.e_booking_status = 'CONFIRMED' 
                     AND @fromDate <= b.check_out_date
                     AND @toDate >= b.check_in_date
             ),
@@ -77,8 +79,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                 JOIN Stays s ON s.room_id = r.id
                 WHERE
                     s.staystatus = 'NOW'
-                    AND @fromDate <= s.actualcheckout 
-                    AND @toDate >= s.actualcheckin 
+                    AND @fromDate <= s.actualcheckout
+                    AND @toDate >= s.actualcheckin
                     AND NOT EXISTS (
                         SELECT 1 FROM BookedRooms br WHERE br.room_id = r.id
                     )
@@ -140,5 +142,4 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             """, nativeQuery = true)
     List<Object[]> getFacilitiesBooking(long bookingId);
 
-    
 }
