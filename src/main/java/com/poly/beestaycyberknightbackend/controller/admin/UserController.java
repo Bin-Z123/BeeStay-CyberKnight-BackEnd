@@ -7,11 +7,7 @@ import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
 import com.poly.beestaycyberknightbackend.service.UserService;
 import java.util.List;
-
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,13 +64,6 @@ public class UserController {
         response.setData(userService.fetchAllUser());
         return response;
     }
-
-    // @DeleteMapping("/users/{id}")
-    // public ApiResponse<Void> deleteUser(@PathVariable("id") long id) {
-    //     userService.fetchUserById(id);
-    //     userService.handleDeleteUser(id);
-    //     return new ApiResponse<>(204, null, null);
-    // }
 
     @PutMapping("/updateUserRole/{userId}/{roleId}")
     public ApiResponse<User> updateUserRole(@PathVariable Long userId, @PathVariable Long roleId) {
