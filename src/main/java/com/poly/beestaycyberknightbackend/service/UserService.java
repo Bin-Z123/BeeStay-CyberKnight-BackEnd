@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.domain.Rank;
 import com.poly.beestaycyberknightbackend.domain.Role;
 import com.poly.beestaycyberknightbackend.domain.User;
+import com.poly.beestaycyberknightbackend.dto.request.RegisterRequest;
 import com.poly.beestaycyberknightbackend.dto.request.UserRequest;
 import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
 import com.poly.beestaycyberknightbackend.exception.AppException;
@@ -98,5 +99,19 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User registerRequesttoUser(RegisterRequest registerRequest) {
+        User user = new User();
+        user.setFullname(registerRequest.getFirstName() + " " + registerRequest.getLastName());
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword(registerRequest.getPassword());
+        return user;
+    }
 
+    public boolean checkEmailExist(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    public Role getRoleByName(String roleName) {
+        return this.roleRepository.findByRoleName(roleName);
+    }
 }
