@@ -7,7 +7,7 @@ import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.RoleResponse;
 import com.poly.beestaycyberknightbackend.service.RoleService;
 
-import io.swagger.v3.core.model.ApiDescription;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
