@@ -1,19 +1,12 @@
 package com.poly.beestaycyberknightbackend.controller.admin;
 
 import org.springframework.web.bind.annotation.RestController;
-import com.poly.beestaycyberknightbackend.domain.RoomType;
 import com.poly.beestaycyberknightbackend.dto.request.RoomTypeRequest;
-
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
-
 import com.poly.beestaycyberknightbackend.dto.response.RoomTypeResponse;
 import com.poly.beestaycyberknightbackend.service.RoomTypeService;
-
 import lombok.RequiredArgsConstructor;
-
 import java.util.List;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-
-
 
 @RestController
 @RequiredArgsConstructor
@@ -66,8 +57,11 @@ public class RoomTypeController {
     }
 
     @PutMapping("/roomTypes/{id}")
-    public ResponseEntity<RoomTypeResponse> handleUpdateRoomType (@PathVariable("id") long id, @RequestBody RoomTypeRequest roomTypeRequest) {
-        return ResponseEntity.ok(roomTypeService.handleUpdateRoomType(roomTypeRequest, id));
+    public ApiResponse<RoomTypeResponse> handleUpdateRoomType (@PathVariable("id") long id, @RequestBody RoomTypeRequest roomTypeRequest) {
+        ApiResponse<RoomTypeResponse> response = new ApiResponse<>();
+        response.setCode(200);
+        response.setData(roomTypeService.handleUpdateRoomType(roomTypeRequest, id));
+        return response;
     }
 }
 

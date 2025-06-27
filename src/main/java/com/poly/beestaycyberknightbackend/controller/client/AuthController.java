@@ -1,6 +1,7 @@
 package com.poly.beestaycyberknightbackend.controller.client;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -10,16 +11,20 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 
 import org.springframework.security.core.context.SecurityContextHolder;
-
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.poly.beestaycyberknightbackend.domain.Role;
 import com.poly.beestaycyberknightbackend.domain.TransactionLog;
 import com.poly.beestaycyberknightbackend.domain.User;
+import com.poly.beestaycyberknightbackend.dto.request.RegisterRequest;
 import com.poly.beestaycyberknightbackend.dto.request.RestLoginDTO;
+import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.LoginDTO;
+import com.poly.beestaycyberknightbackend.repository.RankRepository;
 import com.poly.beestaycyberknightbackend.repository.TransactionLogRepository;
 import com.poly.beestaycyberknightbackend.repository.UserRepository;
+import com.poly.beestaycyberknightbackend.service.UserService;
 import com.poly.beestaycyberknightbackend.util.SecurityUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,12 +42,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class AuthController {
+
+    private final RankRepository rankRepository;
+
+    private final PasswordEncoder passwordEncoder;
     
     AuthenticationManagerBuilder authenticationManagerBuilder;
     SecurityUtil securityUtil;
     TransactionLogRepository logRepository;
     UserRepository userRepository;
+    UserService userService;
 
+    // AuthController(PasswordEncoder passwordEncoder, RankRepository rankRepository) {
+    //     this.passwordEncoder = passwordEncoder;
+    //     this.rankRepository = rankRepository;
+    // }
     @PostMapping("/login")
     public ResponseEntity<RestLoginDTO> login(@Valid @RequestBody LoginDTO loginDTO, HttpServletRequest httpRequest) {
 
@@ -71,4 +85,40 @@ public class AuthController {
       
         return ResponseEntity.ok().body(restLoginDTO);
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<Void>> handleRegister(@RequestBody @Valid RegisterRequest registerRequest) {
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            return ResponseEntity.badRequest().body(ApiResponse.<Void>builder()
+                    .message("Email đã được sử dụng")
+                    .code(400)
+                    .build());
+        }
+
+        User user = new User();
+        user.setFullname(registerRequest.getFirstName() + " " + registerRequest.getLastName());
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setPhone("0000000000"); // default
+        user.setGender(true); // default
+        // user.setBirthday(LocalDate.now().minusYears(18)); // default: đủ tuổi
+        // user.setJoinDate(LocalDateTime.now());
+        // user.setUpdateDate(LocalDateTime.now());
+        // user.setEBlacklist(User.EBlacklist.NORM);
+        user.setCccd("000000000000"); // default CCCD
+        user.setPoint(0);
+
+        Role role = userService.getRoleByName("USER");
+        user.setRole(role);
+
+        user.setRank(rankRepository.findById(1).orElseThrow(() -> new RuntimeException("Rank mặc định không tồn tại")));
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .message("Đăng ký thành công")
+                .code(200)
+                .build());
+    }
+
 }
