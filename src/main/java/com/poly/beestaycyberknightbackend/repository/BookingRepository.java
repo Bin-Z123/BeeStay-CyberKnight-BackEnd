@@ -34,12 +34,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Object[]> getRevenueByYearAndMonthForYear(String year);
 
     @Query(value = """
-                  SELECT COALESCE(SUM(rt.price), 0) + COALESCE(SUM(f.price), 0) AS TOTAL FROM RoomTypes rt join BookingDetail bd ON rt.id = bd.room_type_id
-            join Bookings b ON bd.booking_id = b.id
-            left join BookingFacilities bf ON b.id = bf.booking_id
-            left join Facilities f ON bf.facility_id = f.id
-                  WHERE b.id = :bookingId;
-                  """, nativeQuery = true)
+                 SELECT COALESCE((SUM(DISTINCT rt.price * bd.quantity) * b.numberOfNights), 0) + COALESCE(SUM(DISTINCT f.price * bf.quanlity), 0) AS totalamount
+                 FROM RoomTypes rt JOIN BookingDetail bd ON rt.id = bd.room_type_id
+            JOIN Bookings b ON bd.booking_id = b.id
+            JOIN BookingFacilities bf ON b.id = bf.booking_id
+            JOIN Facilities f ON bf.facility_id = f.id
+            WHERE b.id = :bookingId
+            GROUP BY b.id, b.numberOfNights
+                                   """, nativeQuery = true)
     int sumTotalPrice(Long bookingId);
 
     @Query(value = """
@@ -47,40 +49,39 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             	LEFT JOIN Stays s on r.id = s.room_id
             	LEFT JOIN Bookings b on s.booking_id = b.id
             	WHERE rt.name LIKE CONCAT('%',:nameRoomType,'%')
-            	AND (:date NOT BETWEEN CAST(b.check_in_date AS DATE) AND CAST(b.check_out_date AS DATE) OR b.id IS NULL)
+            	AND (:date NOT BETWEEN b.check_in_date  AND b.check_out_date  OR b.id IS NULL)
             	AND NOT EXISTS(SELECT 1 FROM Stays s JOIN Bookings b on s.booking_id = b.id
-            					WHERE s.room_id = r.id AND (:date BETWEEN CAST(s.actualcheckin AS DATE) AND CAST(s.actualcheckout AS DATE)))
+            					WHERE s.room_id = r.id AND (:date BETWEEN s.actualcheckin  AND s.actualcheckout))
             	AND r.roomstatus NOT LIKE '%FIX%'
             """, nativeQuery = true)
-    long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDate date);
+    long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDateTime date);
 
     @Query(value = """
-            DECLARE @fromDate DATE = :checkIn;
-            DECLARE @toDate DATE = :checkOut;
+            DECLARE @fromDate DATETIME = :checkIn;
+            DECLARE @toDate DATETIME = :checkOut;
 
             -- 1. Phòng đã bị đặt bởi booking CONFIRMED trùng ngày
             WITH BookedRooms AS (
-                SELECT DISTINCT r.id AS room_id, r.roomtype_id
-                FROM Rooms r
-                JOIN Stays s ON s.room_id = r.id
-                JOIN Bookings b ON b.id = s.booking_id
-                WHERE
-                    b.e_booking_status = 'CONFIRMED'
-                    AND @fromDate <= CAST(b.check_out_date AS DATE)
-                    AND @toDate >= CAST(b.check_in_date AS DATE)
+                SELECT rt.id FROM Bookings b JOIN BookingDetail bd ON b.id = bd.booking_id
+            						JOIN RoomTypes rt ON bd.room_type_id = rt.id
+            						WHERE b.e_booking_status = 'CONFIRMED'
+            								AND @fromDate <= b.check_out_date
+            								AND @toDate >= b.check_in_date
+            						 GROUP BY rt.id
+
             ),
 
             -- 2. Phòng đang ở NOW, trùng ngày, không nằm trong booking CONFIRMED
             StayNowRooms AS (
-                SELECT DISTINCT r.id AS room_id, r.roomtype_id
+                SELECT r.roomtype_id
                 FROM Rooms r
                 JOIN Stays s ON s.room_id = r.id
                 WHERE
                     s.staystatus = 'NOW'
-                    AND @fromDate <= CAST(s.actualcheckout AS DATE)
-                    AND @toDate >= CAST(s.actualcheckin AS DATE)
+                    AND @fromDate <= s.actualcheckout
+                    AND @toDate >= s.actualcheckin
                     AND NOT EXISTS (
-                        SELECT 1 FROM BookedRooms br WHERE br.room_id = r.id
+                        SELECT 1 FROM BookedRooms br WHERE br.id = r.roomtype_id
                     )
             ),
 
@@ -111,15 +112,34 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                 rt.id AS roomtype_id, rt.name AS nameroomtype, rt.price AS price,rt.people_about AS peopleabout,  rt.size AS size,
                 ISNULL(ar.total_rooms, 0) AS total_rooms,
                 ISNULL(fr.fix_rooms, 0) AS fix_rooms,
-                COUNT(DISTINCT ur.room_id) AS used_rooms,
-                ISNULL(ar.total_rooms, 0) - ISNULL(fr.fix_rooms, 0) - COUNT(DISTINCT ur.room_id) AS available_rooms
+                COUNT(DISTINCT ur.id) AS used_rooms,
+                ISNULL(ar.total_rooms, 0) - ISNULL(fr.fix_rooms, 0) - COUNT(DISTINCT ur.id) AS available_rooms
             FROM RoomTypes rt
             LEFT JOIN AllRooms ar ON rt.id = ar.roomtype_id
             LEFT JOIN FixRooms fr ON rt.id = fr.roomtype_id
-            LEFT JOIN UsedRooms ur ON rt.id = ur.roomtype_id
-            GROUP BY rt.id, ar.total_rooms, fr.fix_rooms, rt.name, rt.price, rt.people_about, rt.size
+            LEFT JOIN UsedRooms ur ON rt.id = ur.id
+            GROUP BY rt.id, ar.total_rooms, fr.fix_rooms, rt.name, rt.price, rt.people_about, rt.size;
 
-                        """, nativeQuery = true)
-    List<Object[]> getAvailableRooms(LocalDate checkIn, LocalDate checkOut);
-    
+
+                                    """, nativeQuery = true)
+    List<Object[]> getAvailableRooms(LocalDateTime checkIn, LocalDateTime checkOut);
+
+    @Query(value = """
+            SELECT DISTINCT rt.name, bd.quantity FROM RoomTypes rt join BookingDetail bd ON rt.id = bd.room_type_id
+            join Bookings b ON bd.booking_id = b.id
+            left join BookingFacilities bf ON b.id = bf.booking_id
+            left join Facilities f ON bf.facility_id = f.id
+                  WHERE b.id = :bookingId;
+            """, nativeQuery = true)
+    List<Object[]> getRoomTypeBooking(long bookingId);
+
+    @Query(value = """
+            SELECT DISTINCT f.facilityName, bf.quanlity FROM RoomTypes rt join BookingDetail bd ON rt.id = bd.room_type_id
+            join Bookings b ON bd.booking_id = b.id
+            left join BookingFacilities bf ON b.id = bf.booking_id
+            left join Facilities f ON bf.facility_id = f.id
+                  WHERE b.id = :bookingId;
+            """, nativeQuery = true)
+    List<Object[]> getFacilitiesBooking(long bookingId);
+
 }

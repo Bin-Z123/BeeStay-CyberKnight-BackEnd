@@ -139,7 +139,7 @@ public class BookingService {
                 Stay stayEntity = stayMapper.toEntity(stayRequestItem);
                 stayEntity.setBooking(booking1);
                 stayEntity.setRoom(roomRepository.findByRoomNumber(stayRequestItem.getRoomNumber()));
-
+                stayEntity.setStayStatus("NOW");
                 // Set InfoGuests vào Stay trước khi save
                 List<InfoGuest> infoGuests = stayRequestItem.getInfoGuests().stream()
                         .map(infoGuestRequest -> {
@@ -176,11 +176,11 @@ public class BookingService {
         return bookingRepository.findByCheckInDateBetween(startDateTime, end);
     }
 
-    public Long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDate date) {
+    public Long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDateTime date) {
         return bookingRepository.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date);
     }
 
-    public List<AvailableTypeRoomDTO> getAvailableRooms(LocalDate fromDate, LocalDate toDate){
+    public List<AvailableTypeRoomDTO> getAvailableRooms(LocalDateTime fromDate, LocalDateTime toDate){
         List<Object[]> objs = bookingRepository.getAvailableRooms(fromDate, toDate);
 
         List<AvailableTypeRoomDTO> roomDTOs = objs.stream().map((Object[] row) -> {
