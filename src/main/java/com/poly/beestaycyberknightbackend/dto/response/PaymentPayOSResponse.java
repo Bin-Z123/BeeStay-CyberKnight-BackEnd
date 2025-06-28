@@ -1,7 +1,5 @@
 package com.poly.beestaycyberknightbackend.dto.response;
 
-import java.util.List;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,15 +10,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AvailableTypeRoomDTO {
-    Long roomTypeId;
-    String nameRoomType;
-    int price;
-    int peopleAbout;
-    int size;
-    int totalRooms;
-    int fixRooms;
-    int usedRooms;
-    int availableRooms;
-    List<AvailableRoomDTO> AvailableRoomDTO;
+public class PaymentPayOSResponse<T> {
+    int error;
+    String message;
+    T data;
 }

@@ -19,9 +19,8 @@ public class BookingResponse {
     String bookingStatus;
     LocalDateTime bookingDate;
     Integer numGuest;
-
     Long userId;         
     String userFullName; 
-
+    Integer numberOfNights;
     List<BookingDetailResponse> bookingDetails;
 }

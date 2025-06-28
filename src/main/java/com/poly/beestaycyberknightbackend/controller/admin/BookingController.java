@@ -1,6 +1,7 @@
 package com.poly.beestaycyberknightbackend.controller.admin;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.cglib.core.Local;
@@ -46,12 +47,12 @@ public class BookingController {
     }
 
     @GetMapping("/availableRoomsTypeAndDate")
-    public ApiResponse<Long> countAvailableRooms(@RequestParam String nameRoomType, @RequestParam LocalDate date) {
+    public ApiResponse<Long> countAvailableRooms(@RequestParam String nameRoomType, @RequestParam LocalDateTime date) {
         return new ApiResponse<>(200, null, bookingService.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date));
     }
 
     @GetMapping("/availableRoomsTypeAndDateV2")
-    public ApiResponse<List<AvailableTypeRoomDTO>> countAvailableRoomsV2(@RequestParam LocalDate fromDate, @RequestParam LocalDate toDate) {
+    public ApiResponse<List<AvailableTypeRoomDTO>> countAvailableRoomsV2(@RequestParam LocalDateTime fromDate, @RequestParam LocalDateTime toDate) {
         return new ApiResponse<>(200, null, bookingService.getAvailableRooms(fromDate, toDate));
     }
     

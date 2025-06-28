@@ -139,7 +139,7 @@ public class BookingService {
                 Stay stayEntity = stayMapper.toEntity(stayRequestItem);
                 stayEntity.setBooking(booking1);
                 stayEntity.setRoom(roomRepository.findByRoomNumber(stayRequestItem.getRoomNumber()));
-
+                stayEntity.setStayStatus("NOW");
                 // Set InfoGuests vào Stay trước khi save
                 List<InfoGuest> infoGuests = stayRequestItem.getInfoGuests().stream()
                         .map(infoGuestRequest -> {
@@ -176,30 +176,35 @@ public class BookingService {
         return bookingRepository.findByCheckInDateBetween(startDateTime, end);
     }
 
-    public Long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDate date) {
+    public Long countAvailableRoomsByRoomTypeAndDate(String nameRoomType, LocalDateTime date) {
         return bookingRepository.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date);
     }
 
-    public List<AvailableTypeRoomDTO> getAvailableRooms(LocalDate fromDate, LocalDate toDate){
+    public List<AvailableTypeRoomDTO> getAvailableRooms(LocalDateTime fromDate, LocalDateTime toDate){
         List<Object[]> objs = bookingRepository.getAvailableRooms(fromDate, toDate);
 
         List<AvailableTypeRoomDTO> roomDTOs = objs.stream().map((Object[] row) -> {
             Long typeId = Long.parseLong(( row[0]).toString());
-            Integer field1 = Integer.parseInt((row[1]).toString());
-            Integer field2 = Integer.parseInt((row[2]).toString());
-            Integer field3 = Integer.parseInt((row[3]).toString());
-            Integer field4 = Integer.parseInt((row[4]).toString());
+            String nameRoomType = ((String) row[1]).toString();
+            Integer price = Integer.parseInt((row[2]).toString());
+            Integer peopleAbout = Integer.parseInt((row[3]).toString());
+            Integer size = Integer.parseInt((row[4]).toString());
+            Integer field1 = Integer.parseInt((row[5]).toString());
+            Integer field2 = Integer.parseInt((row[6]).toString());
+            Integer field3 = Integer.parseInt((row[7]).toString());
+            Integer field4 = Integer.parseInt((row[8]).toString());
             
             List<Object[]> objrooms = roomRepository.getRoomsAvailable(typeId.intValue());
             
                 List<AvailableRoomDTO> rooms = objrooms.stream().map((Object[] ObjRoom)-> new AvailableRoomDTO(
-                    Long.parseLong(( ObjRoom[0]).toString()),
-                    ((String) ObjRoom[1]).toString(),
-                    Integer.parseInt((row[2]).toString()),
-                    ((String) ObjRoom[3]).toString(),
-                    Integer.parseInt((row[4]).toString())
+                    ((String) ObjRoom[0]).toString(),
+                    Long.parseLong(( ObjRoom[1]).toString()),
+                    ((String) ObjRoom[2]).toString(),
+                    Integer.parseInt((row[0]).toString()),
+                    ((String) ObjRoom[4]).toString(),
+                    Integer.parseInt((row[5]).toString())
                 )).collect(Collectors.toList());
-            return new AvailableTypeRoomDTO(typeId, field1, field2, field3, field4, rooms);
+            return new AvailableTypeRoomDTO(typeId, nameRoomType, price, peopleAbout, size , field1, field2, field3, field4, rooms);
         }).collect(Collectors.toList());
 
         return roomDTOs;

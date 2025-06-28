@@ -22,4 +22,6 @@ public class BookingRequest {
 
     Long userId;
 
+    Integer numberOfNights;
+
 }

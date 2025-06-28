@@ -14,17 +14,14 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StayRequest {
-
+    long roomId;
+    long bookingId;
     String roomNumber;
-
     LocalDateTime actualCheckIn;
-
     LocalDateTime actualCheckOut;
-
     String stayStatus;
-
     String note;
-
+    // Chỉ có khách phụ (infoGuests) nếu cần, có thể null hoặc empty
     List<InfoGuestRequest> infoGuests;
-
 }
+
