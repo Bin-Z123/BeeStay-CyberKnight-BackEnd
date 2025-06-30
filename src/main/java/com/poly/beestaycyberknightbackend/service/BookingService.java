@@ -190,10 +190,10 @@ public class BookingService {
             Integer price = Integer.parseInt((row[2]).toString());
             Integer peopleAbout = Integer.parseInt((row[3]).toString());
             Integer size = Integer.parseInt((row[4]).toString());
-            Integer field1 = Integer.parseInt((row[5]).toString());
-            Integer field2 = Integer.parseInt((row[6]).toString());
-            Integer field3 = Integer.parseInt((row[7]).toString());
-            Integer field4 = Integer.parseInt((row[8]).toString());
+            Integer totalRooms = Integer.parseInt((row[5]).toString());
+            Integer fixRooms = Integer.parseInt((row[6]).toString());
+            Integer usedRooms = Integer.parseInt((row[7]).toString());
+            Integer availableRooms = Integer.parseInt((row[8]).toString());
             
             List<Object[]> objrooms = roomRepository.getRoomsAvailable(typeId.intValue());
             
@@ -201,11 +201,11 @@ public class BookingService {
                     ((String) ObjRoom[0]).toString(),
                     Long.parseLong(( ObjRoom[1]).toString()),
                     ((String) ObjRoom[2]).toString(),
-                    Integer.parseInt((row[0]).toString()),
+                    Integer.parseInt((ObjRoom[3]).toString()),
                     ((String) ObjRoom[4]).toString(),
-                    Integer.parseInt((row[5]).toString())
+                    Integer.parseInt((ObjRoom[5]).toString())
                 )).collect(Collectors.toList());
-            return new AvailableTypeRoomDTO(typeId, nameRoomType, price, peopleAbout, size , field1, field2, field3, field4, rooms);
+            return new AvailableTypeRoomDTO(typeId, nameRoomType, price, peopleAbout, size , totalRooms, fixRooms, usedRooms, availableRooms, rooms);
         }).collect(Collectors.toList());
 
         return roomDTOs;
