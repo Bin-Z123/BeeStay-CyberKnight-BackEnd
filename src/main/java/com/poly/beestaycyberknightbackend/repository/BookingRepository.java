@@ -37,12 +37,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                  SELECT COALESCE((SUM(DISTINCT rt.price * bd.quantity) * b.numberOfNights), 0) + COALESCE(SUM(DISTINCT f.price * bf.quanlity), 0) AS totalamount
                  FROM RoomTypes rt JOIN BookingDetail bd ON rt.id = bd.room_type_id
             JOIN Bookings b ON bd.booking_id = b.id
-            JOIN BookingFacilities bf ON b.id = bf.booking_id
-            JOIN Facilities f ON bf.facility_id = f.id
+            LEFT JOIN BookingFacilities bf ON b.id = bf.booking_id
+            LEFT JOIN Facilities f ON bf.facility_id = f.id
             WHERE b.id = :bookingId
             GROUP BY b.id, b.numberOfNights
                                    """, nativeQuery = true)
-    int sumTotalPrice(Long bookingId);
+    Integer sumTotalPrice(Long bookingId);
 
     @Query(value = """
             SELECT COUNT(DISTINCT r.id) FROM Rooms r JOIN RoomTypes rt on r.roomtype_id = rt.id

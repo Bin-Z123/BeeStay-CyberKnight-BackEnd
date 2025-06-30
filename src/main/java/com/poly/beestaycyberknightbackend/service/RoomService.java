@@ -150,7 +150,7 @@ public RoomResponse handleCreateRoom(RoomRequest roomRequest, List<MultipartFile
             return roomMapper.toRoomResponse(roomRepository.save(getSavedRoom));
         }
 
-        public List<Room> getInactiveLuxuryRooms(String roomType) {
+        public List<Room> getInactiveRooms(String roomType) {
         return roomRepository.findInactiveRoomsByRoomType(roomType);
     }
 
