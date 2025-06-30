@@ -131,8 +131,9 @@ public class BookingService {
                         return facility;
                     })
                     .collect(Collectors.toList());
-        }
-        bookingFacilityRepository.saveAll(bookingFacilities);// Lưu tất cả dịch vụ blabla bla vào cơ sở dữ liệu
+         bookingFacilityRepository.saveAll(bookingFacilities);// Lưu tất cả dịch vụ blabla bla vào cơ sở dữ liệu
+         }
+       
 
         if (stayRequest != null) {
             stayRequest.forEach(stayRequestItem -> {

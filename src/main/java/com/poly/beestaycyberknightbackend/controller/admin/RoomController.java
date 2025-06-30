@@ -63,7 +63,7 @@ public class RoomController {
 
     @GetMapping("/roomsinactive")
     public ApiResponse<List<Room>> getInactiveRooms(@RequestParam String roomType) {
-        return new ApiResponse<>(200,null, roomService.getInactiveLuxuryRooms(roomType));
+        return new ApiResponse<>(200,null, roomService.getInactiveRooms(roomType));
     }
     
 }
