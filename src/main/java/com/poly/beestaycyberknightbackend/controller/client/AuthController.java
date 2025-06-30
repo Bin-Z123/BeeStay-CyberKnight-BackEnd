@@ -88,7 +88,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> handleRegister(@RequestBody @Valid RegisterRequest registerRequest) {
+
         // Check email đã tồn tại
+
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
             return ResponseEntity.badRequest().body(ApiResponse.<Void>builder()
                     .message("Email đã được sử dụng")
@@ -96,7 +98,9 @@ public class AuthController {
                     .build());
         }
 
+
         // Tạo User entity từ RegisterRequest
+
         User user = new User();
         user.setFullname(registerRequest.getFirstName() + " " + registerRequest.getLastName());
         user.setEmail(registerRequest.getEmail());
@@ -110,11 +114,13 @@ public class AuthController {
         user.setCccd("000000000000"); // default CCCD
         user.setPoint(0);
 
+
         // Gán Role mặc định USER
         Role role = userService.getRoleByName("USER");
         user.setRole(role);
 
         // Gán Rank mặc định (giả sử ID = 1)
+
         user.setRank(rankRepository.findById(1).orElseThrow(() -> new RuntimeException("Rank mặc định không tồn tại")));
 
         userRepository.save(user);
