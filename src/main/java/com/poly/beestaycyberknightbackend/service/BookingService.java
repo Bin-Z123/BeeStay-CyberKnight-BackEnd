@@ -158,15 +158,15 @@ public class BookingService {
             });
         }
 
-        Integer totalPrice = bookingRepository.sumTotalPrice(booking1.getId());
-        Booking booking2 = bookingRepository.findById(booking1.getId())
-                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
-        booking2.setTotalAmount(totalPrice); // Cập nhật tổng tiền cho booking
+//        Integer totalPrice = bookingRepository.sumTotalPrice(booking1.getId());
+//        Booking booking2 = bookingRepository.findById(booking1.getId())
+//                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+//        booking2.setTotalAmount(totalPrice); // Cập nhật tổng tiền cho booking
+//
+//        bookingRepository.save(booking2); // Lưu lại booking đã cập nhật tổng tiền
+//        bookingRepository.flush(); // Đẩy xuống lưu vào trước để lấy lên lại liền
 
-        bookingRepository.save(booking2); // Lưu lại booking đã cập nhật tổng tiền
-        bookingRepository.flush(); // Đẩy xuống lưu vào trước để lấy lên lại liền
-
-        return bookingRepository.findById(booking2.getId()) // Trả về booking đã được cập nhật
+        return bookingRepository.findById(booking1.getId()) // Trả về booking đã được cập nhật
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
     }
 
