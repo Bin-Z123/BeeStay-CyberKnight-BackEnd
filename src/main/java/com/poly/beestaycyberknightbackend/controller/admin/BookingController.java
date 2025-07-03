@@ -13,6 +13,8 @@ import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.dto.request.OrderBookingWrapper;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableTypeRoomDTO;
+import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
+import com.poly.beestaycyberknightbackend.dto.response.BookingResponse;
 import com.poly.beestaycyberknightbackend.service.BookingService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +30,7 @@ public class BookingController {
     BookingService bookingService;
 
     @GetMapping("/list")
-    public ApiResponse<List<Booking>> getBookings() {
+    public ApiResponse<List<BookingDTO>> getBookings() {
         return new ApiResponse<>(200, null, bookingService.getAllBookings());
     }
 

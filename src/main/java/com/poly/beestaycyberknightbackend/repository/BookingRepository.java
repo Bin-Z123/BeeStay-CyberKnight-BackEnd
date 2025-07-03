@@ -142,4 +142,23 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             """, nativeQuery = true)
     List<Object[]> getFacilitiesBooking(long bookingId);
 
+//    @Query(value = """
+//            SELECT COALESCE(SUM(f.price * bf.quanlity), 0) FROM Facilities f JOIN BookingFacilities bf on f.id = bf.facility_id
+//            					JOIN Bookings b on bf.booking_id = b.id
+//            				    WHERE b.id = :bookingId;
+//            """, nativeQuery = true)
+//    Integer totalPriceFacilitiesByBookingId(Long bookingId);
+//
+//    @Query(value = """
+//            SELECT SUM(rt.price) * DATEDIFF(DAY,b.check_in_date,b.check_out_date) FROM RoomTypes rt JOIN BookingDetail bd on rt.id = bd.room_type_id
+//            						 JOIN Bookings b on bd.booking_id = b.id
+//            						 WHERE b.id = :bookingId
+//            						 GROUP BY b.check_in_date, b.check_out_date
+//            """)
+//    Integer totalPriceBookingByBookingId(Long bookingId);
+
+//    @Query(value = """
+//
+//            """)
+
 }
