@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
@@ -52,8 +53,9 @@ public class BookingController {
     }
 
     @GetMapping("/availableRoomsTypeAndDateV2")
-    public ApiResponse<List<AvailableTypeRoomDTO>> countAvailableRoomsV2(@RequestParam LocalDateTime fromDate, @RequestParam LocalDateTime toDate) {
+    public ApiResponse<List<AvailableTypeRoomDTO>> countAvailableRoomsV2(@RequestParam LocalDateTime fromDate,
+            @RequestParam LocalDateTime toDate) {
         return new ApiResponse<>(200, null, bookingService.getAvailableRooms(fromDate, toDate));
     }
-    
+
 }
