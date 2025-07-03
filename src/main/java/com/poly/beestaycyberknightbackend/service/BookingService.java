@@ -23,6 +23,8 @@ import com.poly.beestaycyberknightbackend.dto.request.GuestBookingRequest;
 import com.poly.beestaycyberknightbackend.dto.request.StayRequest;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableRoomDTO;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableTypeRoomDTO;
+import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
+import com.poly.beestaycyberknightbackend.dto.response.BookingResponse;
 import com.poly.beestaycyberknightbackend.exception.AppException;
 import com.poly.beestaycyberknightbackend.exception.ErrorCode;
 import com.poly.beestaycyberknightbackend.mapper.BookingDetailMapper;
@@ -59,8 +61,12 @@ public class BookingService {
     RoomTypeRepository roomTypeRepository;
     InfoGuestMapper infoGuestMapper;
 
-    public List<Booking> getAllBookings() {
-        return bookingRepository.findAll();
+    public List<BookingDTO> getAllBookings() {
+        List<Booking> listEntity = bookingRepository.findAll();
+        List<BookingDTO> listResponse = listEntity.stream().map(
+            list -> bookingMapper.toResponse(list)
+        ).collect(Collectors.toList());
+        return listResponse;
     }
 
     @Transactional
