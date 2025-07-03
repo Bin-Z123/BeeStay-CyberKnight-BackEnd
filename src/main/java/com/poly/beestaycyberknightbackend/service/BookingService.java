@@ -165,16 +165,24 @@ public class BookingService {
                                                  // cascade = CascadeType.ALL nên sẽ tự động lưu InfoGuest
             });
         }
+        
+        //⦁	Tổng tiền booking mới đặt = tổng tiền dịch vụ (nullable) + tổng tiền ở - tiền giảm giá của từng loại phòng / đêm đầu tiên (nullable)
+        Integer totalFacilities = bookingRepository.totalPriceFacilitiesByBookingId(booking1.getId());
+        Integer totalPriceBooking = bookingRepository.totalPriceBookingByBookingId(booking1.getId());
+        Integer totalDiscount = bookingRepository.totalPriceDiscountEachRoomType(booking1.getId());
 
-        // Integer totalPrice = bookingRepository.sumTotalPrice(booking1.getId());
-        // Booking booking2 = bookingRepository.findById(booking1.getId())
-        // .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
-        // booking2.setTotalAmount(totalPrice); // Cập nhật tổng tiền cho booking
-        //
-        // bookingRepository.save(booking2); // Lưu lại booking đã cập nhật tổng tiền
-        // bookingRepository.flush(); // Đẩy xuống lưu vào trước để lấy lên lại liền
 
-        return bookingRepository.findById(booking1.getId()) // Trả về booking đã được cập nhật
+       Integer totalPrice = totalFacilities + totalPriceBooking - totalDiscount;
+       
+       Booking booking2 = bookingRepository.findById(booking1.getId())
+               .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+       booking2.setTotalAmount(totalPrice); // Cập nhật tổng tiền cho booking
+
+       bookingRepository.save(booking2); // Lưu lại booking đã cập nhật tổng tiền
+       bookingRepository.flush(); // Đẩy xuống lưu vào trước để lấy lên lại liền
+
+
+        return bookingRepository.findById(booking2.getId()) // Trả về booking đã được cập nhật
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
     }
 
