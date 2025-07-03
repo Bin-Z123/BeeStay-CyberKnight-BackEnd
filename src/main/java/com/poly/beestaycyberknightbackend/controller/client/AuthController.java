@@ -99,14 +99,14 @@ public class AuthController {
         user.setFullname(registerRequest.getFirstName() + " " + registerRequest.getLastName());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setPhone("0000000000"); // default
-        user.setGender(true); // default
+        // user.setPhone("0000000000"); // default
+        // user.setGender(true); // default
         // user.setBirthday(LocalDate.now().minusYears(18)); // default: đủ tuổi
         // user.setJoinDate(LocalDateTime.now());
         // user.setUpdateDate(LocalDateTime.now());
         // user.setEBlacklist(User.EBlacklist.NORM);
-        user.setCccd("000000000000"); // default CCCD
-        user.setPoint(0);
+        // user.setCccd("000000000000"); // default CCCD
+        // user.setPoint(0);
 
         Role role = userService.getRoleByName("USER");
         user.setRole(role);
