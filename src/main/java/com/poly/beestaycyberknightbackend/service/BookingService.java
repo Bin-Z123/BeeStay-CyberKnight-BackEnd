@@ -230,4 +230,26 @@ public class BookingService {
         return roomDTOs;
     }
 
+    public BookingDTO getBooking(Long bookingId){
+        Booking entity = bookingRepository.findById(bookingId).orElseThrow(()-> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+        BookingDTO resp = bookingMapper.toResponse(entity);
+
+        return resp;
+    }
+
+    public BookingDTO updateTotalPriceBooking(Long bookingId){
+        Integer totalPriceFacilites = bookingRepository.totalPriceFacilitiesByBookingId(bookingId);
+        Integer totalPriceBookingActual = bookingRepository.totalPriceBookingActual(bookingId);
+        Integer totalPriceDiscount = bookingRepository.totalPriceDiscountEachRoomType(bookingId);
+
+        Integer totalPrice = totalPriceFacilites + totalPriceBookingActual - totalPriceDiscount;
+
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(()-> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+        booking.setTotalAmount(totalPrice);
+
+        bookingRepository.save(booking);
+
+        return bookingMapper.toResponse(booking);
+    }
+
 }
