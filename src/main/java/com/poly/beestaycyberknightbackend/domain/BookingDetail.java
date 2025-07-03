@@ -1,6 +1,7 @@
 package com.poly.beestaycyberknightbackend.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,12 +20,12 @@ public class BookingDetail {
     long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonBackReference
+    @JsonManagedReference
     @JoinColumn(name = "booking_id", nullable = false)
     Booking booking;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonManagedReference
     @JoinColumn(name = "room_type_id", nullable = false)
     RoomType roomType;
 
