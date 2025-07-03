@@ -2,6 +2,8 @@ package com.poly.beestaycyberknightbackend.dto.response;
 
 
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,5 +18,5 @@ public class AvailableRoomDTO {
     int roomTypeId;
     String roomStatus;
     int floor;
-    
+    List<RoomImageResponse> roomImage;
 }
