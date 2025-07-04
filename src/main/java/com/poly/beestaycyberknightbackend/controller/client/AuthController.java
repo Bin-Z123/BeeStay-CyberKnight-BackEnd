@@ -5,7 +5,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -29,7 +29,9 @@ import com.poly.beestaycyberknightbackend.repository.UserRepository;
 import com.poly.beestaycyberknightbackend.service.UserService;
 import com.poly.beestaycyberknightbackend.util.SecurityUtil;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -60,23 +62,30 @@ public class AuthController {
     //     this.rankRepository = rankRepository;
     // }
     @PostMapping("/login")
-    public ResponseEntity<RestLoginDTO> login(@Valid @RequestBody LoginDTO loginDTO, HttpServletRequest httpRequest) {
-
-        //Nạp input gồm username & password vào Secủitycủity
+    public ResponseEntity<RestLoginDTO> login(@Valid @RequestBody LoginDTO loginDTO, HttpServletRequest httpRequest, HttpServletResponse response) {
         UsernamePasswordAuthenticationToken authenticationToken =
-        new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
-        //Xác thực người dùng -> Viết hàm loadUserByUsername
+            new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
+
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        
-        //Create token
         String access_token = this.securityUtil.createToken(authentication);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
- 
+
+        // ✅ Thêm cookie chứa token
+        Cookie cookie = new Cookie("jwt", access_token);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false); // nên true nếu dùng HTTPS
+        cookie.setPath("/");
+        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 ngày
+
+        response.addCookie(cookie);
+
+        // Để frontend dùng nếu cần
         RestLoginDTO restLoginDTO = new RestLoginDTO();
         restLoginDTO.setAccessToken(access_token);
+
+        // Lưu log
         User user = userRepository.findByEmail(loginDTO.getUsername());
-        // Lưu log đăng nhập
         TransactionLog log = new TransactionLog();
         log.setActionType("LOGIN");
         log.setLogAt(LocalDateTime.now());
@@ -84,9 +93,10 @@ public class AuthController {
         log.setAmount(0);
         log.setUser(user);
         logRepository.save(log);
-      
+
         return ResponseEntity.ok().body(restLoginDTO);
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> handleRegister(@RequestBody @Valid RegisterRequest registerRequest) {
@@ -124,12 +134,14 @@ public class AuthController {
     }
 
     @PostMapping("/change_password")
-    public ApiResponse<?> changePassword(@RequestBody ChangePasswordRequest request, Principal principal ) {
+    public ApiResponse<?> changePassword(@RequestBody @Valid ChangePasswordRequest request, Principal principal) {
         User user = userRepository.findByEmail(principal.getName());
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         user.setUpdateDate(LocalDateTime.now());
-        return new ApiResponse<>(200, null, userRepository.save(user));
+        userRepository.save(user);
+        return new ApiResponse<>(200, "Đổi mật khẩu thành công", null);
     }
+
     
 
 }

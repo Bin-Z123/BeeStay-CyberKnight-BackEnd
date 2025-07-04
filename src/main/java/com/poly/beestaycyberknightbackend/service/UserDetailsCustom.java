@@ -1,9 +1,10 @@
 package com.poly.beestaycyberknightbackend.service;
 
 import java.util.Collections;
+import java.util.List;
 
+import com.poly.beestaycyberknightbackend.dto.response.CustomUserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,11 +25,13 @@ public class UserDetailsCustom implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("Username hoặc password không hợp lệ");
         }
-        
-        return new User(
-            user.getEmail(),
-            user.getPassword(),
-            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+
+        String roleName = user.getRole().getRoleName(); // "ADMIN", "USER", etc.
+
+        List<SimpleGrantedAuthority> authorities = Collections.singletonList(
+            new SimpleGrantedAuthority("ROLE_" + roleName)
+        );
+
+        return new CustomUserDetails(user, authorities);
     }
-    
 }
