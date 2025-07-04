@@ -1,6 +1,7 @@
 package com.poly.beestaycyberknightbackend.controller.client;
 
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.poly.beestaycyberknightbackend.domain.Role;
 import com.poly.beestaycyberknightbackend.domain.TransactionLog;
 import com.poly.beestaycyberknightbackend.domain.User;
+import com.poly.beestaycyberknightbackend.dto.request.ChangePasswordRequest;
 import com.poly.beestaycyberknightbackend.dto.request.RegisterRequest;
 import com.poly.beestaycyberknightbackend.dto.request.RestLoginDTO;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
@@ -120,5 +122,14 @@ public class AuthController {
                 .code(200)
                 .build());
     }
+
+    @PostMapping("/change_password")
+    public ApiResponse<?> changePassword(@RequestBody ChangePasswordRequest request, Principal principal ) {
+        User user = userRepository.findByEmail(principal.getName());
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setUpdateDate(LocalDateTime.now());
+        return new ApiResponse<>(200, null, userRepository.save(user));
+    }
+    
 
 }
