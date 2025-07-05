@@ -15,6 +15,7 @@ public enum ErrorCode {
     FACILITIES_NOT_EXISTED(404, "Facility not found"),
     NO_USER_INFORMATION(400, "No user information found"),
     BOOKING_NOT_EXISTED(404, "Booking not found"),
+    BOOKINGDETAIL_NOT_EXISTED(404, "BookingDetail not found")
     ;
 
     private final int code;

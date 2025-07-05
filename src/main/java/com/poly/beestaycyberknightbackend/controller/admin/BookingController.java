@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.cglib.core.Local;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,5 +70,10 @@ public class BookingController {
     @PutMapping("/{id}")
     public ApiResponse<BookingDTO>  updatePriceActual(@PathVariable Long id) {
         return new ApiResponse<>(200, null, bookingService.updateTotalPriceBooking(id));
+    }
+
+    @PutMapping("/afterUBD/{id}")
+    public ApiResponse<BookingDTO> updatePriceAfterUpdateBD(@PathVariable Long id) {        
+        return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.updateTotalPriceBookingAfter(id));
     }
 }
