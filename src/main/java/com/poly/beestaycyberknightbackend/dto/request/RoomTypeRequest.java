@@ -12,4 +12,5 @@ public class RoomTypeRequest {
     private int size;
     private int price;
     private int peopleAbout;
+    private String description;
 }

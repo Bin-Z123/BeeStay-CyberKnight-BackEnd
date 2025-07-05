@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,6 +45,8 @@ public class RoomType {
 
     @Column(name = "people_about", nullable = false)
     private int peopleAbout;
+
+    private String description;
 
     @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL)
     @JsonManagedReference

@@ -26,7 +26,7 @@ public class UserDetailsCustom implements UserDetailsService {
             throw new UsernameNotFoundException("Username hoặc password không hợp lệ");
         }
 
-        String roleName = user.getRole().getRoleName(); // "ADMIN", "USER", etc.
+        String roleName = user.getRole().getRoleName();
 
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(
             new SimpleGrantedAuthority("ROLE_" + roleName)
