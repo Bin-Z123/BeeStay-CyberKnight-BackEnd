@@ -2,9 +2,12 @@ package com.poly.beestaycyberknightbackend.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.poly.beestaycyberknightbackend.domain.Booking;
+import com.poly.beestaycyberknightbackend.domain.Stay;
+
 import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -67,7 +70,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                 FROM Bookings b
                 JOIN BookingDetail bd ON b.id = bd.booking_id
                 WHERE
-                    b.e_booking_status = 'CONFIRMED'
+                    b.e_booking_status = 'CONFIRMED'  OR b.e_booking_status = 'LATE'
                     AND @fromDate <= b.check_out_date
                     AND @toDate >= b.check_in_date
                 GROUP BY bd.room_type_id
@@ -199,5 +202,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             GROUP BY s.actualcheckin, s.actualcheckout
                """, nativeQuery = true)
     Integer totalPriceBookingActual(Long bookingId);
+
+    @Query(value = """
+            DECLARE @today DATE = :date;
+            SELECT b.id FROM Bookings b WHERE CAST(b.check_in_date AS DATE) = DATEADD(DAY, -1, @today) AND b.e_booking_status LIKE 'CONFIRMED'
+            """, nativeQuery = true)
+    List<Object[]> bookingCheckinLate(LocalDate date);
+
+    @Query("SELECT s FROM Stay s JOIN s.booking b WHERE b.id = :bId")
+    List<Stay> listStayOfBooking(Long bId);
 
 }

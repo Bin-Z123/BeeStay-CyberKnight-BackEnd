@@ -165,22 +165,21 @@ public class BookingService {
                                                  // cascade = CascadeType.ALL nên sẽ tự động lưu InfoGuest
             });
         }
-        
-        //⦁	Tổng tiền booking mới đặt = tổng tiền dịch vụ (nullable) + tổng tiền ở - tiền giảm giá của từng loại phòng / đêm đầu tiên (nullable)
+
+        // ⦁ Tổng tiền booking mới đặt = tổng tiền dịch vụ (nullable) + tổng tiền ở -
+        // tiền giảm giá của từng loại phòng / đêm đầu tiên (nullable)
         Integer totalFacilities = bookingRepository.totalPriceFacilitiesByBookingId(booking1.getId());
         Integer totalPriceBooking = bookingRepository.totalPriceBookingByBookingId(booking1.getId());
         Integer totalDiscount = bookingRepository.totalPriceDiscountEachRoomType(booking1.getId());
 
+        Integer totalPrice = totalFacilities + totalPriceBooking - totalDiscount;
 
-       Integer totalPrice = totalFacilities + totalPriceBooking - totalDiscount;
-       
-       Booking booking2 = bookingRepository.findById(booking1.getId())
-               .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
-       booking2.setTotalAmount(totalPrice); // Cập nhật tổng tiền cho booking
+        Booking booking2 = bookingRepository.findById(booking1.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+        booking2.setTotalAmount(totalPrice); // Cập nhật tổng tiền cho booking
 
-       bookingRepository.save(booking2); // Lưu lại booking đã cập nhật tổng tiền
-       bookingRepository.flush(); // Đẩy xuống lưu vào trước để lấy lên lại liền
-
+        bookingRepository.save(booking2); // Lưu lại booking đã cập nhật tổng tiền
+        bookingRepository.flush(); // Đẩy xuống lưu vào trước để lấy lên lại liền
 
         return bookingRepository.findById(booking2.getId()) // Trả về booking đã được cập nhật
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
@@ -197,11 +196,11 @@ public class BookingService {
         return bookingRepository.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date);
     }
 
-    public List<AvailableTypeRoomDTO> getAvailableRooms(LocalDateTime fromDate, LocalDateTime toDate){
+    public List<AvailableTypeRoomDTO> getAvailableRooms(LocalDateTime fromDate, LocalDateTime toDate) {
         List<Object[]> objs = bookingRepository.getAvailableRooms(fromDate, toDate);
 
         List<AvailableTypeRoomDTO> roomDTOs = objs.stream().map((Object[] row) -> {
-            Long typeId = Long.parseLong(( row[0]).toString());
+            Long typeId = Long.parseLong((row[0]).toString());
             String nameRoomType = ((String) row[1]).toString();
             Integer price = Integer.parseInt((row[2]).toString());
             Integer peopleAbout = Integer.parseInt((row[3]).toString());
@@ -210,45 +209,50 @@ public class BookingService {
             Integer fixRooms = Integer.parseInt((row[6]).toString());
             Integer usedRooms = Integer.parseInt((row[7]).toString());
             Integer availableRooms = Integer.parseInt((row[8]).toString());
-            
+
             List<Object[]> objrooms = roomRepository.getRoomsAvailable(typeId.intValue());
-            
-                List<AvailableRoomDTO> rooms = objrooms.stream().map((Object[] ObjRoom)-> {
-                    String nameRoomType1 =  ((String) ObjRoom[0]).toString();
-                    long id = Long.parseLong(( ObjRoom[1]).toString());
-                    String roomNumber = ((String) ObjRoom[2]).toString();
-                    int roomTypeId = Integer.parseInt((ObjRoom[3]).toString());
-                    String roomStatus = ((String) ObjRoom[4]).toString();
-                    int floor = Integer.parseInt((ObjRoom[5]).toString());
-                    List<RoomImageResponse> roomImage = roomImageRepository.findByRoomId(id).stream().map(image -> roomImageMapper.toRoomImageResponse(image)).collect(Collectors.toList());
-                    return new AvailableRoomDTO( nameRoomType1, id, roomNumber, roomTypeId, roomStatus, floor, roomImage);                                                                       
-                                                                                        }
-                                                                    ).collect(Collectors.toList());
-            return new AvailableTypeRoomDTO(typeId, nameRoomType, price, peopleAbout, size , totalRooms, fixRooms, usedRooms, availableRooms, rooms);
+
+            List<AvailableRoomDTO> rooms = objrooms.stream().map((Object[] ObjRoom) -> {
+                String nameRoomType1 = ((String) ObjRoom[0]).toString();
+                long id = Long.parseLong((ObjRoom[1]).toString());
+                String roomNumber = ((String) ObjRoom[2]).toString();
+                int roomTypeId = Integer.parseInt((ObjRoom[3]).toString());
+                String roomStatus = ((String) ObjRoom[4]).toString();
+                int floor = Integer.parseInt((ObjRoom[5]).toString());
+                List<RoomImageResponse> roomImage = roomImageRepository.findByRoomId(id).stream()
+                        .map(image -> roomImageMapper.toRoomImageResponse(image)).collect(Collectors.toList());
+                return new AvailableRoomDTO(nameRoomType1, id, roomNumber, roomTypeId, roomStatus, floor, roomImage);
+            }).collect(Collectors.toList());
+            return new AvailableTypeRoomDTO(typeId, nameRoomType, price, peopleAbout, size, totalRooms, fixRooms,
+                    usedRooms, availableRooms, rooms);
         }).collect(Collectors.toList());
 
         return roomDTOs;
     }
 
-    public BookingDTO getBooking(Long bookingId){
-        Booking entity = bookingRepository.findById(bookingId).orElseThrow(()-> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+    public BookingDTO getBooking(Long bookingId) {
+        Booking entity = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
         BookingDTO resp = bookingMapper.toResponse(entity);
 
         return resp;
     }
 
-    public BookingDTO updateTotalPriceBooking(Long bookingId){
+    public BookingDTO updateTotalPriceBooking(Long bookingId) {
         Integer totalPriceFacilites = bookingRepository.totalPriceFacilitiesByBookingId(bookingId);
         Integer totalPriceBookingActual = bookingRepository.totalPriceBookingActual(bookingId);
         Integer totalPriceDiscount = bookingRepository.totalPriceDiscountEachRoomType(bookingId);
 
-        if(totalPriceBookingActual == null){
+
+        if (totalPriceBookingActual == null) {
+
             totalPriceBookingActual = 0;
         }
 
         Integer totalPrice = totalPriceFacilites + totalPriceBookingActual - totalPriceDiscount;
 
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(()-> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
         booking.setTotalAmount(totalPrice);
 
         bookingRepository.save(booking);
@@ -257,18 +261,41 @@ public class BookingService {
     }
 
     @Transactional
-    public BookingDTO updateTotalPriceBookingAfter(Long id){
+
+    public BookingDTO updateTotalPriceBookingAfter(Long id) {
+
         Integer totalFacilites = bookingRepository.totalPriceFacilitiesByBookingId(id);
         Integer totalBooking = bookingRepository.totalPriceBookingByBookingId(id);
         Integer totalDiscount = bookingRepository.totalPriceDiscountEachRoomType(id);
 
         Integer TotalPrice = totalFacilites + totalBooking - totalDiscount;
 
-        Booking booking = bookingRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+
         booking.setTotalAmount(TotalPrice);
 
         return bookingMapper.toResponse(booking);
 
     }
+
+
+    @Transactional
+    public void setStatusBookingLate() {
+        LocalDate today = LocalDate.now();
+        List<Object[]> listId = bookingRepository.bookingCheckinLate(today);
+
+        List<Booking> listBooking = listId.stream().map(id -> { 
+                Long bId = Long.parseLong((id[0]).toString());
+                Booking b = bookingRepository.findById(bId).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+                b.setBookingStatus("LATE");
+                return b;
+            }
+        ).collect(Collectors.toList());
+
+        bookingRepository.saveAll(listBooking);
+    }
+
 
 }
