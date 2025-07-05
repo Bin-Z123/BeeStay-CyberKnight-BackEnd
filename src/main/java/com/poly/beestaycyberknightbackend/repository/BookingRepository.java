@@ -37,12 +37,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                  SELECT COALESCE((SUM(DISTINCT rt.price * bd.quantity) * b.numberOfNights), 0) + COALESCE(SUM(DISTINCT f.price * bf.quanlity), 0) AS totalamount
                  FROM RoomTypes rt JOIN BookingDetail bd ON rt.id = bd.room_type_id
             JOIN Bookings b ON bd.booking_id = b.id
-            JOIN BookingFacilities bf ON b.id = bf.booking_id
-            JOIN Facilities f ON bf.facility_id = f.id
+            LEFT JOIN BookingFacilities bf ON b.id = bf.booking_id
+            LEFT JOIN Facilities f ON bf.facility_id = f.id
             WHERE b.id = :bookingId
             GROUP BY b.id, b.numberOfNights
                                    """, nativeQuery = true)
-    int sumTotalPrice(Long bookingId);
+    Integer sumTotalPrice(Long bookingId);
 
     @Query(value = """
             SELECT COUNT(DISTINCT r.id) FROM Rooms r JOIN RoomTypes rt on r.roomtype_id = rt.id
@@ -141,5 +141,38 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                   WHERE b.id = :bookingId;
             """, nativeQuery = true)
     List<Object[]> getFacilitiesBooking(long bookingId);
+
+   @Query(value = """
+           SELECT COALESCE(SUM(f.price * bf.quanlity), 0) FROM Facilities f JOIN BookingFacilities bf on f.id = bf.facility_id
+           					JOIN Bookings b on bf.booking_id = b.id
+           				    WHERE b.id = :bookingId;
+           """, nativeQuery = true)
+   Integer totalPriceFacilitiesByBookingId(Long bookingId);
+
+   @Query(value = """
+           SELECT SUM(rt.price) * DATEDIFF(DAY,b.check_in_date,b.check_out_date) FROM RoomTypes rt JOIN BookingDetail bd on rt.id = bd.room_type_id
+           						 JOIN Bookings b on bd.booking_id = b.id
+           						 WHERE b.id = :bookingId
+           						 GROUP BY b.check_in_date, b.check_out_date
+           """, nativeQuery = true)
+   Integer totalPriceBookingByBookingId(Long bookingId);
+
+   @Query(value = """
+            SELECT  COALESCE( SUM( rt.price * (d.discountValue/100) ), 0) FROM Discounts d JOIN discounts_roomtypes drt on d.id = drt.discounts_id
+						  JOIN RoomTypes rt on drt.roomtype_id = rt.id
+						  JOIN BookingDetail bd on rt.id = bd.room_type_id
+						  JOIN Bookings b on bd.booking_id = b.id
+						  WHERE b.id = :bookingId AND d.startDate < b.booking_date AND b.booking_date < d.endDate AND d.status LIKE 'ACTIVE'
+           """, nativeQuery = true)
+    Integer totalPriceDiscountEachRoomType(Long bookingId);
+
+    @Query(value = """
+            SELECT SUM(rt.price) * DATEDIFF(DAY,s.actualcheckin,s.actualcheckout) FROM RoomTypes rt JOIN Rooms r on rt.id = r.roomtype_id
+						   JOIN Stays s on r.id = s.room_id
+						   JOIN Bookings b on s.booking_id = b.id
+						   WHERE b.id = :bookingId
+						   GROUP BY s.actualcheckin, s.actualcheckout
+            """, nativeQuery = true)
+    Integer totalPriceBookingActual(Long bookingId);
 
 }

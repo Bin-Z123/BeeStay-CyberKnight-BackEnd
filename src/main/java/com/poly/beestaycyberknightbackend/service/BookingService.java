@@ -23,6 +23,9 @@ import com.poly.beestaycyberknightbackend.dto.request.GuestBookingRequest;
 import com.poly.beestaycyberknightbackend.dto.request.StayRequest;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableRoomDTO;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableTypeRoomDTO;
+import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
+import com.poly.beestaycyberknightbackend.dto.response.BookingResponse;
+import com.poly.beestaycyberknightbackend.dto.response.RoomImageResponse;
 import com.poly.beestaycyberknightbackend.exception.AppException;
 import com.poly.beestaycyberknightbackend.exception.ErrorCode;
 import com.poly.beestaycyberknightbackend.mapper.BookingDetailMapper;
@@ -30,6 +33,7 @@ import com.poly.beestaycyberknightbackend.mapper.BookingFacilityMapper;
 import com.poly.beestaycyberknightbackend.mapper.BookingMapper;
 import com.poly.beestaycyberknightbackend.mapper.GuestBookingMapper;
 import com.poly.beestaycyberknightbackend.mapper.InfoGuestMapper;
+import com.poly.beestaycyberknightbackend.mapper.RoomImageMapper;
 import com.poly.beestaycyberknightbackend.mapper.StayMapper;
 import com.poly.beestaycyberknightbackend.repository.*;
 import jakarta.transaction.Transactional;
@@ -58,9 +62,14 @@ public class BookingService {
     RoomRepository roomRepository;
     RoomTypeRepository roomTypeRepository;
     InfoGuestMapper infoGuestMapper;
+    RoomImageRepository roomImageRepository;
+    RoomImageMapper roomImageMapper;
 
-    public List<Booking> getAllBookings() {
-        return bookingRepository.findAll();
+    public List<BookingDTO> getAllBookings() {
+        List<Booking> listEntity = bookingRepository.findAll();
+        List<BookingDTO> listResponse = listEntity.stream().map(
+                list -> bookingMapper.toResponse(list)).collect(Collectors.toList());
+        return listResponse;
     }
 
     @Transactional
@@ -131,8 +140,8 @@ public class BookingService {
                         return facility;
                     })
                     .collect(Collectors.toList());
+            bookingFacilityRepository.saveAll(bookingFacilities);// Lưu tất cả dịch vụ blabla bla vào cơ sở dữ liệu
         }
-        bookingFacilityRepository.saveAll(bookingFacilities);// Lưu tất cả dịch vụ blabla bla vào cơ sở dữ liệu
 
         if (stayRequest != null) {
             stayRequest.forEach(stayRequestItem -> {
@@ -156,14 +165,22 @@ public class BookingService {
                                                  // cascade = CascadeType.ALL nên sẽ tự động lưu InfoGuest
             });
         }
+        
+        //⦁	Tổng tiền booking mới đặt = tổng tiền dịch vụ (nullable) + tổng tiền ở - tiền giảm giá của từng loại phòng / đêm đầu tiên (nullable)
+        Integer totalFacilities = bookingRepository.totalPriceFacilitiesByBookingId(booking1.getId());
+        Integer totalPriceBooking = bookingRepository.totalPriceBookingByBookingId(booking1.getId());
+        Integer totalDiscount = bookingRepository.totalPriceDiscountEachRoomType(booking1.getId());
 
-        Integer totalPrice = bookingRepository.sumTotalPrice(booking1.getId());
-        Booking booking2 = bookingRepository.findById(booking1.getId())
-                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
-        booking2.setTotalAmount(totalPrice); // Cập nhật tổng tiền cho booking
 
-        bookingRepository.save(booking2); // Lưu lại booking đã cập nhật tổng tiền
-        bookingRepository.flush(); // Đẩy xuống lưu vào trước để lấy lên lại liền
+       Integer totalPrice = totalFacilities + totalPriceBooking - totalDiscount;
+       
+       Booking booking2 = bookingRepository.findById(booking1.getId())
+               .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+       booking2.setTotalAmount(totalPrice); // Cập nhật tổng tiền cho booking
+
+       bookingRepository.save(booking2); // Lưu lại booking đã cập nhật tổng tiền
+       bookingRepository.flush(); // Đẩy xuống lưu vào trước để lấy lên lại liền
+
 
         return bookingRepository.findById(booking2.getId()) // Trả về booking đã được cập nhật
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
@@ -189,22 +206,25 @@ public class BookingService {
             Integer price = Integer.parseInt((row[2]).toString());
             Integer peopleAbout = Integer.parseInt((row[3]).toString());
             Integer size = Integer.parseInt((row[4]).toString());
-            Integer field1 = Integer.parseInt((row[5]).toString());
-            Integer field2 = Integer.parseInt((row[6]).toString());
-            Integer field3 = Integer.parseInt((row[7]).toString());
-            Integer field4 = Integer.parseInt((row[8]).toString());
+            Integer totalRooms = Integer.parseInt((row[5]).toString());
+            Integer fixRooms = Integer.parseInt((row[6]).toString());
+            Integer usedRooms = Integer.parseInt((row[7]).toString());
+            Integer availableRooms = Integer.parseInt((row[8]).toString());
             
             List<Object[]> objrooms = roomRepository.getRoomsAvailable(typeId.intValue());
             
-                List<AvailableRoomDTO> rooms = objrooms.stream().map((Object[] ObjRoom)-> new AvailableRoomDTO(
-                    ((String) ObjRoom[0]).toString(),
-                    Long.parseLong(( ObjRoom[1]).toString()),
-                    ((String) ObjRoom[2]).toString(),
-                    Integer.parseInt((row[0]).toString()),
-                    ((String) ObjRoom[4]).toString(),
-                    Integer.parseInt((row[5]).toString())
-                )).collect(Collectors.toList());
-            return new AvailableTypeRoomDTO(typeId, nameRoomType, price, peopleAbout, size , field1, field2, field3, field4, rooms);
+                List<AvailableRoomDTO> rooms = objrooms.stream().map((Object[] ObjRoom)-> {
+                    String nameRoomType1 =  ((String) ObjRoom[0]).toString();
+                    long id = Long.parseLong(( ObjRoom[1]).toString());
+                    String roomNumber = ((String) ObjRoom[2]).toString();
+                    int roomTypeId = Integer.parseInt((ObjRoom[3]).toString());
+                    String roomStatus = ((String) ObjRoom[4]).toString();
+                    int floor = Integer.parseInt((ObjRoom[5]).toString());
+                    List<RoomImageResponse> roomImage = roomImageRepository.findByRoomId(id).stream().map(image -> roomImageMapper.toRoomImageResponse(image)).collect(Collectors.toList());
+                    return new AvailableRoomDTO( nameRoomType1, id, roomNumber, roomTypeId, roomStatus, floor, roomImage);                                                                       
+                                                                                        }
+                                                                    ).collect(Collectors.toList());
+            return new AvailableTypeRoomDTO(typeId, nameRoomType, price, peopleAbout, size , totalRooms, fixRooms, usedRooms, availableRooms, rooms);
         }).collect(Collectors.toList());
 
         return roomDTOs;

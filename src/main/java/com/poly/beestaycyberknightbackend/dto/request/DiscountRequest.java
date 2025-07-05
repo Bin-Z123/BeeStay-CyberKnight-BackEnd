@@ -1,5 +1,6 @@
 package com.poly.beestaycyberknightbackend.dto.request;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
@@ -13,7 +14,7 @@ public class DiscountRequest {
     String description;
     String discountCode;
     String discountType;
-    String discountValue;
+    BigDecimal discountValue;
     LocalDateTime startDate;
     LocalDateTime endDate;
     String status;
