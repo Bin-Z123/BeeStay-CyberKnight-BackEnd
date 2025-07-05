@@ -134,7 +134,7 @@ public class AuthController {
     }
 
     @PostMapping("/change_password")
-    public ApiResponse<?> changePassword(@RequestBody @Valid ChangePasswordRequest request, Principal principal) {
+    public ApiResponse<?> changePassword(@RequestBody ChangePasswordRequest request, Principal principal) {
         User user = userRepository.findByEmail(principal.getName());
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         user.setUpdateDate(LocalDateTime.now());
