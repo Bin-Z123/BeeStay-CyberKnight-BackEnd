@@ -5,6 +5,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
+import com.poly.beestaycyberknightbackend.service.UserService;
 import com.poly.beestaycyberknightbackend.util.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class SecurityConfiguration {
             HttpSecurity http,
             CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
             CorsConfigurationSource corsConfigurationSource,
-            JwtAuthFilter jwtAuthFilter // 👈 inject ở đây
+            JwtAuthFilter jwtAuthFilter
     ) throws Exception {
 
         http
@@ -54,7 +55,7 @@ public class SecurityConfiguration {
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/login", "/register", "/change_password", "/api/forgot-password/**").permitAll()
+                .requestMatchers("/api/login", "/api/register", "/api/change_password", "/api/forgot-password/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/").hasRole("USER")
                 .anyRequest().authenticated()
@@ -69,7 +70,6 @@ public class SecurityConfiguration {
             )
             .formLogin(form -> form.disable());
 
-        // ✅ Thêm filter custom của bạn trước UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -124,9 +124,9 @@ public class SecurityConfiguration {
         return source;
     }
 
-    // ✅ Định nghĩa JwtAuthFilter thành bean ở đây để tránh vòng lặp
     @Bean
-    public JwtAuthFilter jwtAuthFilter(JwtDecoder jwtDecoder, JwtAuthenticationConverter jwtAuthenticationConverter) {
-        return new JwtAuthFilter(jwtDecoder, jwtAuthenticationConverter);
+    public JwtAuthFilter jwtAuthFilter(JwtDecoder jwtDecoder, UserService userService) {
+        return new JwtAuthFilter(jwtDecoder, userService);
     }
+
 }
