@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -23,10 +26,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class BookingDetailController {
     BookingDetailService bookingDetailService;
 
-    @PutMapping("/{id}")
-    public ApiResponse<?> updateBookingDetail(@PathVariable Long id, @RequestBody BookingDetailUpdateRequest request) {
-        bookingDetailService.updateBookingDetail(id, request);
-        return new ApiResponse<>(HttpStatus.OK.value(), null, null);
+    @PutMapping("/{bookingId}")
+    public ApiResponse<?> updateBookingDetail(@PathVariable Long bookingId, @RequestBody List<BookingDetailUpdateRequest> request) {
+        
+        return new ApiResponse<>(HttpStatus.OK.value(), null, bookingDetailService.updateBookingDetail(bookingId, request));
     }
 
 }

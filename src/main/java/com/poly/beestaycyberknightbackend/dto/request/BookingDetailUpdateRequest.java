@@ -10,8 +10,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookingDetailUpdateRequest {
-    
-    Long bookingId;
+    Long id;
     
     Long roomTypeId;
 
