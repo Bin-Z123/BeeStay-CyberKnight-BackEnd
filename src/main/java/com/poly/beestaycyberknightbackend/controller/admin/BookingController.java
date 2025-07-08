@@ -76,4 +76,20 @@ public class BookingController {
     public ApiResponse<BookingDTO> updatePriceAfterUpdateBD(@PathVariable Long id) {        
         return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.updateTotalPriceBookingAfter(id));
     }
+
+    @PutMapping("/cancel/{id}")
+    public ApiResponse<BookingDTO> cancelBooking(@PathVariable Long id) {
+        return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.setStatusBookingCancel(id));
+    }
+
+    @PutMapping("/checkout/{id}")
+    public ApiResponse<?> checkoutBooking(@PathVariable Long id) {
+        try {
+            return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.checkoutBookingStatus(id));
+        } catch (Exception e) {
+            return new ApiResponse<>(HttpStatus.SC_BAD_REQUEST, "Insufficient payment, Please pay the full amount", null);
+        }
+        
+  
+    }
 }

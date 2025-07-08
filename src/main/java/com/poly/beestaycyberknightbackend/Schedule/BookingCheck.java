@@ -18,7 +18,7 @@ import lombok.experimental.FieldDefaults;
 public class BookingCheck {
     BookingService bookingService;
 
-    @Scheduled(cron = "*/30 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void checkBookingCheckinLate(){
         System.out.println("Scheduled is running: " + LocalDateTime.now());
         bookingService.setStatusBookingLate();

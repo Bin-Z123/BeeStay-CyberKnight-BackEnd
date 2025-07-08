@@ -2,12 +2,8 @@ package com.poly.beestaycyberknightbackend.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import com.poly.beestaycyberknightbackend.domain.Booking;
-import com.poly.beestaycyberknightbackend.domain.Stay;
-
 import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -209,7 +205,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             """, nativeQuery = true)
     List<Object[]> bookingCheckinLate(LocalDate date);
 
-    @Query("SELECT s FROM Stay s JOIN s.booking b WHERE b.id = :bId")
-    List<Stay> listStayOfBooking(Long bId);
-
+    @Query(value = """
+            SELECT SUM(p.amount) FROM Payment p JOIN Bookings b ON p.booking_id = b.id
+					  WHERE b.id = :bookingId
+            """, nativeQuery = true)
+    Integer totalPaymentofBooking(Long bookingId);
 }
