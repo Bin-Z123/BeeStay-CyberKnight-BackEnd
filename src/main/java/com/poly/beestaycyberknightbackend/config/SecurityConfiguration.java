@@ -55,7 +55,7 @@ public class SecurityConfiguration {
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/login", "/register", "/change_password", "/logout", "/api/forgot-password/**").permitAll()
+                .requestMatchers("/login", "/register/send-otp","/register/verify-otp", "/change_password", "/logout", "/api/forgot-password/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/").hasRole("USER")
                 .anyRequest().authenticated()

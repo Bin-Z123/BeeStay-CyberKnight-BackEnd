@@ -69,87 +69,89 @@ public class AuthController {
     //     this.rankRepository = rankRepository;
     // }
     @PostMapping("/login")
-public ApiResponse<RestLoginDTO> login(@Valid @RequestBody LoginDTO loginDTO,
-                                       HttpServletRequest httpRequest,
-                                       HttpServletResponse response) {
+    public ApiResponse<RestLoginDTO> login(@Valid @RequestBody LoginDTO loginDTO,
+                                        HttpServletRequest httpRequest,
+                                        HttpServletResponse response) {
 
-    UsernamePasswordAuthenticationToken authenticationToken =
-        new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken =
+            new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
 
-    Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-    String access_token = this.securityUtil.createToken(authentication);
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        String access_token = this.securityUtil.createToken(authentication);
 
-    SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    // ✅ Thêm cookie chứa token
-    Cookie cookie = new Cookie("jwt", access_token);
-    cookie.setHttpOnly(true);
-    cookie.setSecure(false); // nên là true nếu dùng HTTPS thực tế
-    cookie.setPath("/");
-    cookie.setMaxAge(30 * 60); // 30 phút
+        // ✅ Thêm cookie chứa token
+        Cookie cookie = new Cookie("jwt", access_token);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false); // nên là true nếu dùng HTTPS thực tế
+        cookie.setPath("/");
+        cookie.setMaxAge(30 * 60); // 30 phút
 
-    response.addCookie(cookie);
+        response.addCookie(cookie);
 
-    // ✅ Để frontend dùng nếu cần
-    RestLoginDTO restLoginDTO = new RestLoginDTO();
-    restLoginDTO.setAccessToken(access_token);
+        // ✅ Để frontend dùng nếu cần
+        RestLoginDTO restLoginDTO = new RestLoginDTO();
+        restLoginDTO.setAccessToken(access_token);
 
-    // ✅ Ghi log đăng nhập
-    User user = userRepository.findByEmail(loginDTO.getUsername());
-    TransactionLog log = new TransactionLog();
-    log.setActionType("LOGIN");
-    log.setLogAt(LocalDateTime.now());
-    log.setIp(httpRequest.getRemoteAddr());
-    log.setAmount(0);
-    log.setUser(user);
-    logRepository.save(log);
+        // ✅ Ghi log đăng nhập
+        User user = userRepository.findByEmail(loginDTO.getUsername());
+        TransactionLog log = new TransactionLog();
+        log.setActionType("LOGIN");
+        log.setLogAt(LocalDateTime.now());
+        log.setIp(httpRequest.getRemoteAddr());
+        log.setAmount(0);
+        log.setUser(user);
+        logRepository.save(log);
 
-    return ApiResponse.<RestLoginDTO>builder()
-            .code(HttpStatus.OK.value())
-            .message("Đăng nhập thành công")
-            .data(restLoginDTO)
-            .build();
-}
-
-
-
-    @PostMapping("/register")
-    public ApiResponse<Void> handleRegister(@RequestBody @Valid RegisterRequest registerRequest) {
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            return ApiResponse.<Void>builder()
-                    .message("Email đã được sử dụng")
-                    .code(HttpStatus.BAD_REQUEST.value())
-                    .build();
-        }
-
-        User user = new User();
-        user.setFullname(registerRequest.getFirstName() + " " + registerRequest.getLastName());
-        user.setEmail(registerRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-
-        // ✅ Bạn có thể bật lại các giá trị mặc định khi cần
-        // user.setPhone("0000000000");
-        // user.setGender(true);
-        // user.setBirthday(LocalDate.now().minusYears(18));
-        // user.setJoinDate(LocalDateTime.now());
-        // user.setUpdateDate(LocalDateTime.now());
-        // user.setEBlacklist(User.EBlacklist.NORM);
-        // user.setCccd("000000000000");
-        // user.setPoint(0);
-
-        Role role = userService.getRoleByName("USER");
-        user.setRole(role);
-
-        user.setRank(rankRepository.findById(1)
-                .orElseThrow(() -> new RuntimeException("Rank mặc định không tồn tại")));
-
-        userRepository.save(user);
-
-        return ApiResponse.<Void>builder()
-                .message("Đăng ký thành công")
+        return ApiResponse.<RestLoginDTO>builder()
                 .code(HttpStatus.OK.value())
+                .message("Đăng nhập thành công")
+                .data(restLoginDTO)
                 .build();
     }
+
+
+
+    // @PostMapping("/register")
+    // public ApiResponse<Void> handleRegister(@RequestBody @Valid RegisterRequest registerRequest) {
+    //     if (userRepository.existsByEmail(registerRequest.getEmail())) {
+    //         return ApiResponse.<Void>builder()
+    //                 .message("Email đã được sử dụng")
+    //                 .code(HttpStatus.BAD_REQUEST.value())
+    //                 .build();
+    //     }
+
+    //     User user = new User();
+    //     user.setFullname(registerRequest.getFirstName() + " " + registerRequest.getLastName());
+    //     user.setEmail(registerRequest.getEmail());
+    //     user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+
+    //     // ✅ Bạn có thể bật lại các giá trị mặc định khi cần
+    //     // user.setPhone("0000000000");
+    //     // user.setGender(true);
+    //     // user.setBirthday(LocalDate.now().minusYears(18));
+    //     // user.setJoinDate(LocalDateTime.now());
+    //     // user.setUpdateDate(LocalDateTime.now());
+    //     // user.setEBlacklist(User.EBlacklist.NORM);
+    //     // user.setCccd("000000000000");
+    //     // user.setPoint(0);
+
+    //     Role role = userService.getRoleByName("USER");
+    //     user.setRole(role);
+
+    //     user.setRank(rankRepository.findById(1)
+    //             .orElseThrow(() -> new RuntimeException("Rank mặc định không tồn tại")));
+
+    //     userRepository.save(user);
+
+    //     return ApiResponse.<Void>builder()
+    //             .message("Đăng ký thành công")
+    //             .code(HttpStatus.OK.value())
+    //             .build();
+    // }
+
+    
 
 
     @PostMapping("/change_password")
