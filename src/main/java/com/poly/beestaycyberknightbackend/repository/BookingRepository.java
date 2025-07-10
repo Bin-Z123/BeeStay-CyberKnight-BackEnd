@@ -210,4 +210,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 					  WHERE b.id = :bookingId
             """, nativeQuery = true)
     Integer totalPaymentofBooking(Long bookingId);
+
+    @Query(value = """
+            DECLARE @today1 DATETIME = :today
+            SELECT b.* FROM Rooms r JOIN Stays s on r.id = s.room_id
+					    JOIN Bookings b on s.booking_id = b.id
+		   WHERE b.check_in_date <= @today1 AND @today1 <= b.check_out_date
+				 AND r.id = :roomId
+            """, nativeQuery = true)
+    List<Booking> findBookingByRoomId(Long roomId, LocalDateTime today);
 }
