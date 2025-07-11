@@ -55,21 +55,21 @@ public class SecurityConfiguration {
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/login", "/api/register", "/api/change_password", "/api/forgot-password/**").permitAll()
+                .requestMatchers("/api/login", "/api/register", "/api/change_password", "/api/logout", "/api/forgot-password/**", "api/admin/booking/availableRoomsTypeAndDateV2").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/").hasRole("USER")
                 .anyRequest().authenticated()
             )
-            .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                .authenticationEntryPoint(customAuthenticationEntryPoint)
-            )
+            // .oauth2ResourceServer(oauth2 -> oauth2
+            //     .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+            //     .authenticationEntryPoint(customAuthenticationEntryPoint)
+            // )
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                 .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
             )
-            .formLogin(form -> form.disable());
-
+            .formLogin(form -> form.disable())
+            .logout(logout -> logout.disable());
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

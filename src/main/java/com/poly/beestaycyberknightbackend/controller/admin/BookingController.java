@@ -24,16 +24,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/booking")
+@RequestMapping("/api")
 public class BookingController {
     BookingService bookingService;
 
-    @GetMapping("/list")
+    @GetMapping("/admin/booking/list")
     public ApiResponse<List<BookingDTO>> getBookings() {
         return new ApiResponse<>(200, null, bookingService.getAllBookings());
     }
 
-    @PostMapping("/order")
+    @PostMapping("/admin/booking/order")
     public ApiResponse<Booking> orderBooking(@RequestBody OrderBookingWrapper request) {
         return new ApiResponse<>(200, null, bookingService.orderBooking(
                 request.getGuestBookingRequest(),
@@ -43,17 +43,17 @@ public class BookingController {
                 request.getStayRequest()));
     }
 
-    @GetMapping("/bookingbycheckin")
+    @GetMapping("/admin/booking/bookingbycheckin")
     public ApiResponse<List<Booking>> getBookingsByGuest(@RequestParam LocalDate checkInDate) {
         return new ApiResponse<>(200, null, bookingService.getBookingByCheckInDate(checkInDate));
     }
 
-    @GetMapping("/availableRoomsTypeAndDate")
+    @GetMapping("/admin/booking/availableRoomsTypeAndDate")
     public ApiResponse<Long> countAvailableRooms(@RequestParam String nameRoomType, @RequestParam LocalDateTime date) {
         return new ApiResponse<>(200, null, bookingService.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date));
     }
 
-    @GetMapping("/availableRoomsTypeAndDateV2")
+    @GetMapping("/admin/booking/availableRoomsTypeAndDateV2")
     public ApiResponse<List<AvailableTypeRoomDTO>> countAvailableRoomsV2(@RequestParam LocalDateTime fromDate, @RequestParam LocalDateTime toDate) {
         return new ApiResponse<>(200, null, bookingService.getAvailableRooms(fromDate, toDate));
     }

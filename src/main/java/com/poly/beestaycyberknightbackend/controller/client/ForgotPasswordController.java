@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.poly.beestaycyberknightbackend.domain.User;
+import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.repository.UserRepository;
 import com.poly.beestaycyberknightbackend.service.EmailService;
 import com.poly.beestaycyberknightbackend.service.RedisService;
@@ -25,52 +26,79 @@ public class ForgotPasswordController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/send-otp")
-    public ResponseEntity<?> sendOtp(@RequestBody Map<String, String> body) {
+    public ApiResponse<Void> sendOtp(@RequestBody Map<String, String> body) {
         String email = body.get("email");
         if (email == null || !userRepository.existsByEmail(email)) {
-            return ResponseEntity.badRequest().body("❌ Email không tồn tại!");
+            return ApiResponse.<Void>builder()
+                    .code(400)
+                    .message("Email không tồn tại!")
+                    .build();
         }
 
         String otp = String.valueOf(100000 + new Random().nextInt(900000));
-        redisService.saveOtp(email, otp, 5);
+        redisService.saveOtp(email, otp, 5); 
         emailService.sendOtp(email, otp);
-        return ResponseEntity.ok("✅ OTP đã gửi về email");
+
+        return ApiResponse.<Void>builder()
+                .code(200)
+                .message("OTP đã gửi về email")
+                .build();
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtp(@RequestBody Map<String, String> body) {
+    public ApiResponse<Void> verifyOtp(@RequestBody Map<String, String> body) {
         String email = body.get("email");
         String otp = body.get("otp");
         if (email == null || otp == null) {
-            return ResponseEntity.badRequest().body("❌ Thiếu thông tin email hoặc OTP");
+            return ApiResponse.<Void>builder()
+                    .code(400)
+                    .message("Thiếu thông tin email hoặc OTP")
+                    .build();
         }
 
         String saved = redisService.getOtp(email);
         if (saved != null && saved.equals(otp)) {
-            return ResponseEntity.ok("✅ OTP chính xác");
+            return ApiResponse.<Void>builder()
+                    .code(200)
+                    .message("OTP chính xác")
+                    .build();
         }
-        return ResponseEntity.badRequest().body("❌ OTP sai hoặc hết hạn");
+
+        return ApiResponse.<Void>builder()
+                .code(400)
+                .message("OTP sai hoặc đã hết hạn")
+                .build();
     }
 
-    @PostMapping("/reset")
-    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
+    @PostMapping("/reset-password")
+    public ApiResponse<Void> resetPassword(@RequestBody Map<String, String> body) {
         String email = body.get("email");
         String otp = body.get("otp");
         String newPassword = body.get("newPassword");
 
         if (email == null || otp == null || newPassword == null) {
-            return ResponseEntity.badRequest().body("❌ Thiếu thông tin");
+            return ApiResponse.<Void>builder()
+                    .code(400)
+                    .message("Thiếu thông tin")
+                    .build();
         }
 
         String saved = redisService.getOtp(email);
         if (saved == null || !saved.equals(otp)) {
-            return ResponseEntity.badRequest().body("❌ OTP sai hoặc hết hạn");
+            return ApiResponse.<Void>builder()
+                    .code(400)
+                    .message("OTP sai hoặc đã hết hạn")
+                    .build();
         }
 
         User user = userRepository.findByEmail(email);
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         redisService.deleteOtp(email);
-        return ResponseEntity.ok("✅ Đổi mật khẩu thành công");
+
+        return ApiResponse.<Void>builder()
+                .code(200)
+                .message("Đổi mật khẩu thành công")
+                .build();
     }
 }

@@ -55,6 +55,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                     var auth = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(auth);
+                    System.out.println(">>> JwtAuthFilter chạy rồi");
                 } catch (Exception e) {
                     System.out.println("JWT không hợp lệ: " + e.getMessage());
                 }
