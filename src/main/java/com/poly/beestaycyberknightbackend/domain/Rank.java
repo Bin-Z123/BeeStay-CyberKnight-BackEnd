@@ -2,6 +2,7 @@ package com.poly.beestaycyberknightbackend.domain;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
@@ -39,7 +40,7 @@ public class Rank {
     int discount_percent;
 
     @OneToMany(mappedBy = "rank", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnore
     List<User> User;
 
     

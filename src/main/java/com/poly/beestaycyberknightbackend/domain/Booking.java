@@ -66,6 +66,10 @@ public class Booking {
     @Column(name = "numberofnights")
     Integer numberOfNights;
 
+    @OneToMany(mappedBy = "booking")
+    @JsonManagedReference
+    List<Payment> payments;
+
     // @ManyToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "review_id")
     // Review review;

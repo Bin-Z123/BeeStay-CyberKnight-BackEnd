@@ -1,25 +1,34 @@
 package com.poly.beestaycyberknightbackend.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.poly.beestaycyberknightbackend.dto.request.RoomUpdateRequest;
+import com.poly.beestaycyberknightbackend.repository.BookingRepository;
 import com.poly.beestaycyberknightbackend.repository.RoomImageRepository;
 import com.poly.beestaycyberknightbackend.util.CloudinaryUtil;
 import org.springframework.stereotype.Service;
 
+import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.Room;
 import com.poly.beestaycyberknightbackend.domain.RoomImage;
 import com.poly.beestaycyberknightbackend.domain.RoomType;
+import com.poly.beestaycyberknightbackend.domain.Stay;
 import com.poly.beestaycyberknightbackend.dto.request.RoomImageRequest;
 import com.poly.beestaycyberknightbackend.dto.request.RoomRequest;
 import com.poly.beestaycyberknightbackend.dto.request.RoomTypeRequest;
+import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
 import com.poly.beestaycyberknightbackend.dto.response.RoomResponse;
+import com.poly.beestaycyberknightbackend.dto.response.StayDTO;
+import com.poly.beestaycyberknightbackend.mapper.BookingMapper;
 import com.poly.beestaycyberknightbackend.mapper.RoomMapper;
+import com.poly.beestaycyberknightbackend.mapper.StayMapper;
 import com.poly.beestaycyberknightbackend.repository.RoomRepository;
 import com.poly.beestaycyberknightbackend.repository.RoomTypeRepository;
+import com.poly.beestaycyberknightbackend.repository.StayRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +43,10 @@ public class RoomService {
     private final RoomTypeRepository roomTypeRepository;
     private final CloudinaryUtil cloudinaryUtil;
     private final RoomImageRepository roomImageRepository;
+    private final StayRepository stayRepository;
+    private final BookingRepository bookingRepository;
+    private final StayMapper stayMapper;
+    private final BookingMapper bookingMapper;
 
     @Transactional
     public RoomResponse handleCreateRoom(RoomRequest roomRequest, List<MultipartFile> multipartFiles) {
@@ -94,10 +107,30 @@ public class RoomService {
     }
 
     public List<RoomResponse> fetchAllRooms() {
-        return roomRepository.findAll()
-                .stream()
-                .map(roomMapper::toRoomResponse)
-                .toList();
+        List<Room> listRoom = roomRepository.findAll();
+        List<RoomResponse> listResp = listRoom.stream().map(list -> {
+            RoomResponse roomResponse = roomMapper.toRoomResponse(list);
+
+            List<Stay> listStay = stayRepository.findStayByRoomId(list.getId(), LocalDateTime.now());
+            List<StayDTO> listStaydto = listStay.stream().map(listS -> {
+                StayDTO staydto = stayMapper.toDto(listS);
+                staydto.setRoomId(listS.getRoom().getId());
+                return staydto;
+            }).collect(Collectors.toList());
+
+            List<Booking> listBooking = bookingRepository.findBookingByRoomId(list.getId(), LocalDateTime.now());
+            List<BookingDTO> listBookingdto = listBooking.stream().map(listB -> {
+                BookingDTO bookingdto = bookingMapper.toResponse(listB);
+                return bookingdto;
+            }).collect(Collectors.toList());
+
+            roomResponse.setStay(listStaydto);
+            roomResponse.setBooking(listBookingdto);
+
+            return roomResponse;
+        }).collect(Collectors.toList());
+
+        return listResp;
     }
 
     @Transactional

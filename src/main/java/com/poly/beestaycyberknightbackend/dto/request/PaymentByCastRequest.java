@@ -1,4 +1,5 @@
 package com.poly.beestaycyberknightbackend.dto.request;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,10 +10,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookingDetailUpdateRequest {
-    Long id;
-    
-    Long roomTypeId;
-
-    Integer quantity;
+public class PaymentByCastRequest {
+    Integer amount;
+    String rawResponse;
+    Long bookingId;
 }

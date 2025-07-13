@@ -65,6 +65,7 @@ public class BookingService {
     RoomImageRepository roomImageRepository;
     RoomImageMapper roomImageMapper;
 
+
     public List<BookingDTO> getAllBookings() {
         List<Booking> listEntity = bookingRepository.findAll();
         List<BookingDTO> listResponse = listEntity.stream().map(
@@ -298,4 +299,51 @@ public class BookingService {
     }
 
 
+    public BookingDTO setStatusBookingCancel(Long bookingId){
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(()-> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+        booking.setBookingStatus("CANCEL");
+        BookingDTO bookingDTO = bookingMapper.toResponse(booking);
+        return bookingDTO;
+    }
+
+    public void checkTotalPaymentofBooking(Long bookingId){
+        Integer total = bookingRepository.totalPaymentofBooking(bookingId);
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(()-> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+        Integer totalAmountBooking = booking.getTotalAmount();
+
+        Integer result = totalAmountBooking - total;
+
+        if(result == 0){
+            booking.setBookingStatus("PAIED");
+            bookingRepository.save(booking);
+        }
+        
+    }
+
+    public BookingDTO checkoutBookingStatus(Long bookingId){
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(()-> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+        Integer totalPayment = bookingRepository.totalPaymentofBooking(bookingId);
+        Integer totalAmountBooking = booking.getTotalAmount();
+
+        Integer result = totalPayment - totalAmountBooking;
+
+        if(result == 0){
+            booking.setBookingStatus("CHECKOUT");
+
+            //Đồng thời nếu booking checkout thì sẽ set tất cả Stay của booking đó thành Stay.setStatus("CHECKOUT")
+            List<Stay> listStay = stayRepository.listStayOfBooking(bookingId);
+            listStay.forEach(stay -> {
+                stay.setStayStatus("CHECKOUT");
+                stay.setActualCheckOut(LocalDateTime.now());
+                stayRepository.save(stay);
+            });
+
+            
+
+            bookingRepository.save(booking);
+        } 
+        
+        BookingDTO bookingDTO = bookingMapper.toResponse(booking);
+        return bookingDTO;
+    }
 }
