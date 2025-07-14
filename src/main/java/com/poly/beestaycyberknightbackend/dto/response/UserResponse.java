@@ -19,6 +19,7 @@ public class UserResponse {
     String email;
     Boolean gender;
     LocalDate birthday;
+    String password;
     LocalDateTime joinDate;
     String fullname;
     String cccd;
