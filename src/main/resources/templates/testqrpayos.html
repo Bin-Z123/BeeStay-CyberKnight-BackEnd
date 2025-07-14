@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thanh toán PayOS Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+    table { border-collapse: collapse; width: 100%; max-width: 500px; margin-bottom: 20px; }
+    td { padding: 8px; border-bottom: 1px solid #ddd; }
+    th { text-align: left; padding: 8px; background-color: #eee; }
+    #qrcode { margin-top: 20px; }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Thông tin chuyển khoản</h2>
+  <table>
+    <tr><td><strong>Ngân hàng (BIN):</strong></td><td>970416</td></tr>
+    <tr><td><strong>Số tài khoản:</strong></td><td>LOCCASS000331833</td></tr>
+    <tr><td><strong>Chủ tài khoản:</strong></td><td>PHAM QUANG THINH</td></tr>
+    <tr><td><strong>Số tiền:</strong></td><td>3000 VND</td></tr>
+    <tr><td><strong>Nội dung chuyển khoản:</strong></td><td>CSJTOSZT9W1 Full payment of bill 2</td></tr>
+  </table>
+
+  <h3>🔄 Quét mã QR để thanh toán:</h3>
+  <canvas id="qrcode"></canvas>
+
+  <br><br>
+  <a href="https://pay.payos.vn/web/c25e7ea40b004635ba84bc0ef243abdf" target="_blank">
+    <button>Hoặc nhấn vào đây để thanh toán trực tiếp</button>
+  </a>
+
+  <script>
+    const qrCodeData = "00020101021238600010A000000727013000069704160116LOCCASS0003318330208QRIBFTTA5303704540430005802VN62380834CS72CNXZH21 Full payment of bill 1630428AB";
+    QRCode.toCanvas(document.getElementById("qrcode"), qrCodeData, { width: 300 }, function (error) {
+      if (error) console.error(error);
+      console.log("QR Code generated");
+    });
+  </script>
+
+</body>
+</html>

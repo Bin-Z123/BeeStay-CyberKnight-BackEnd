@@ -1,25 +1,13 @@
 package com.poly.beestaycyberknightbackend.service;
 
-import java.sql.Date;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.dto.request.CreatePaymentLinkRequestBody;
 import com.poly.beestaycyberknightbackend.dto.response.PaymentPayOSResponse;
 import com.poly.beestaycyberknightbackend.exception.AppException;
 import com.poly.beestaycyberknightbackend.exception.ErrorCode;
 import com.poly.beestaycyberknightbackend.repository.BookingRepository;
-
-import jakarta.mail.FetchProfile.Item;
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -67,21 +55,10 @@ public class PayOSService {
 
             String billNamelast = String.valueOf(billName);
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDateTime fromDate = booking.getCheckInDate();
-            LocalDateTime toDate = booking.getCheckOutDate();
-            String formattedFromDate = fromDate.format(formatter);
-            String formattedToDate = toDate.format(formatter);
-
             description.append("Full payment of bill ")
-                    .append(booking.getId())
-                    .append(", Customer ")
-                    .append(booking.getUser()
-                            .getFullname())
-                    .append(", form ")
-                    .append(formattedFromDate)
-                    .append(" to ").append(formattedToDate);
-
+                       .append(booking.getId());
+                    
+                    
             String descripstionlast = String.valueOf(description);
 
             ItemData itemData = ItemData.builder().name(billNamelast).price(totalAmount).quantity(1).build();
@@ -95,7 +72,7 @@ public class PayOSService {
             return new PaymentPayOSResponse<>(0, "success", data);
         } catch (Exception e) {
             e.printStackTrace();
-            return new PaymentPayOSResponse(-1, "fail", null);
+            return new PaymentPayOSResponse<>(-1, "fail", e);
         }
     }
 
