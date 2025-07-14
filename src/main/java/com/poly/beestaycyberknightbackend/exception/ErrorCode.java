@@ -17,8 +17,8 @@ public enum ErrorCode {
     BOOKING_NOT_EXISTED(404, "Booking not found"),
 
     BOOKINGDETAIL_NOT_EXISTED(404, "BookingDetail not found"),
-    ROOM_NOT_EXISTED(404, "Room not found");
-
+    ROOM_NOT_EXISTED(404, "Room not found"),
+    INVALID_REQUEST(400, "Invalid request");
 
     private final int code;
     private final String message;

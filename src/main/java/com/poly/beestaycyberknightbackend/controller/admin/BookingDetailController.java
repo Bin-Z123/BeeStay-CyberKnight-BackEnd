@@ -18,7 +18,6 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 
-
 @RestController
 @RequestMapping("/api/admin/bookingDetail")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -27,9 +26,11 @@ public class BookingDetailController {
     BookingDetailService bookingDetailService;
 
     @PutMapping("/{bookingId}")
-    public ApiResponse<?> updateBookingDetail(@PathVariable Long bookingId, @RequestBody List<BookingDetailUpdateRequest> request) {
-        
-        return new ApiResponse<>(HttpStatus.OK.value(), null, bookingDetailService.updateBookingDetail(bookingId, request));
+    public ApiResponse<?> updateBookingDetail(@PathVariable Long bookingId,
+            @RequestBody List<BookingDetailUpdateRequest> request) {
+
+        return new ApiResponse<>(HttpStatus.OK.value(), null,
+                bookingDetailService.updateBookingDetails(bookingId, request));
     }
 
 }

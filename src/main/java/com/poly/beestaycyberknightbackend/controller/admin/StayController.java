@@ -13,10 +13,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 
 @RestController
 @RequestMapping("/api/admin/stay")
@@ -26,8 +27,8 @@ public class StayController {
     StayService service;
 
     @PostMapping("/create")
-    public ApiResponse<Stay> createStay(@RequestBody StayCreationRequest request) {        
-        return new ApiResponse<>(HttpStatus.SC_OK, null, service.createStay(request));
+    public ApiResponse<List<Stay>> createStay(@RequestBody List<StayCreationRequest> request) {
+        return new ApiResponse<>(HttpStatus.SC_OK, null, service.createMultipleStays(request));
     }
-       
+
 }

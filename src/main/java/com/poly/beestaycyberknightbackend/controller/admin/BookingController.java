@@ -58,22 +58,23 @@ public class BookingController {
     }
 
     @GetMapping("/availableRoomsTypeAndDateV2")
-    public ApiResponse<List<AvailableTypeRoomDTO>> countAvailableRoomsV2(@RequestParam LocalDateTime fromDate, @RequestParam LocalDateTime toDate) {
+    public ApiResponse<List<AvailableTypeRoomDTO>> countAvailableRoomsV2(@RequestParam LocalDateTime fromDate,
+            @RequestParam LocalDateTime toDate) {
         return new ApiResponse<>(200, null, bookingService.getAvailableRooms(fromDate, toDate));
     }
-    
+
     @GetMapping("/{id}")
-    public ApiResponse<BookingDTO>  getBooking(@PathVariable Long id) {
+    public ApiResponse<BookingDTO> getBooking(@PathVariable Long id) {
         return new ApiResponse<>(200, null, bookingService.getBooking(id));
     }
-    
+
     @PutMapping("/{id}")
-    public ApiResponse<BookingDTO>  updatePriceActual(@PathVariable Long id) {
+    public ApiResponse<BookingDTO> updatePriceActual(@PathVariable Long id) {
         return new ApiResponse<>(200, null, bookingService.updateTotalPriceBooking(id));
     }
 
     @PutMapping("/afterUBD/{id}")
-    public ApiResponse<BookingDTO> updatePriceAfterUpdateBD(@PathVariable Long id) {        
+    public ApiResponse<BookingDTO> updatePriceAfterUpdateBD(@PathVariable Long id) {
         return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.updateTotalPriceBookingAfter(id));
     }
 
