@@ -17,5 +17,6 @@ public class RoomTypeResponse {
     private int size;
     private int price;
     private int peopleAbout;
+    private String description;
     private List<RoomResponse> rooms;
 }
