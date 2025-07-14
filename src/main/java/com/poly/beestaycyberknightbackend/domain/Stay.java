@@ -32,7 +32,7 @@ public class Stay {
     @Column(name = "actualcheckin", nullable = false)
     LocalDateTime actualCheckIn;
 
-    @Column(name = "actualcheckout", nullable = false)
+    @Column(name = "actualcheckout")
     LocalDateTime actualCheckOut;
 
     @Column(name = "staystatus", length = 30, nullable = false)
