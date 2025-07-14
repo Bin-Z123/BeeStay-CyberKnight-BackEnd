@@ -2,11 +2,13 @@ package com.poly.beestaycyberknightbackend.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.BookingDetail;
@@ -36,68 +38,69 @@ public class BookingDetailService {
     RoomTypeRepository roomTypeRepository;
     BookingDetailMapper bookingDetailMapper;
 
-
-    public List<BookingDetailDTO> updateBookingDetail(Long bookingId,
-            List<BookingDetailUpdateRequest> bookingDetailUpdateRequest) {
-        List<BookingDetailUpdateRequest> listUpdate = new ArrayList<>();
-        List<BookingDetailUpdateRequest> listCreate = new ArrayList<>();
-        List<BookingDetail> listResult = new ArrayList<>();
-
-        bookingDetailUpdateRequest.forEach(list -> {
-            if (list.getId() != null) {
-                listUpdate.add(list);
-            } else if (list.getId() == null) {
-                listCreate.add(list);
-            }
-        });
-
+    @Transactional
+    public List<BookingDetailDTO> updateBookingDetails(Long bookingId, List<BookingDetailUpdateRequest> requestItems) {
+        // 1. Kiểm tra xem Booking cha có tồn tại không.
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
 
-        if (!listUpdate.isEmpty()) {
-            listUpdate.forEach(list -> {
+        // --- TỐI ƯU HÓA TRUY VẤN ---
 
-                RoomType roomType = roomTypeRepository.findById(list.getRoomTypeId())
-                        .orElseThrow(() -> new AppException(ErrorCode.ROOMTYPE_NOT_EXISTED));
-                BookingDetail bookingDetail = bookingDetailRepository.findById(list.getId())
-                        .orElseThrow(() -> new AppException(ErrorCode.BOOKINGDETAIL_NOT_EXISTED));
-                bookingDetail.setBooking(booking);
-                bookingDetail.setRoomType(roomType);
-                bookingDetail.setQuantity(list.getQuantity());
+        // 2. Lấy tất cả ID cần thiết từ danh sách request để truy vấn một lần
+        List<Long> roomTypeIds = requestItems.stream()
+                .map(BookingDetailUpdateRequest::getRoomTypeId)
+                .distinct()
+                .collect(Collectors.toList());
 
-                bookingDetailRepository.save(bookingDetail);
-                bookingDetailRepository.flush();
+        List<Long> existingDetailIds = requestItems.stream()
+                .filter(req -> req.getId() != null)
+                .map(BookingDetailUpdateRequest::getId)
+                .collect(Collectors.toList());
 
-                listResult.add(bookingDetail);
-            });
+        // 3. Truy vấn DB MỘT LẦN DUY NHẤT cho mỗi loại đối tượng và đưa vào Map để tra
+        // cứu nhanh
+        Map<Long, RoomType> roomTypeMap = roomTypeRepository.findAllById(roomTypeIds).stream()
+                .collect(Collectors.toMap(RoomType::getId, rt -> rt));
 
-        }
+        Map<Long, BookingDetail> existingDetailsMap = bookingDetailRepository.findAllById(existingDetailIds).stream()
+                .collect(Collectors.toMap(BookingDetail::getId, bd -> bd));
 
-        if (!listCreate.isEmpty()) {
-            listCreate.forEach(list -> {
+        // --- KẾT THÚC TỐI ƯU HÓA ---
 
-                RoomType roomType = roomTypeRepository.findById(list.getRoomTypeId())
-                        .orElseThrow(() -> new AppException(ErrorCode.ROOMTYPE_NOT_EXISTED));
-                BookingDetail bookingDetail = new BookingDetail();
-                bookingDetail.setBooking(booking);
-                bookingDetail.setRoomType(roomType);
-                bookingDetail.setQuantity(list.getQuantity());
+        List<BookingDetail> bookingDetailsToSave = new ArrayList<>();
 
-                bookingDetailRepository.save(bookingDetail);
-                bookingDetailRepository.flush();
-
-                listResult.add(bookingDetail);
-            });
-
-        }
-
-        List<BookingDetailDTO> lisDtos = listResult.stream().map(
-            list -> {
-                BookingDetailDTO bDto = bookingDetailMapper.toResponse(list);
-                return bDto;
+        // 4. Lặp qua danh sách request để xử lý logic
+        for (BookingDetailUpdateRequest req : requestItems) {
+            RoomType roomType = roomTypeMap.get(req.getRoomTypeId());
+            if (roomType == null) {
+                throw new AppException(ErrorCode.ROOMTYPE_NOT_EXISTED);
             }
-        ).collect(Collectors.toList());
 
-        return lisDtos;
+            BookingDetail bookingDetail;
+
+            if (req.getId() != null) { // --- Xử lý UPDATE ---
+                bookingDetail = existingDetailsMap.get(req.getId());
+                if (bookingDetail == null) {
+                    throw new AppException(ErrorCode.BOOKINGDETAIL_NOT_EXISTED);
+                }
+            } else { // --- Xử lý CREATE ---
+                bookingDetail = new BookingDetail();
+                bookingDetail.setBooking(booking);
+            }
+
+            // Cập nhật các trường chung
+            bookingDetail.setRoomType(roomType);
+            bookingDetail.setQuantity(req.getQuantity());
+
+            bookingDetailsToSave.add(bookingDetail);
+        }
+
+        // 5. Gọi saveAll MỘT LẦN DUY NHẤT để lưu tất cả thay đổi
+        List<BookingDetail> savedEntities = bookingDetailRepository.saveAll(bookingDetailsToSave);
+
+        // 6. Chuyển đổi kết quả sang DTO để trả về
+        return savedEntities.stream()
+                .map(bookingDetailMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }

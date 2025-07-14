@@ -1,9 +1,11 @@
 package com.poly.beestaycyberknightbackend.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.InfoGuest;
@@ -32,28 +34,51 @@ public class StayService {
     RoomRepository roomRepository;
     InfoGuestMapper guestMapper;
 
-    public Stay createStay(StayCreationRequest request){
-        Room room = roomRepository.findById(request.getRoomId()).orElseThrow(()-> new AppException(ErrorCode.ROOM_NOT_EXISTED));
-        Booking booking = bookingRepository.findById(request.getBookingId()).orElseThrow(()-> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+    @Transactional
+    public List<Stay> createMultipleStays(List<StayCreationRequest> requests) {
+        if (requests == null || requests.isEmpty()) {
+            throw new AppException(ErrorCode.INVALID_REQUEST);
+        }
 
-        Stay stay = mapper.toStay(request);
-        stay.setBooking(booking);
-        stay.setRoom(room);
-        
-        List<InfoGuest> listguest = request.getInfoGuests().stream().map(
-            guest -> {
-                InfoGuest infoGuest = guestMapper.toEntity(guest);
-                infoGuest.setStay(stay);
-                return infoGuest;
+        List<Stay> staysToSave = new ArrayList<>();
+
+        // Lặp qua từng yêu cầu tạo Stay
+        for (StayCreationRequest request : requests) {
+            Room room = roomRepository.findById(request.getRoomId())
+                    .orElseThrow(() -> new AppException(ErrorCode.ROOM_NOT_EXISTED));
+            Booking booking = bookingRepository.findById(request.getBookingId())
+                    .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+
+            // Tạo một đối tượng Stay mới cho mỗi request
+            Stay stay = mapper.toStay(request);
+            stay.setBooking(booking);
+            stay.setRoom(room);
+
+            // Xử lý danh sách khách cho từng Stay
+            if (request.getInfoGuests() != null && !request.getInfoGuests().isEmpty()) {
+                List<InfoGuest> listguest = request.getInfoGuests().stream().map(
+                        guestRequest -> {
+                            InfoGuest infoGuest = guestMapper.toEntity(guestRequest);
+                            infoGuest.setStay(stay); // Gán vào đối tượng stay hiện tại
+                            return infoGuest;
+                        }).collect(Collectors.toList());
+                stay.setInfoGuests(listguest);
             }
-        ).collect(Collectors.toList());
-        stay.setInfoGuests(listguest);
 
-        
+            // Cập nhật trạng thái của booking (chỉ cần làm một lần nếu tất cả stay thuộc
+            // cùng booking)
+            // Nếu các stay có thể thuộc các booking khác nhau, logic này cần được xem xét
+            // lại.
+            if (!booking.getBookingStatus().equals("STAY")) {
+                booking.setBookingStatus("STAY");
+                bookingRepository.save(booking);
+            }
 
-        booking.setBookingStatus("STAY");
-        bookingRepository.save(booking);
+            staysToSave.add(stay);
+        }
 
-        return stayRepository.save(stay);
+        // Lưu tất cả các Stay mới vào DB trong một lần duy nhất để tối ưu hiệu suất
+        return stayRepository.saveAll(staysToSave);
     }
+
 }
