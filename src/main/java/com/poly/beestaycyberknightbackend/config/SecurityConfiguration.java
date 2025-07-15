@@ -57,7 +57,7 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/login", "/register/send-otp","/register/verify-otp", "/change_password", "/logout", "/api/forgot-password/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/").hasRole("USER")
+                .requestMatchers("/", "/api/user/**").hasRole("USER")
                 .anyRequest().authenticated()
             )
             // .oauth2ResourceServer(oauth2 -> oauth2
