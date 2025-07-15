@@ -45,7 +45,7 @@ public class BookingDTO {
 
     // List<BookingFacility> bookingFacilities;
 
-    // List<Stay> stay;
+    List<StayDTO> stay;
 
 
 }

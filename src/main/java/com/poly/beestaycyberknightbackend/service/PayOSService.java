@@ -3,6 +3,7 @@ package com.poly.beestaycyberknightbackend.service;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.domain.Booking;
+import com.poly.beestaycyberknightbackend.domain.Payment;
 import com.poly.beestaycyberknightbackend.dto.request.CreatePaymentLinkRequestBody;
 import com.poly.beestaycyberknightbackend.dto.response.PaymentPayOSResponse;
 import com.poly.beestaycyberknightbackend.exception.AppException;
@@ -55,12 +56,16 @@ public class PayOSService {
 
             String billNamelast = String.valueOf(billName);
 
-            description.append("Full payment of bill ")
+            description.append("pay bill ")
                        .append(booking.getId());
                     
                     
             String descripstionlast = String.valueOf(description);
 
+            //Tạo payment và lấy id payment làm ordercode
+            Payment payment = new Payment();
+
+            //Tạo item cho thanh toán
             ItemData itemData = ItemData.builder().name(billNamelast).price(totalAmount).quantity(1).build();
 
             PaymentData paymentData = PaymentData.builder().orderCode(booking.getId()).description(descripstionlast)
