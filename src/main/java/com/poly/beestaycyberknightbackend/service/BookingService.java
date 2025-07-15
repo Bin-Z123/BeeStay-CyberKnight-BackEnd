@@ -26,6 +26,7 @@ import com.poly.beestaycyberknightbackend.dto.response.AvailableTypeRoomDTO;
 import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
 import com.poly.beestaycyberknightbackend.dto.response.BookingResponse;
 import com.poly.beestaycyberknightbackend.dto.response.RoomImageResponse;
+import com.poly.beestaycyberknightbackend.dto.response.StayDTO;
 import com.poly.beestaycyberknightbackend.exception.AppException;
 import com.poly.beestaycyberknightbackend.exception.ErrorCode;
 import com.poly.beestaycyberknightbackend.mapper.BookingDetailMapper;
@@ -235,7 +236,8 @@ public class BookingService {
         Booking entity = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
         BookingDTO resp = bookingMapper.toResponse(entity);
-
+        List<StayDTO> listStayDTOs = entity.getStay().stream().map(list -> stayMapper.toDto(list)).collect(Collectors.toList());
+        resp.setStay(listStayDTOs);
         return resp;
     }
 

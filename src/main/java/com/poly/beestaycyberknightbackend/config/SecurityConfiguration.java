@@ -55,7 +55,9 @@ public class SecurityConfiguration {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/login", "/api/register", "/api/change_password", "/api/logout",
-                                "/api/forgot-password/**", "/api/availableRoomsTypeAndDateV2")
+
+                                "/api/forgot-password/**", "/api/availableRoomsTypeAndDateV2","/orderPayOS/**","/api/booking/**")
+
                         .permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/").hasRole("USER")

@@ -14,5 +14,6 @@ public interface StayMapper {
 
     Stay toStay(StayCreationRequest request);
 
+    @Mapping(source = "room.id", target = "roomId")
     StayDTO toDto(Stay stay);
 }

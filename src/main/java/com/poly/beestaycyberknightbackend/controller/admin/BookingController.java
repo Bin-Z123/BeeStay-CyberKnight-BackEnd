@@ -63,12 +63,16 @@ public class BookingController {
         return new ApiResponse<>(200, null, bookingService.getAvailableRooms(fromDate, toDate));
     }
 
-    @GetMapping("/{id}")
+
+    @GetMapping("/booking/{id}")
+
     public ApiResponse<BookingDTO> getBooking(@PathVariable Long id) {
         return new ApiResponse<>(200, null, bookingService.getBooking(id));
     }
 
-    @PutMapping("/{id}")
+
+    @PutMapping("/update-booking/{id}")
+
     public ApiResponse<BookingDTO> updatePriceActual(@PathVariable Long id) {
         return new ApiResponse<>(200, null, bookingService.updateTotalPriceBooking(id));
     }
