@@ -264,7 +264,6 @@ public class BookingService {
     }
 
     @Transactional
-
     public BookingDTO updateTotalPriceBookingAfter(Long id) {
 
         Integer totalFacilites = bookingRepository.totalPriceFacilitiesByBookingId(id);
@@ -316,7 +315,7 @@ public class BookingService {
         Integer result = totalAmountBooking - total;
 
         if(result == 0){
-            booking.setBookingStatus("PAIED");
+            booking.setBookingStatus("PAID");
             bookingRepository.save(booking);
         }
         

@@ -57,7 +57,6 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/login", "/api/register", "/api/change_password", "/api/logout",
 
                                 "/api/forgot-password/**", "/api/availableRoomsTypeAndDateV2","/orderPayOS/**","/api/booking/**")
-
                         .permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/").hasRole("USER")

@@ -30,8 +30,8 @@ public class PaymentByCastService {
         Payment payment = paymentMapper.toPayment(request);
         payment.setBooking(booking);
         payment.setPaymentMethod("CAST");
-        payment.setPaymentStatus("PAIED");
-        payment.setPaymentType("FULL");
+        payment.setPaymentStatus("PAID");
+        payment.setPaymentType("BOOKING");
 
         paymentRepository.save(payment);
         paymentRepository.flush();
