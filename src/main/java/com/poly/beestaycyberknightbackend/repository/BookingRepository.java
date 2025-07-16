@@ -207,7 +207,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(value = """
             SELECT SUM(p.amount) FROM Payment p JOIN Bookings b ON p.booking_id = b.id
-					  WHERE b.id = :bookingId
+					  WHERE b.id = :bookingId AND p.payment_status LIKE 'PAID'
             """, nativeQuery = true)
     Integer totalPaymentofBooking(Long bookingId);
 

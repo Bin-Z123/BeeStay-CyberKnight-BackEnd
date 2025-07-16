@@ -15,7 +15,7 @@ public enum ErrorCode {
     FACILITIES_NOT_EXISTED(404, "Facility not found"),
     NO_USER_INFORMATION(400, "No user information found"),
     BOOKING_NOT_EXISTED(404, "Booking not found"),
-
+    PAYMENT_NOT_EXISTED(404,"Payment not found"),
     BOOKINGDETAIL_NOT_EXISTED(404, "BookingDetail not found"),
     ROOM_NOT_EXISTED(404, "Room not found"),
     INVALID_REQUEST(400, "Invalid request");
