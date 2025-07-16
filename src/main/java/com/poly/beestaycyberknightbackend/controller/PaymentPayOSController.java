@@ -8,6 +8,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.poly.beestaycyberknightbackend.dto.request.CreatePaymentLinkRequestBody;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.PaymentPayOSResponse;
+import com.poly.beestaycyberknightbackend.exception.AppException;
+import com.poly.beestaycyberknightbackend.exception.ErrorCode;
+import com.poly.beestaycyberknightbackend.repository.BookingRepository;
+import com.poly.beestaycyberknightbackend.repository.PaymentRepository;
+import com.poly.beestaycyberknightbackend.service.BookingService;
 import com.poly.beestaycyberknightbackend.service.PayOSService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +26,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/orderPayOS")
@@ -35,6 +42,7 @@ public class PaymentPayOSController {
         return new ApiResponse<>(200, null, osService.createPaymentLink(requestBody));
     }
 
+
     @GetMapping("/{orderCode}")
     public ApiResponse<PaymentPayOSResponse> getOrderBookingById(@PathVariable Long orderCode) {
         return new ApiResponse<>(200, null, osService.getOrderById(orderCode));
@@ -45,21 +53,13 @@ public class PaymentPayOSController {
         return new ApiResponse<>(200, null, osService.cancelPendingPaymentByBookingId(bookingId));
     }
 
-<<<<<<< Updated upstream
-    // @PostMapping("/confirm-webhook")
-    // public ApiResponse<PaymentPayOSResponse> confirmWebhook(@RequestBody
-    // Map<String, String> requestBody) {
-    // return new ApiResponse<>(200, null, osService.confirmWebhook(requestBody));
-    // }
-    
 
-=======
->>>>>>> Stashed changes
     @PostMapping("/payos_transfer_handler")
     public ObjectNode payosTransferHandler(@RequestBody ObjectNode body)
             throws JsonProcessingException, IllegalArgumentException {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
+
 
         try {
             Webhook webhookBody = objectMapper.treeToValue(body, Webhook.class);
@@ -70,6 +70,7 @@ public class PaymentPayOSController {
             response.put("error", 0);
             response.put("message", "Webhook delivered");
             response.set("data", null);
+
             return response;
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,7 +79,9 @@ public class PaymentPayOSController {
             response.set("data", null);
             return response;
         }
+
     }
+
 
     @PostMapping(path = "/confirm-webhook")
     public ObjectNode confirmWebhook(@RequestBody Map<String, String> requestBody) {
@@ -98,5 +101,6 @@ public class PaymentPayOSController {
             return response;
         }
     }
+
 
 }

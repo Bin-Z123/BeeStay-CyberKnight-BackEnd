@@ -1,9 +1,9 @@
 package com.poly.beestaycyberknightbackend.service;
 
+
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.Payment;
@@ -13,7 +13,6 @@ import com.poly.beestaycyberknightbackend.exception.AppException;
 import com.poly.beestaycyberknightbackend.exception.ErrorCode;
 import com.poly.beestaycyberknightbackend.repository.BookingRepository;
 import com.poly.beestaycyberknightbackend.repository.PaymentRepository;
-
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -75,8 +74,7 @@ public class PayOSService {
 
             String billNamelast = String.valueOf(billName);
 
-            description.append("pay bill ")
-                    .append(booking.getId());
+            description.append("pay bill ").append(booking.getId());
 
             String descripstionlast = String.valueOf(description);
 
