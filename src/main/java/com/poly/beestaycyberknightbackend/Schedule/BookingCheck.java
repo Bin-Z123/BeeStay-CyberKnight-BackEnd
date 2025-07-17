@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.Schedule;
+package com.poly.beestaycyberknightbackend.schedule;
 
 import java.time.LocalDateTime;
 
