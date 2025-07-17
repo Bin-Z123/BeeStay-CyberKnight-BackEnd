@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.schedule;
+package com.poly.beestaycyberknightbackend.Schedule;
 
 import java.time.LocalDateTime;
 
@@ -19,7 +19,7 @@ public class BookingCheck {
     BookingService bookingService;
 
     @Scheduled(cron = "0 0 0 * * *")
-    public void checkBookingCheckinLate(){
+    public void checkBookingCheckinLate() {
         System.out.println("Scheduled is running: " + LocalDateTime.now());
         bookingService.setStatusBookingLate();
     }

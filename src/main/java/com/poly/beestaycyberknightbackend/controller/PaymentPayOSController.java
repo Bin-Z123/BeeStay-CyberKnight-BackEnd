@@ -28,9 +28,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 @RestController
-@RequestMapping("/orderPayOS")
+@RequestMapping("/api/orderPayOS")
 @FieldDefaults(level = AccessLevel.PACKAGE, makeFinal = true)
 @RequiredArgsConstructor
 public class PaymentPayOSController {
@@ -42,7 +41,6 @@ public class PaymentPayOSController {
         return new ApiResponse<>(200, null, osService.createPaymentLink(requestBody));
     }
 
-
     @GetMapping("/{orderCode}")
     public ApiResponse<PaymentPayOSResponse> getOrderBookingById(@PathVariable Long orderCode) {
         return new ApiResponse<>(200, null, osService.getOrderById(orderCode));
@@ -53,19 +51,17 @@ public class PaymentPayOSController {
         return new ApiResponse<>(200, null, osService.cancelPendingPaymentByBookingId(bookingId));
     }
 
-
     @PostMapping("/payos_transfer_handler")
     public ObjectNode payosTransferHandler(@RequestBody ObjectNode body)
             throws JsonProcessingException, IllegalArgumentException {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
 
-
         try {
             Webhook webhookBody = objectMapper.treeToValue(body, Webhook.class);
-            WebhookData data = payOS.verifyPaymentWebhookData(webhookBody); 
+            WebhookData data = payOS.verifyPaymentWebhookData(webhookBody);
 
-            osService.handleWebhookData(data, body); 
+            osService.handleWebhookData(data, body);
 
             response.put("error", 0);
             response.put("message", "Webhook delivered");
@@ -81,7 +77,6 @@ public class PaymentPayOSController {
         }
 
     }
-
 
     @PostMapping(path = "/confirm-webhook")
     public ObjectNode confirmWebhook(@RequestBody Map<String, String> requestBody) {
@@ -101,6 +96,5 @@ public class PaymentPayOSController {
             return response;
         }
     }
-
 
 }

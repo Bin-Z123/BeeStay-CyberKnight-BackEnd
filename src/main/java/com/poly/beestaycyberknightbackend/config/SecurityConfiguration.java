@@ -55,8 +55,11 @@ public class SecurityConfiguration {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/login", "/api/register", "/api/change_password", "/api/logout",
-
-                                "/api/forgot-password/**", "/api/availableRoomsTypeAndDateV2","/orderPayOS/**","/api/booking/**")
+                                "/api/forgot-password/**", "/api/availableRoomsTypeAndDateV2", "/orderPayOS/**",
+                                "/api/booking/**",
+                                "/api/**", "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html")
                         .permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/").hasRole("USER")

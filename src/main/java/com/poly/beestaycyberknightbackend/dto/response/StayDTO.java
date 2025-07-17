@@ -1,6 +1,10 @@
 package com.poly.beestaycyberknightbackend.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.poly.beestaycyberknightbackend.domain.InfoGuest;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,5 +30,7 @@ public class StayDTO {
     LocalDateTime createdAt = LocalDateTime.now();
 
     String note;
+
+    List<InfoGuest> infoGuests;
 
 }
