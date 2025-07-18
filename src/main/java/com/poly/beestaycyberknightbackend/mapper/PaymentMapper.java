@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.poly.beestaycyberknightbackend.domain.Payment;
-import com.poly.beestaycyberknightbackend.dto.request.PaymentByCastRequest;
+import com.poly.beestaycyberknightbackend.dto.request.PaymentByCashRequest;
 
 @Mapper(componentModel = "spring")
 public interface PaymentMapper {
@@ -16,5 +16,5 @@ public interface PaymentMapper {
     @Mapping(target = "paymentMethod", ignore = true)
     @Mapping(target = "paymentStatus", ignore = true)
     @Mapping(target = "paymentType", ignore = true)
-    Payment toPayment(PaymentByCastRequest request);
+    Payment toPayment(PaymentByCashRequest request);
 }

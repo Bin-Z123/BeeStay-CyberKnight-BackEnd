@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PaymentByCastRequest {
+public class PaymentByCashRequest {
     Integer amount;
     String rawResponse;
     Long bookingId;
