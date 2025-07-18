@@ -1,13 +1,9 @@
 package com.poly.beestaycyberknightbackend.schedule;
 
 import java.time.LocalDateTime;
-
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.scheduling.annotation.Schedules;
 import org.springframework.stereotype.Component;
-
 import com.poly.beestaycyberknightbackend.service.BookingService;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

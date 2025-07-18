@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.Payment;
-import com.poly.beestaycyberknightbackend.dto.request.PaymentByCastRequest;
+import com.poly.beestaycyberknightbackend.dto.request.PaymentByCashRequest;
 import com.poly.beestaycyberknightbackend.exception.AppException;
 import com.poly.beestaycyberknightbackend.exception.ErrorCode;
 import com.poly.beestaycyberknightbackend.mapper.PaymentMapper;
@@ -18,13 +18,13 @@ import lombok.experimental.FieldDefaults;
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-public class PaymentByCastService {
+public class PaymentByCashService {
     PaymentRepository paymentRepository;
     PaymentMapper paymentMapper;
     BookingRepository bookingRepository;
     BookingService bookingService;
 
-    public Payment createPaymentByCast(PaymentByCastRequest request){
+    public Payment createPaymentByCast(PaymentByCashRequest request){
         Booking booking = bookingRepository.findById(request.getBookingId()).orElseThrow(()-> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
 
         Payment payment = paymentMapper.toPayment(request);
