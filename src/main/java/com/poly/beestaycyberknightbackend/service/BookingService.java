@@ -47,7 +47,7 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 public class BookingService {
 
-    InfoGuestRepository infoGuestRepository;
+    RankService rankService;
     BookingRepository bookingRepository;
     BookingMapper bookingMapper;
     GuestBookingMapper guestBookingMapper;
@@ -65,6 +65,7 @@ public class BookingService {
     InfoGuestMapper infoGuestMapper;
     RoomImageRepository roomImageRepository;
     RoomImageMapper roomImageMapper;
+    UserService userService;
 
 
     public List<BookingDTO> getAllBookings() {
@@ -317,8 +318,11 @@ public class BookingService {
         if(result == 0){
             booking.setBookingStatus("PAID");
             bookingRepository.save(booking);
+            bookingRepository.flush();
+            userService.sumPointForUserEachBooking(booking.getUser().getId(), totalAmountBooking);
         }
         
+        rankService.updateRankUser(booking.getUser().getId());
     }
 
     public BookingDTO checkoutBookingStatus(Long bookingId){
