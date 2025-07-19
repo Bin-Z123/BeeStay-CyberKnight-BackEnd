@@ -174,7 +174,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Integer totalPriceFacilitiesByBookingId(Long bookingId);
 
     @Query(value = """
-            SELECT SUM(rt.price) * DATEDIFF(DAY,b.check_in_date,b.check_out_date) FROM RoomTypes rt JOIN BookingDetail bd on rt.id = bd.room_type_id
+            SELECT SUM(rt.price * bd.quantity) * DATEDIFF(DAY,b.check_in_date,b.check_out_date) FROM RoomTypes rt JOIN BookingDetail bd on rt.id = bd.room_type_id
             						 JOIN Bookings b on bd.booking_id = b.id
             						 WHERE b.id = :bookingId
             						 GROUP BY b.check_in_date, b.check_out_date
