@@ -79,7 +79,7 @@ public class User {
     @JsonBackReference
     Rank rank;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonBackReference
     List<Booking> booking;
 
