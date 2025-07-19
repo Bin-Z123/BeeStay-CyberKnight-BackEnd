@@ -1,5 +1,6 @@
 package com.poly.beestaycyberknightbackend.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -112,6 +113,20 @@ public class UserService {
     }
 
     public Role getRoleByName(String roleName) {
-        return this.roleRepository.findByRoleName(roleName);
+    return this.roleRepository.findByRoleName(roleName)
+        .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
     }
+
+
+    public UserResponse updateUserProfile(Long id, UserRequest request) {
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+    userMapper.updateProfileUser(user, request);
+    user.setUpdateDate(LocalDateTime.now());
+
+    userRepository.save(user);
+    return userMapper.toUserResponse(user);
+    }
+
 }

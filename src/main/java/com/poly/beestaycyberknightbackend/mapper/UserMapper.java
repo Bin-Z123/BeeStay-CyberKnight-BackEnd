@@ -1,9 +1,11 @@
 package com.poly.beestaycyberknightbackend.mapper;
 
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.domain.User.EBlacklist;
@@ -31,5 +33,7 @@ public interface UserMapper {
     default int mapEBlacklistToInt(EBlacklist eBlacklist) {
         return eBlacklist.ordinal(); // Map EBlacklist enum về đúng giá trị int
     }
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateProfileUser(@MappingTarget User user, UserRequest userRequest);
 
 }

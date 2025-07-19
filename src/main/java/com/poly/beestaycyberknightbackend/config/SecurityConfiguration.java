@@ -49,8 +49,7 @@ public class SecurityConfiguration {
             CorsConfigurationSource corsConfigurationSource,
             JwtAuthFilter jwtAuthFilter) throws Exception {
 
-        http
-                .csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
