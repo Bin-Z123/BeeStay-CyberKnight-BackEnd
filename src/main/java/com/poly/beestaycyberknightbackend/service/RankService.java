@@ -5,12 +5,17 @@ import java.util.Optional;
 
 
 import org.springframework.stereotype.Service;
+
+import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.Rank;
+import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.dto.request.RankRequest;
 import com.poly.beestaycyberknightbackend.exception.AppException;
 import com.poly.beestaycyberknightbackend.exception.ErrorCode;
 import com.poly.beestaycyberknightbackend.mapper.RankMapper;
 import com.poly.beestaycyberknightbackend.repository.RankRepository;
+import com.poly.beestaycyberknightbackend.repository.UserRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,6 +25,7 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 public class RankService {
     RankRepository rankRepository;
+    UserRepository userRepository;
     RankMapper mapper;
 
     public Rank createRank(RankRequest rankRequest) {
@@ -54,5 +60,19 @@ public class RankService {
         rankRepository.delete(rank);
         return rank;
     }
+
+    public void updateUserPointByBookingPaidStatus(long userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+    int totalPoint = user.getBooking().stream()
+        .filter(booking -> "PAID".equals(booking.getBookingStatus()))
+        .mapToInt(booking -> booking.getTotalAmount() / 100_000)
+        .sum();
+
+    user.setPoint(totalPoint);
+    userRepository.save(user);
+    }
+
 
 }
