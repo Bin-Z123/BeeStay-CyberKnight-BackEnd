@@ -59,7 +59,7 @@ public class PayOSService {
 
             StringBuilder billName = new StringBuilder();
             StringBuilder description = new StringBuilder();
-            int totalAmount = booking.getTotalAmount();
+            int totalAmount = booking.getTotalAmount() - bookingRepository.totalPaymentofBooking(booking.getId());
 
             roomTypesList.stream().forEach(row -> {
                 String roomtype = (String) row[0];
