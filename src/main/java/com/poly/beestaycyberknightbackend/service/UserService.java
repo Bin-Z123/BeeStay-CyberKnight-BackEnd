@@ -129,4 +129,12 @@ public class UserService {
     return userMapper.toUserResponse(user);
     }
 
+    public void sumPointForUserEachBooking(Long userId, Integer totalAmount){
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Integer Convertpoints = totalAmount / 100000;
+        user.setPoint(user.getPoint() + Convertpoints);
+        userRepository.save(user);
+        userRepository.flush();
+    }
+
 }
