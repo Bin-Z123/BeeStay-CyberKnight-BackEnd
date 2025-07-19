@@ -13,6 +13,8 @@ public class RoomResponse {
     private String roomNumber;    
     private String roomStatus;    
     private int floor;     
-    private RoomTypeResponseNotlistRoom roomType;        
+    private RoomTypeResponseNotlistRoom roomType;
     private List<RoomImageResponse> roomImages;
+    private List<StayDTO> stay;
+    private List<BookingDTO> booking;   
 }

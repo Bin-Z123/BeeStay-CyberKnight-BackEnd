@@ -1,8 +1,6 @@
 package com.poly.beestaycyberknightbackend.dto.response;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,21 +8,20 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse {
-    long id;
-    String phone;
-    String email;
-    Boolean gender;
-    LocalDate birthday;
-    String password;
-    LocalDateTime joinDate;
+public class GuestBookingDTO {
+
+    Long id;
+
     String fullname;
+
+    String phone;
+
+    String email;
+
     String cccd;
-    int point;
-    int eBlacklist;
-    RoleResponse role;
-    RankResponse rank;
+
+    LocalDateTime createAt;
 }

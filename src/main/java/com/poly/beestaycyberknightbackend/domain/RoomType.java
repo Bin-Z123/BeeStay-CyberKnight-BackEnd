@@ -46,6 +46,7 @@ public class RoomType {
     @Column(name = "people_about", nullable = false)
     private int peopleAbout;
 
+    @Column(name = "description")
     private String description;
 
     @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL)

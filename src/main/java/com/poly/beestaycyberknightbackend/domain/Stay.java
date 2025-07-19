@@ -19,7 +19,7 @@ public class Stay {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_id", nullable = false)
     @JsonBackReference
     Room room;
@@ -32,7 +32,7 @@ public class Stay {
     @Column(name = "actualcheckin", nullable = false)
     LocalDateTime actualCheckIn;
 
-    @Column(name = "actualcheckout", nullable = false)
+    @Column(name = "actualcheckout")
     LocalDateTime actualCheckOut;
 
     @Column(name = "staystatus", length = 30, nullable = false)

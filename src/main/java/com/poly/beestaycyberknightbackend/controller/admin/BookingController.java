@@ -3,9 +3,9 @@ package com.poly.beestaycyberknightbackend.controller.admin;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import org.springframework.cglib.core.Local;
+import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,25 +13,28 @@ import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.dto.request.OrderBookingWrapper;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableTypeRoomDTO;
+import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
 import com.poly.beestaycyberknightbackend.service.BookingService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/booking")
+@RequestMapping("/api")
 public class BookingController {
     BookingService bookingService;
 
-    @GetMapping("/list")
-    public ApiResponse<List<Booking>> getBookings() {
+    @GetMapping("/admin/booking/list")
+    public ApiResponse<List<BookingDTO>> getBookings() {
         return new ApiResponse<>(200, null, bookingService.getAllBookings());
     }
 
-    @PostMapping("/order")
+    @PostMapping("/admin/booking/order")
     public ApiResponse<Booking> orderBooking(@RequestBody OrderBookingWrapper request) {
         return new ApiResponse<>(200, null, bookingService.orderBooking(
                 request.getGuestBookingRequest(),
@@ -41,19 +44,54 @@ public class BookingController {
                 request.getStayRequest()));
     }
 
-    @GetMapping("/bookingbycheckin")
+    @GetMapping("/admin/booking/bookingbycheckin")
     public ApiResponse<List<Booking>> getBookingsByGuest(@RequestParam LocalDate checkInDate) {
         return new ApiResponse<>(200, null, bookingService.getBookingByCheckInDate(checkInDate));
     }
 
-    @GetMapping("/availableRoomsTypeAndDate")
+    @GetMapping("/admin/booking/availableRoomsTypeAndDate")
     public ApiResponse<Long> countAvailableRooms(@RequestParam String nameRoomType, @RequestParam LocalDateTime date) {
         return new ApiResponse<>(200, null, bookingService.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date));
     }
 
     @GetMapping("/availableRoomsTypeAndDateV2")
-    public ApiResponse<List<AvailableTypeRoomDTO>> countAvailableRoomsV2(@RequestParam LocalDateTime fromDate, @RequestParam LocalDateTime toDate) {
+    public ApiResponse<List<AvailableTypeRoomDTO>> countAvailableRoomsV2(@RequestParam LocalDateTime fromDate,
+            @RequestParam LocalDateTime toDate) {
         return new ApiResponse<>(200, null, bookingService.getAvailableRooms(fromDate, toDate));
     }
-    
+
+
+    @GetMapping("/booking/{id}")
+    public ApiResponse<BookingDTO> getBooking(@PathVariable Long id) {
+        return new ApiResponse<>(200, null, bookingService.getBooking(id));
+    }
+
+
+    // tính tiền ở thực tế
+    @PutMapping("/update-booking/{id}")
+    public ApiResponse<BookingDTO> updatePriceActual(@PathVariable Long id) {
+        return new ApiResponse<>(200, null, bookingService.updateTotalPriceBooking(id));
+    }
+
+    // tính tiền sau khi update booking detail
+    @PutMapping("/afterUBD/{id}")
+    public ApiResponse<BookingDTO> updatePriceAfterUpdateBD(@PathVariable Long id) {
+        return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.updateTotalPriceBookingAfter(id));
+    }
+
+    @PutMapping("/cancel/{id}")
+    public ApiResponse<BookingDTO> cancelBooking(@PathVariable Long id) {
+        return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.setStatusBookingCancel(id));
+    }
+
+    @PutMapping("/checkout/{id}")
+    public ApiResponse<?> checkoutBooking(@PathVariable Long id) {
+        try {
+            return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.checkoutBookingStatus(id));
+        } catch (Exception e) {
+            return new ApiResponse<>(HttpStatus.SC_BAD_REQUEST, "Insufficient payment, Please pay the full amount",
+                    null);
+        }
+
+    }
 }

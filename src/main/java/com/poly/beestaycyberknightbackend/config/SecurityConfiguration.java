@@ -47,29 +47,31 @@ public class SecurityConfiguration {
             HttpSecurity http,
             CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
             CorsConfigurationSource corsConfigurationSource,
-            JwtAuthFilter jwtAuthFilter
-    ) throws Exception {
+            JwtAuthFilter jwtAuthFilter) throws Exception {
 
-        http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource))
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/login", "/register/send-otp","/register/verify-otp", "/change_password", "/logout", "/api/forgot-password/**").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/", "/api/user/**").hasRole("USER")
-                .anyRequest().authenticated()
-            )
-            // .oauth2ResourceServer(oauth2 -> oauth2
-            //     .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-            //     .authenticationEntryPoint(customAuthenticationEntryPoint)
-            // )
-            .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-            )
-            .formLogin(form -> form.disable())
-            .logout(logout -> logout.disable());
+        http.csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/api/login", "/api/register", "/api/change_password", "/api/logout",
+                                "/api/forgot-password/**", "/api/availableRoomsTypeAndDateV2", "/orderPayOS/**",
+                                "/api/booking/**",
+                                "/api/**", "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html")
+                        .permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/").hasRole("USER")
+                        .anyRequest().authenticated())
+                // .oauth2ResourceServer(oauth2 -> oauth2
+                // .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                // .authenticationEntryPoint(customAuthenticationEntryPoint)
+                // )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
+                .formLogin(form -> form.disable())
+                .logout(logout -> logout.disable());
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
