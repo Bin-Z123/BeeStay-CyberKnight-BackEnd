@@ -36,12 +36,19 @@ public class BookingController {
 
     @PostMapping("/admin/booking/order")
     public ApiResponse<Booking> orderBooking(@RequestBody OrderBookingWrapper request) {
-        return new ApiResponse<>(200, null, bookingService.orderBooking(
+        try {
+            Booking booking = bookingService.orderBooking(
                 request.getGuestBookingRequest(),
                 request.getBookingRequest(),
                 request.getBookingDetailRequest(),
                 request.getBookingFacilityRequest(),
-                request.getStayRequest()));
+                request.getStayRequest());
+            return new ApiResponse<>(HttpStatus.SC_OK, null, booking);
+        } catch (Exception e) {
+            return new ApiResponse<>(HttpStatus.SC_BAD_REQUEST, e.getMessage(), null);
+        }
+
+        
     }
 
     @GetMapping("/admin/booking/bookingbycheckin")
