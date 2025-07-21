@@ -38,7 +38,8 @@ public class Facility {
     @Column(name = "price", precision = 18, scale = 2)
     BigDecimal price;
 
-    String publicId;
+    @Column(name = "public_id")
+    private String publicId;
 
     @OneToMany(mappedBy = "facility")
     @JsonManagedReference
