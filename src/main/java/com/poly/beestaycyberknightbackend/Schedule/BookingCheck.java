@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.schedule;
+package com.poly.beestaycyberknightbackend.Schedule;
 
 import java.time.LocalDateTime;
 import org.springframework.scheduling.annotation.Scheduled;
