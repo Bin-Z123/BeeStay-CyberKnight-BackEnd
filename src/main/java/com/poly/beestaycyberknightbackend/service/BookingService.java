@@ -1,13 +1,10 @@
 package com.poly.beestaycyberknightbackend.service;
 
-import java.text.ParsePosition;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.BookingDetail;
@@ -24,7 +21,6 @@ import com.poly.beestaycyberknightbackend.dto.request.StayRequest;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableRoomDTO;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableTypeRoomDTO;
 import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
-import com.poly.beestaycyberknightbackend.dto.response.BookingResponse;
 import com.poly.beestaycyberknightbackend.dto.response.RoomImageResponse;
 import com.poly.beestaycyberknightbackend.dto.response.StayDTO;
 import com.poly.beestaycyberknightbackend.exception.AppException;
@@ -79,6 +75,29 @@ public class BookingService {
     public Booking orderBooking(GuestBookingRequest guestBookingRequest, BookingRequest bookingRequest,
             List<BookingDetailRequest> bookingDetailRequest, List<BookingFacilityRequest> bookingFacilityRequest,
             List<StayRequest> stayRequest) {
+
+        // Phần kiểm tra số lượng phòng 
+        LocalDateTime checkInDate = bookingRequest.getCheckInDate();
+        LocalDateTime checkOutDate = bookingRequest.getCheckOutDate();
+
+        List<AvailableTypeRoomDTO> availableRooms = this.getAvailableRooms(checkInDate, checkOutDate);
+
+        //Duyệt qua đơn hàng
+        for(BookingDetailRequest detailRequest : bookingDetailRequest){
+            Long requestedRoomTypeId = detailRequest.getRoomTypeId();
+            int requestedQuantity = detailRequest.getQuantity();
+
+            // Tìm thông tin của loại phòng khách muốn đặt trong danh sách phòng trống
+            AvailableTypeRoomDTO roomTypeInfo = availableRooms.stream()
+                .filter(r -> r.getRoomTypeId().equals(requestedRoomTypeId))
+                .findFirst()
+                .orElseThrow(() -> new AppException(ErrorCode.ROOMTYPE_NOT_EXISTED));
+
+            // nếu số lượng phòng khách yêu cầu lớn hơn số lượng phòng trống
+            if(roomTypeInfo.getAvailableRooms() < requestedQuantity){
+                throw new AppException(ErrorCode.ROOM_IS_OUT_OF_STOCK);
+            }
+        }
 
         User user = null;
         GuestBooking guestBooking = null;
