@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.schedule;
+package com.poly.beestaycyberknightbackend.Schedule;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,18 +24,19 @@ public class PayOSCheck {
     final PayOSService payOSService;
     final PaymentRepository paymentRepository;
 
-    @Scheduled(cron = "0 * * * * *")
+    // @Scheduled(cron = "0 * * * * *")
     public void cancelExpiredPayments() {
         logger.info("--- [CRON JOB] Starting job to cancel expired payments ---");
 
         // 1. Xác định thời điểm giới hạn là 5 phút trước
         LocalDateTime fiveMinutesAgo = LocalDateTime.now().minusMinutes(5);
 
-        // 2. Tìm tất cả các payment có trạng thái "PENDING" và được tạo trước thời điểm giới hạn
+        // 2. Tìm tất cả các payment có trạng thái "PENDING" và được tạo trước thời điểm
+        // giới hạn
         List<Payment> expiredPayments = paymentRepository
                 .findByPaymentStatusAndPaymentDateBefore("PENDING", fiveMinutesAgo);
-        
-        if(expiredPayments.isEmpty()) {
+
+        if (expiredPayments.isEmpty()) {
             logger.info("--- [CRON JOB] No expired payments found ---");
             return;
         }
@@ -43,7 +44,8 @@ public class PayOSCheck {
         // 3. Duyệt qua từng payment và hủy nó
         expiredPayments.forEach(payment -> {
             try {
-                logger.warn("Cancelling expired payment with ID: {} created at {}", payment.getId(), payment.getPaymentDate());
+                logger.warn("Cancelling expired payment with ID: {} created at {}", payment.getId(),
+                        payment.getPaymentDate());
 
                 payOSService.cancelOrderByPaymentId(payment.getId());
 
