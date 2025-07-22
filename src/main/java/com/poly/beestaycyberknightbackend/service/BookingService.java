@@ -351,4 +351,13 @@ public class BookingService {
         BookingDTO bookingDTO = bookingMapper.toResponse(booking);
         return bookingDTO;
     }
+
+    public List<BookingDTO> fetchBookingByUser(User user) {
+        List<Booking> bookings = bookingRepository.findByUser(user);
+        return bookings.stream()
+                    .map(bookingMapper::toResponse)
+                    .collect(Collectors.toList());
+    }
+
+
 }

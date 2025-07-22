@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.poly.beestaycyberknightbackend.domain.Booking;
+import com.poly.beestaycyberknightbackend.domain.User;
+
 import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,6 +21,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     long countByCheckOutDateBetween(LocalDateTime start, LocalDateTime end);
 
     List<Booking> findByCheckInDateBetween(LocalDateTime start, LocalDateTime end);
+
+    List<Booking> findByUser(User user);
 
     @Query(value = """
                     SELECT YEAR(b.booking_date) AS BookingYear, NULL AS BookingMonth, SUM(b.total_amount) AS Revenue, 'TOTAL YEAR' AS Type FROM Bookings b
