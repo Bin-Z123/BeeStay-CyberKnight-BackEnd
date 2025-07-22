@@ -44,9 +44,13 @@ public class PayOSService {
                     .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
 
             cancelExistingPendingPayment(linkRequestBody.getBookingId());
+            int totalAmount = booking.getTotalAmount() - bookingRepository.totalPaymentofBooking(booking.getId());
+            if(totalAmount <= 0){
+                return new PaymentPayOSResponse<>(0, "Đã thanh toán hết", null);
+            }
 
             Payment payment = new Payment();
-            payment.setAmount(booking.getTotalAmount());
+            payment.setAmount(totalAmount);
             payment.setBooking(booking);
             payment.setPaymentMethod("BANK");
             payment.setPaymentDate(LocalDateTime.now());
@@ -59,7 +63,7 @@ public class PayOSService {
 
             StringBuilder billName = new StringBuilder();
             StringBuilder description = new StringBuilder();
-            int totalAmount = booking.getTotalAmount() - bookingRepository.totalPaymentofBooking(booking.getId());
+            
 
             roomTypesList.stream().forEach(row -> {
                 String roomtype = (String) row[0];
