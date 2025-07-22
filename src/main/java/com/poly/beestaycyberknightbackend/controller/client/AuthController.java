@@ -257,12 +257,4 @@ public class AuthController {
                 .code(200)
                 .build();
     }
-
-
-
-
-
-
-
-
 }

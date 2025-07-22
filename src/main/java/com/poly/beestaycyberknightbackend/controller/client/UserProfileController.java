@@ -4,6 +4,7 @@ import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.dto.request.UserRequest;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
+import com.poly.beestaycyberknightbackend.dto.response.BookingResponse;
 import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
 import com.poly.beestaycyberknightbackend.repository.UserRepository;
 import com.poly.beestaycyberknightbackend.service.BookingService;
@@ -15,6 +16,9 @@ import java.util.List;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -54,7 +58,17 @@ public class UserProfileController {
         return new ApiResponse<>(200, "Lấy thông tin thành công", bookings);
     }
 
+    @GetMapping("/booking/{id}")
+    public ApiResponse<BookingResponse> getBookingById(@PathVariable("id") long id) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUsser = userRepository.findByEmail(email);
 
-
+        BookingResponse booking = bookingService.getBookingByIdAndUser(id, currentUsser);
+        if (booking == null) {
+            return new ApiResponse<>(404, "Không tìm thấy đơn đặt phòng", null);
+        }
+        return new ApiResponse<>(200, "Lấy thông tin thành công",booking);
+    }
+    
     
 }
