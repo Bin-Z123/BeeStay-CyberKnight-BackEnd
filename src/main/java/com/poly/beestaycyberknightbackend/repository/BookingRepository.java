@@ -66,7 +66,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                 FROM Bookings b
                 JOIN BookingDetail bd ON b.id = bd.booking_id
                 WHERE
-                    b.e_booking_status = 'CONFIRMED'  OR b.e_booking_status = 'LATE'
+                    (b.e_booking_status = 'CONFIRMED'  OR b.e_booking_status = 'LATE')
                     AND @fromDate <= b.check_out_date
                     AND @toDate >= b.check_in_date
                 GROUP BY bd.room_type_id

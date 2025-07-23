@@ -37,7 +37,7 @@ public class Voucher {
     @Column(length = 10, nullable = false)
     VoucherStatus eStatus = VoucherStatus.ACTIVE;
 
-    @ManyToOne(fetch = FetchType.LAZY) // ẩn object khi không cần dùng
+    @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "user_id")
     User user;
 
