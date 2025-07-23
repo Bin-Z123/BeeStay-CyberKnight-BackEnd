@@ -382,7 +382,7 @@ public class BookingService {
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
         Integer totalPayment = bookingRepository.totalPaymentofBooking(bookingId);
         Integer totalAmountBooking = booking.getTotalAmount();
-
+        booking.setBookingStatus("PENDING");
         Integer result = totalPayment - totalAmountBooking;
 
         if (result == 0) {
@@ -438,10 +438,8 @@ public class BookingService {
                 depositAmount += roomTypePrice * detail.getQuantity();
             }
 
-
             CreatePaymentLinkManuallyRequest createPaymentLinkRequest = new CreatePaymentLinkManuallyRequest(
                     booking.getId(), "Booking Deposit", "Booking Deposit", depositAmount);
-
 
             booking.setIsDeposit(true);
             bookingRepository.save(booking);
