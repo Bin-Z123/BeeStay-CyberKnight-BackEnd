@@ -16,11 +16,13 @@ import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.dto.request.BookingDetailRequest;
 import com.poly.beestaycyberknightbackend.dto.request.BookingFacilityRequest;
 import com.poly.beestaycyberknightbackend.dto.request.BookingRequest;
+import com.poly.beestaycyberknightbackend.dto.request.CreatePaymentLinkManuallyRequest;
 import com.poly.beestaycyberknightbackend.dto.request.GuestBookingRequest;
 import com.poly.beestaycyberknightbackend.dto.request.StayRequest;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableRoomDTO;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableTypeRoomDTO;
 import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
+import com.poly.beestaycyberknightbackend.dto.response.PaymentPayOSResponse;
 import com.poly.beestaycyberknightbackend.dto.response.RoomImageResponse;
 import com.poly.beestaycyberknightbackend.dto.response.StayDTO;
 import com.poly.beestaycyberknightbackend.exception.AppException;
@@ -62,6 +64,8 @@ public class BookingService {
     RoomImageRepository roomImageRepository;
     RoomImageMapper roomImageMapper;
     UserService userService;
+    PayOSService payOSService;
+
 
     public List<BookingDTO> getAllBookings() {
         List<Booking> listEntity = bookingRepository.findAll();
@@ -193,8 +197,19 @@ public class BookingService {
         Integer totalPriceBooking = bookingRepository.totalPriceBookingByBookingId(booking1.getId());
         Integer totalDiscount = bookingRepository.totalPriceDiscountEachRoomType(booking1.getId());
 
-        Integer totalPrice = totalFacilities + totalPriceBooking - totalDiscount;
+        double rankDiscountAmount = 0;
+        if (user != null && user.getRank() != null) {
+            // Lấy phần trăm giảm giá từ rank của user
+            int rankDiscountPercent = user.getRank().getDiscount_percent();
 
+            // Tính số tiền được giảm giá dựa trên tổng tiền phòng
+            // Dùng 100.0 để đảm bảo phép chia là số thực
+            rankDiscountAmount = totalPriceBooking * (rankDiscountPercent / 100.0);
+        }
+        // Tổng tiền = (Tiền phòng + Tiền dịch vụ) - Giảm giá phòng - Giảm giá theo Rank
+        Integer totalPrice = (totalFacilities + totalPriceBooking) - totalDiscount - (int) rankDiscountAmount;
+
+        // Cập nhật và lưu lại booking
         Booking booking2 = bookingRepository.findById(booking1.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
         booking2.setTotalAmount(totalPrice); // Cập nhật tổng tiền cho booking
@@ -343,7 +358,6 @@ public class BookingService {
 
         }
 
-        
     }
 
     public BookingDTO checkoutBookingStatus(Long bookingId) {
@@ -371,5 +385,52 @@ public class BookingService {
 
         BookingDTO bookingDTO = bookingMapper.toResponse(booking);
         return bookingDTO;
+    }
+
+    // booking cho user
+    @Transactional
+    public Object orderBookingForUser(GuestBookingRequest guestBookingRequest, BookingRequest bookingRequest,
+            List<BookingDetailRequest> bookingDetailRequest, List<BookingFacilityRequest> bookingFacilityRequest,
+            List<StayRequest> stayRequest) {
+        try {
+            // GỌI HÀM orderBooking GỐC ĐỂ TẠO ĐƠN HÀNG Y HỆT NHƯ CŨ
+            Booking booking1 = this.orderBooking(
+                    guestBookingRequest,
+                    bookingRequest,
+                    bookingDetailRequest,
+                    bookingFacilityRequest,
+                    stayRequest);
+
+            Booking booking = bookingRepository.findById(booking1.getId())
+                    .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+            // KIỂM TRA TRẠNG THÁI ĐẶT CỌC
+
+            if (booking.getIsDeposit()) {
+                return "Đặt cọc đã được thực hiện trước đó.";
+            }
+
+            int depositAmount = 0;
+            List<BookingDetail> bookingDetails = bookingDetailRepository.findByBookingId(booking.getId());
+            if (bookingDetails == null || bookingDetails.isEmpty()) {
+                throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+            }
+            for (BookingDetail detail : bookingDetails) {
+                // Lấy giá từ RoomType liên kết với BookingDetail
+                int roomTypePrice = detail.getRoomType().getPrice();
+                // Cộng dồn tiền cọc = giá phòng * số lượng
+                depositAmount += roomTypePrice * detail.getQuantity();
+            }
+
+            CreatePaymentLinkManuallyRequest createPaymentLinkRequest = new CreatePaymentLinkManuallyRequest(booking.getId(), "Booking Deposit", "Booking Deposit", depositAmount);
+
+            booking.setIsDeposit(true);
+            bookingRepository.save(booking);
+
+            return payOSService.createPaymentLinkManually(createPaymentLinkRequest);
+
+        } catch (AppException e) {
+            return new PaymentPayOSResponse<>(-1, "fail", e.getMessage());
+        }
+
     }
 }
