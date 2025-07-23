@@ -76,8 +76,7 @@ public class UserService {
     //     }
     //     return currentUser;
     // }
-
-    public User handleGetUserByUsername(String username) {
+public User handleGetUserByUsername(String username) {
         return this.userRepository.findByEmail(username);
     }
 
@@ -118,9 +117,11 @@ public class UserService {
     }
 
 
-    public UserResponse updateUserProfile(Long id, UserRequest request) {
-    User user = userRepository.findById(id)
-        .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    public UserResponse updateUserProfileByEmail(String email, UserRequest request) {
+    User user = userRepository.findByEmail(email);
+    if (user == null) {
+        throw new AppException(ErrorCode.USER_NOT_EXISTED);
+    }
 
     userMapper.updateProfileUser(user, request);
     user.setUpdateDate(LocalDateTime.now());
@@ -128,6 +129,15 @@ public class UserService {
     userRepository.save(user);
     return userMapper.toUserResponse(user);
     }
+
+    public UserResponse fetchUserByEmail(String email) {
+    User user = userRepository.findByEmail(email);
+    if (user == null) {
+        throw new AppException(ErrorCode.USER_NOT_EXISTED);
+    }
+    return userMapper.toUserResponse(user);
+    }
+
 
     public void sumPointForUserEachBooking(Long userId, Integer totalAmount){
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));

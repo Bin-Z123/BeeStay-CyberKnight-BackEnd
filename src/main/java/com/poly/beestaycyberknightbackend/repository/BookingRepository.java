@@ -4,7 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.poly.beestaycyberknightbackend.domain.Booking;
+import com.poly.beestaycyberknightbackend.domain.User;
+
 import java.util.List;
+import java.util.Optional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -222,4 +225,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             AND r.id = :roomId
                    """, nativeQuery = true)
     List<Booking> findBookingByRoomId(Long roomId, LocalDateTime today);
+
+    List<Booking> findByUser(User user);
+
+    Optional<Booking> findByIdAndUser(Long bookingId, User user);
 }
