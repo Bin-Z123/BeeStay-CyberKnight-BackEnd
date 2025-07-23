@@ -438,8 +438,10 @@ public class BookingService {
                 depositAmount += roomTypePrice * detail.getQuantity();
             }
 
+
             CreatePaymentLinkManuallyRequest createPaymentLinkRequest = new CreatePaymentLinkManuallyRequest(
                     booking.getId(), "Booking Deposit", "Booking Deposit", depositAmount);
+
 
             booking.setIsDeposit(true);
             bookingRepository.save(booking);
