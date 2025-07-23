@@ -22,6 +22,7 @@ import com.poly.beestaycyberknightbackend.dto.request.StayRequest;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableRoomDTO;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableTypeRoomDTO;
 import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
+import com.poly.beestaycyberknightbackend.dto.response.BookingFacilitiesDTO;
 import com.poly.beestaycyberknightbackend.dto.response.PaymentPayOSResponse;
 import com.poly.beestaycyberknightbackend.dto.response.RoomImageResponse;
 import com.poly.beestaycyberknightbackend.dto.response.StayDTO;
@@ -66,11 +67,21 @@ public class BookingService {
     UserService userService;
     PayOSService payOSService;
 
-
     public List<BookingDTO> getAllBookings() {
         List<Booking> listEntity = bookingRepository.findAll();
         List<BookingDTO> listResponse = listEntity.stream().map(
-                list -> bookingMapper.toResponse(list)).collect(Collectors.toList());
+                list -> {
+                    BookingDTO bookingDTO = bookingMapper.toResponse(list);
+                    List<BookingFacility> bookingFacilities = bookingFacilityRepository.findByBookingId(list.getId());
+                    List<BookingFacilitiesDTO> bookingFacilitiesDTOs = bookingFacilities.stream()
+                            .map(bookingFacilityMapper::toDto).collect(Collectors.toList());
+                    List<StayDTO> listStayDTOs = list.getStay().stream().map(stay -> stayMapper.toDto(stay))
+                            .collect(Collectors.toList());
+                    bookingDTO.setBookingFacilities(bookingFacilitiesDTOs);
+                    bookingDTO.setStay(listStayDTOs);
+                    return bookingDTO;
+                }).collect(Collectors.toList());
+
         return listResponse;
     }
 
@@ -272,7 +283,13 @@ public class BookingService {
         BookingDTO resp = bookingMapper.toResponse(entity);
         List<StayDTO> listStayDTOs = entity.getStay().stream().map(list -> stayMapper.toDto(list))
                 .collect(Collectors.toList());
+
+        List<BookingFacility> bookingFacilities = bookingFacilityRepository.findByBookingId(bookingId);
+        List<BookingFacilitiesDTO> bookingFacilitiesDTOs = bookingFacilities.stream()
+                .map(bookingFacilityMapper::toDto).collect(Collectors.toList());
+
         resp.setStay(listStayDTOs);
+        resp.setBookingFacilities(bookingFacilitiesDTOs);
         return resp;
     }
 
@@ -421,7 +438,8 @@ public class BookingService {
                 depositAmount += roomTypePrice * detail.getQuantity();
             }
 
-            CreatePaymentLinkManuallyRequest createPaymentLinkRequest = new CreatePaymentLinkManuallyRequest(booking.getId(), "Booking Deposit", "Booking Deposit", depositAmount);
+            CreatePaymentLinkManuallyRequest createPaymentLinkRequest = new CreatePaymentLinkManuallyRequest(
+                    booking.getId(), "Booking Deposit", "Booking Deposit", depositAmount);
 
             booking.setIsDeposit(true);
             bookingRepository.save(booking);

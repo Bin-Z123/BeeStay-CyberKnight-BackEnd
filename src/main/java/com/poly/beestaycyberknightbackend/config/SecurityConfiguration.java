@@ -54,7 +54,7 @@ public class SecurityConfiguration {
                                 "/api/booking/**",
                                 "/api/**", "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html")
+                                "/swagger-ui.html","/api/admin/**")
                         .permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/").hasRole("USER")

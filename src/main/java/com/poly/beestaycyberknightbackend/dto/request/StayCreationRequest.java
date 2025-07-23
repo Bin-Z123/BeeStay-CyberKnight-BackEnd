@@ -2,7 +2,6 @@ package com.poly.beestaycyberknightbackend.dto.request;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import com.poly.beestaycyberknightbackend.domain.InfoGuest;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

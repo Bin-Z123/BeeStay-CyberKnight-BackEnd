@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import com.poly.beestaycyberknightbackend.dto.request.RoomUpdateRequest;
 import com.poly.beestaycyberknightbackend.repository.BookingRepository;
 import com.poly.beestaycyberknightbackend.repository.RoomImageRepository;
 import com.poly.beestaycyberknightbackend.util.CloudinaryUtil;
 import org.springframework.stereotype.Service;
-
 import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.Room;
 import com.poly.beestaycyberknightbackend.domain.RoomImage;
@@ -19,7 +17,6 @@ import com.poly.beestaycyberknightbackend.domain.RoomType;
 import com.poly.beestaycyberknightbackend.domain.Stay;
 import com.poly.beestaycyberknightbackend.dto.request.RoomImageRequest;
 import com.poly.beestaycyberknightbackend.dto.request.RoomRequest;
-import com.poly.beestaycyberknightbackend.dto.request.RoomTypeRequest;
 import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
 import com.poly.beestaycyberknightbackend.dto.response.RoomResponse;
 import com.poly.beestaycyberknightbackend.dto.response.StayDTO;
@@ -29,7 +26,6 @@ import com.poly.beestaycyberknightbackend.mapper.StayMapper;
 import com.poly.beestaycyberknightbackend.repository.RoomRepository;
 import com.poly.beestaycyberknightbackend.repository.RoomTypeRepository;
 import com.poly.beestaycyberknightbackend.repository.StayRepository;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
