@@ -33,7 +33,7 @@ public class BookingFacility {
     @JsonBackReference
     Booking booking;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_id")
     @JsonBackReference
     Facility facility;

@@ -8,11 +8,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.poly.beestaycyberknightbackend.dto.request.CreatePaymentLinkRequestBody;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.PaymentPayOSResponse;
-import com.poly.beestaycyberknightbackend.exception.AppException;
-import com.poly.beestaycyberknightbackend.exception.ErrorCode;
-import com.poly.beestaycyberknightbackend.repository.BookingRepository;
-import com.poly.beestaycyberknightbackend.repository.PaymentRepository;
-import com.poly.beestaycyberknightbackend.service.BookingService;
 import com.poly.beestaycyberknightbackend.service.PayOSService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/orderPayOS")

@@ -2,10 +2,7 @@ package com.poly.beestaycyberknightbackend.service;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
-
-import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.Rank;
 import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.dto.request.RankRequest;
@@ -14,7 +11,6 @@ import com.poly.beestaycyberknightbackend.exception.ErrorCode;
 import com.poly.beestaycyberknightbackend.mapper.RankMapper;
 import com.poly.beestaycyberknightbackend.repository.RankRepository;
 import com.poly.beestaycyberknightbackend.repository.UserRepository;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

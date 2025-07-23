@@ -1,9 +1,7 @@
 package com.poly.beestaycyberknightbackend.service;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.domain.Role;
 import com.poly.beestaycyberknightbackend.dto.response.RoleResponse;

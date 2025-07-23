@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.dto.request;
+package com.poly.beestaycyberknightbackend.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -7,16 +7,16 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class GuestBookingRequest {
+public class BookingFacilitiesDTO {
 
-    String fullname;
+    Long id;
 
-    String phone;
+    Long bookingId;
 
-    String email;
-    
-    String cccd;
+    Long facilityId;
+
+    Integer quantity;
 }
