@@ -2,13 +2,15 @@ package com.poly.beestaycyberknightbackend.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import org.slf4j.Logger; // Nên dùng Logger thay cho System.out
+import org.slf4j.Logger; 
 import org.slf4j.LoggerFactory;
-
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.Payment;
+import com.poly.beestaycyberknightbackend.dto.request.CreatePaymentLinkManuallyRequest;
 import com.poly.beestaycyberknightbackend.dto.request.CreatePaymentLinkRequestBody;
 import com.poly.beestaycyberknightbackend.dto.response.PaymentPayOSResponse;
 import com.poly.beestaycyberknightbackend.exception.AppException;
@@ -17,25 +19,38 @@ import com.poly.beestaycyberknightbackend.repository.BookingRepository;
 import com.poly.beestaycyberknightbackend.repository.PaymentRepository;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import vn.payos.PayOS;
-import vn.payos.exception.PayOSException;
 import vn.payos.type.CheckoutResponseData;
 import vn.payos.type.ItemData;
 import vn.payos.type.PaymentData;
 import vn.payos.type.PaymentLinkData;
-import vn.payos.type.Webhook;
 import vn.payos.type.WebhookData;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequiredArgsConstructor
 public class PayOSService {
     PayOS payOS;
     BookingRepository bookingRepository;
     PaymentRepository paymentRepository;
     BookingService bookingService;
+
+    public PayOSService(PayOS payOS, BookingRepository bookingRepository,
+                        PaymentRepository paymentRepository, @Lazy BookingService bookingService, 
+                        @Value("${returnUrl}") String returnUrl, @Value("${cancelUrl}") String cancelUrl) {
+        this.payOS = payOS;
+        this.bookingRepository = bookingRepository;
+        this.paymentRepository = paymentRepository;
+        this.bookingService = bookingService;
+        this.returnUrl = returnUrl;
+        this.cancelUrl = cancelUrl;
+    }
+
+    @Value("${returnUrl}")
+    String returnUrl;
+
+    @Value("${cancelUrl}")
+    String cancelUrl;
 
     @Transactional
     public PaymentPayOSResponse createPaymentLink(CreatePaymentLinkRequestBody linkRequestBody) {
@@ -44,9 +59,13 @@ public class PayOSService {
                     .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
 
             cancelExistingPendingPayment(linkRequestBody.getBookingId());
+            int totalAmount = booking.getTotalAmount() - bookingRepository.totalPaymentofBooking(booking.getId());
+            if(totalAmount <= 0){
+                return new PaymentPayOSResponse<>(0, "Đã thanh toán hết", null);
+            }
 
             Payment payment = new Payment();
-            payment.setAmount(booking.getTotalAmount());
+            payment.setAmount(totalAmount);
             payment.setBooking(booking);
             payment.setPaymentMethod("BANK");
             payment.setPaymentDate(LocalDateTime.now());
@@ -59,7 +78,7 @@ public class PayOSService {
 
             StringBuilder billName = new StringBuilder();
             StringBuilder description = new StringBuilder();
-            int totalAmount = booking.getTotalAmount() - bookingRepository.totalPaymentofBooking(booking.getId());
+            
 
             roomTypesList.stream().forEach(row -> {
                 String roomtype = (String) row[0];
@@ -100,8 +119,8 @@ public class PayOSService {
             ItemData itemData = ItemData.builder().name(billNamelast).price(totalAmount).quantity(1).build();
 
             PaymentData paymentData = PaymentData.builder().orderCode(payment.getId()).description(descripstionlast)
-                    .amount(totalAmount).item(itemData).returnUrl(linkRequestBody.getReturnUrl())
-                    .cancelUrl(linkRequestBody.getCancelUrl()).build();
+                    .amount(totalAmount).item(itemData).returnUrl(returnUrl)
+                    .cancelUrl(cancelUrl).build();
 
             CheckoutResponseData data = payOS.createPaymentLink(paymentData);
 
@@ -244,5 +263,34 @@ public class PayOSService {
         }
 
     }
+
+    @Transactional
+    public Object createPaymentLinkManually(CreatePaymentLinkManuallyRequest request) {
+        try {
+            Booking booking = bookingRepository.findById(request.getBookingId()).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+            cancelExistingPendingPayment(request.getBookingId());
+
+            Payment payment = new Payment();
+            payment.setAmount(request.getAmount());
+            payment.setBooking(booking);
+            payment.setPaymentMethod("BANK");
+            payment.setPaymentDate(LocalDateTime.now());
+            payment.setPaymentStatus("PENDING");
+            payment.setPaymentType("BOOKING");
+            paymentRepository.save(payment);
+
+            ItemData itemData = ItemData.builder().name(request.getBillName()).price(request.getAmount()).quantity(1).build();
+            PaymentData paymentData = PaymentData.builder().orderCode(payment.getId())
+                    .description(request.getDescription())
+                    .amount(request.getAmount()).item(itemData).returnUrl(returnUrl).cancelUrl(cancelUrl).build();
+
+            CheckoutResponseData data = payOS.createPaymentLink(paymentData);
+            return new PaymentPayOSResponse<>(0, "success", data);
+        } catch (Exception e) {
+            return new PaymentPayOSResponse<>(-1, "fail", e.getMessage());
+        }
+    }
+        
+
 
 }

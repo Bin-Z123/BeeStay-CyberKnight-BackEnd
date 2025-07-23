@@ -2,13 +2,6 @@ package com.poly.beestaycyberknightbackend.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-
-import com.poly.beestaycyberknightbackend.domain.BookingFacility;
-import com.poly.beestaycyberknightbackend.domain.GuestBooking;
-import com.poly.beestaycyberknightbackend.domain.Stay;
-
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,7 +36,7 @@ public class BookingDTO {
 
     List<BookingDetailDTO> bookingDetails;
 
-    // List<BookingFacility> bookingFacilities;
+    List<BookingFacilitiesDTO> bookingFacilities;
 
     List<StayDTO> stay;
 

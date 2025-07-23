@@ -2,13 +2,10 @@ package com.poly.beestaycyberknightbackend.config;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
 import com.poly.beestaycyberknightbackend.service.UserService;
 import com.poly.beestaycyberknightbackend.util.SecurityUtil;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +24,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.List;
 
 @Configuration
@@ -59,7 +55,8 @@ public class SecurityConfiguration {
                                 "/api/**", "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html", 
-                                "/api/user/**")
+                                "/api/user/**","/api/admin/**")
+
                         .permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/").hasRole("USER")

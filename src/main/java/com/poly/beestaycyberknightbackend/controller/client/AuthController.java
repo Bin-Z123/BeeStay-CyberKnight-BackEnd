@@ -1,40 +1,27 @@
 package com.poly.beestaycyberknightbackend.controller.client;
 
-
 import java.security.Principal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.poly.beestaycyberknightbackend.domain.Rank;
-import com.poly.beestaycyberknightbackend.domain.Role;
 import com.poly.beestaycyberknightbackend.domain.TransactionLog;
 import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.dto.request.ChangePasswordRequest;
-import com.poly.beestaycyberknightbackend.dto.request.RegisterRequest;
 import com.poly.beestaycyberknightbackend.dto.request.RestLoginDTO;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
-import com.poly.beestaycyberknightbackend.dto.response.CustomUserDetails;
 import com.poly.beestaycyberknightbackend.dto.response.LoginDTO;
 import com.poly.beestaycyberknightbackend.dto.response.RankResponse;
 import com.poly.beestaycyberknightbackend.dto.response.RoleResponse;
 import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
-import com.poly.beestaycyberknightbackend.repository.RankRepository;
 import com.poly.beestaycyberknightbackend.repository.TransactionLogRepository;
 import com.poly.beestaycyberknightbackend.repository.UserRepository;
-import com.poly.beestaycyberknightbackend.service.UserService;
 import com.poly.beestaycyberknightbackend.util.SecurityUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,16 +42,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class AuthController {
-
-    private final RankRepository rankRepository;
-
-    private final PasswordEncoder passwordEncoder;
-    
+    PasswordEncoder passwordEncoder;
     AuthenticationManagerBuilder authenticationManagerBuilder;
     SecurityUtil securityUtil;
     TransactionLogRepository logRepository;
     UserRepository userRepository;
-    UserService userService;
 
     // AuthController(PasswordEncoder passwordEncoder, RankRepository rankRepository) {
     //     this.passwordEncoder = passwordEncoder;

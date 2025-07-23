@@ -1,22 +1,16 @@
 package com.poly.beestaycyberknightbackend.controller.admin;
 
 import java.util.List;
-
-import com.cloudinary.Api;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poly.beestaycyberknightbackend.dto.request.RoomUpdateRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import com.poly.beestaycyberknightbackend.domain.Room;
 import com.poly.beestaycyberknightbackend.dto.request.RoomRequest;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.RoomResponse;
 import com.poly.beestaycyberknightbackend.service.RoomService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.GetMapping;

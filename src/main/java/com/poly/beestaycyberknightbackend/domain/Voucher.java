@@ -1,7 +1,6 @@
 package com.poly.beestaycyberknightbackend.domain;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -37,7 +36,7 @@ public class Voucher {
     @Column(length = 10, nullable = false)
     VoucherStatus eStatus = VoucherStatus.ACTIVE;
 
-    @ManyToOne(fetch = FetchType.LAZY) // ẩn object khi không cần dùng
+    @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "user_id")
     User user;
 

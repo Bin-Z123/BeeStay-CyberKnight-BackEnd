@@ -1,4 +1,4 @@
-package com.poly.beestaycyberknightbackend.dto.request;
+package com.poly.beestaycyberknightbackend.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -7,11 +7,16 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreatePaymentLinkRequestBody {
+public class BookingFacilitiesDTO {
+
+    Long id;
+
     Long bookingId;
-    // String returnUrl;
-    // String cancelUrl;
+
+    Long facilityId;
+
+    Integer quantity;
 }

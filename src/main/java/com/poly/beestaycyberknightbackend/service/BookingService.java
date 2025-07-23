@@ -1,13 +1,10 @@
 package com.poly.beestaycyberknightbackend.service;
 
-import java.text.ParsePosition;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.BookingDetail;
@@ -19,12 +16,14 @@ import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.dto.request.BookingDetailRequest;
 import com.poly.beestaycyberknightbackend.dto.request.BookingFacilityRequest;
 import com.poly.beestaycyberknightbackend.dto.request.BookingRequest;
+import com.poly.beestaycyberknightbackend.dto.request.CreatePaymentLinkManuallyRequest;
 import com.poly.beestaycyberknightbackend.dto.request.GuestBookingRequest;
 import com.poly.beestaycyberknightbackend.dto.request.StayRequest;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableRoomDTO;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableTypeRoomDTO;
 import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
-import com.poly.beestaycyberknightbackend.dto.response.BookingResponse;
+import com.poly.beestaycyberknightbackend.dto.response.BookingFacilitiesDTO;
+import com.poly.beestaycyberknightbackend.dto.response.PaymentPayOSResponse;
 import com.poly.beestaycyberknightbackend.dto.response.RoomImageResponse;
 import com.poly.beestaycyberknightbackend.dto.response.StayDTO;
 import com.poly.beestaycyberknightbackend.exception.AppException;
@@ -66,12 +65,23 @@ public class BookingService {
     RoomImageRepository roomImageRepository;
     RoomImageMapper roomImageMapper;
     UserService userService;
-
+    PayOSService payOSService;
 
     public List<BookingDTO> getAllBookings() {
         List<Booking> listEntity = bookingRepository.findAll();
         List<BookingDTO> listResponse = listEntity.stream().map(
-                list -> bookingMapper.toResponse(list)).collect(Collectors.toList());
+                list -> {
+                    BookingDTO bookingDTO = bookingMapper.toResponse(list);
+                    List<BookingFacility> bookingFacilities = bookingFacilityRepository.findByBookingId(list.getId());
+                    List<BookingFacilitiesDTO> bookingFacilitiesDTOs = bookingFacilities.stream()
+                            .map(bookingFacilityMapper::toDto).collect(Collectors.toList());
+                    List<StayDTO> listStayDTOs = list.getStay().stream().map(stay -> stayMapper.toDto(stay))
+                            .collect(Collectors.toList());
+                    bookingDTO.setBookingFacilities(bookingFacilitiesDTOs);
+                    bookingDTO.setStay(listStayDTOs);
+                    return bookingDTO;
+                }).collect(Collectors.toList());
+
         return listResponse;
     }
 
@@ -79,6 +89,29 @@ public class BookingService {
     public Booking orderBooking(GuestBookingRequest guestBookingRequest, BookingRequest bookingRequest,
             List<BookingDetailRequest> bookingDetailRequest, List<BookingFacilityRequest> bookingFacilityRequest,
             List<StayRequest> stayRequest) {
+
+        // Phần kiểm tra số lượng phòng
+        LocalDateTime checkInDate = bookingRequest.getCheckInDate();
+        LocalDateTime checkOutDate = bookingRequest.getCheckOutDate();
+
+        List<AvailableTypeRoomDTO> availableRooms = this.getAvailableRooms(checkInDate, checkOutDate);
+
+        // Duyệt qua đơn hàng
+        for (BookingDetailRequest detailRequest : bookingDetailRequest) {
+            Long requestedRoomTypeId = detailRequest.getRoomTypeId();
+            int requestedQuantity = detailRequest.getQuantity();
+
+            // Tìm thông tin của loại phòng khách muốn đặt trong danh sách phòng trống
+            AvailableTypeRoomDTO roomTypeInfo = availableRooms.stream()
+                    .filter(r -> r.getRoomTypeId().equals(requestedRoomTypeId))
+                    .findFirst()
+                    .orElseThrow(() -> new AppException(ErrorCode.ROOMTYPE_NOT_EXISTED));
+
+            // nếu số lượng phòng khách yêu cầu lớn hơn số lượng phòng trống
+            if (roomTypeInfo.getAvailableRooms() < requestedQuantity) {
+                throw new AppException(ErrorCode.ROOM_IS_OUT_OF_STOCK);
+            }
+        }
 
         User user = null;
         GuestBooking guestBooking = null;
@@ -175,8 +208,19 @@ public class BookingService {
         Integer totalPriceBooking = bookingRepository.totalPriceBookingByBookingId(booking1.getId());
         Integer totalDiscount = bookingRepository.totalPriceDiscountEachRoomType(booking1.getId());
 
-        Integer totalPrice = totalFacilities + totalPriceBooking - totalDiscount;
+        double rankDiscountAmount = 0;
+        if (user != null && user.getRank() != null) {
+            // Lấy phần trăm giảm giá từ rank của user
+            int rankDiscountPercent = user.getRank().getDiscount_percent();
 
+            // Tính số tiền được giảm giá dựa trên tổng tiền phòng
+            // Dùng 100.0 để đảm bảo phép chia là số thực
+            rankDiscountAmount = totalPriceBooking * (rankDiscountPercent / 100.0);
+        }
+        // Tổng tiền = (Tiền phòng + Tiền dịch vụ) - Giảm giá phòng - Giảm giá theo Rank
+        Integer totalPrice = (totalFacilities + totalPriceBooking) - totalDiscount - (int) rankDiscountAmount;
+
+        // Cập nhật và lưu lại booking
         Booking booking2 = bookingRepository.findById(booking1.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
         booking2.setTotalAmount(totalPrice); // Cập nhật tổng tiền cho booking
@@ -237,8 +281,15 @@ public class BookingService {
         Booking entity = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
         BookingDTO resp = bookingMapper.toResponse(entity);
-        List<StayDTO> listStayDTOs = entity.getStay().stream().map(list -> stayMapper.toDto(list)).collect(Collectors.toList());
+        List<StayDTO> listStayDTOs = entity.getStay().stream().map(list -> stayMapper.toDto(list))
+                .collect(Collectors.toList());
+
+        List<BookingFacility> bookingFacilities = bookingFacilityRepository.findByBookingId(bookingId);
+        List<BookingFacilitiesDTO> bookingFacilitiesDTOs = bookingFacilities.stream()
+                .map(bookingFacilityMapper::toDto).collect(Collectors.toList());
+
         resp.setStay(listStayDTOs);
+        resp.setBookingFacilities(bookingFacilitiesDTOs);
         return resp;
     }
 
@@ -246,7 +297,6 @@ public class BookingService {
         Integer totalPriceFacilites = bookingRepository.totalPriceFacilitiesByBookingId(bookingId);
         Integer totalPriceBookingActual = bookingRepository.totalPriceBookingActual(bookingId);
         Integer totalPriceDiscount = bookingRepository.totalPriceDiscountEachRoomType(bookingId);
-
 
         if (totalPriceBookingActual == null) {
 
@@ -273,7 +323,6 @@ public class BookingService {
 
         Integer TotalPrice = totalFacilites + totalBooking - totalDiscount;
 
-
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
 
@@ -283,59 +332,64 @@ public class BookingService {
 
     }
 
-
     @Transactional
     public void setStatusBookingLate() {
         LocalDate today = LocalDate.now();
         List<Object[]> listId = bookingRepository.bookingCheckinLate(today);
 
-        List<Booking> listBooking = listId.stream().map(id -> { 
-                Long bId = Long.parseLong((id[0]).toString());
-                Booking b = bookingRepository.findById(bId).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
-                b.setBookingStatus("LATE");
-                return b;
-            }
-        ).collect(Collectors.toList());
+        List<Booking> listBooking = listId.stream().map(id -> {
+            Long bId = Long.parseLong((id[0]).toString());
+            Booking b = bookingRepository.findById(bId)
+                    .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+            b.setBookingStatus("LATE");
+            return b;
+        }).collect(Collectors.toList());
 
         bookingRepository.saveAll(listBooking);
     }
 
-
-    public BookingDTO setStatusBookingCancel(Long bookingId){
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(()-> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+    public BookingDTO setStatusBookingCancel(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
         booking.setBookingStatus("CANCEL");
         BookingDTO bookingDTO = bookingMapper.toResponse(booking);
         return bookingDTO;
     }
 
-    public void checkTotalPaymentofBooking(Long bookingId){
+    public void checkTotalPaymentofBooking(Long bookingId) {
         Integer total = bookingRepository.totalPaymentofBooking(bookingId);
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(()-> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
         Integer totalAmountBooking = booking.getTotalAmount();
 
         Integer result = totalAmountBooking - total;
 
-        if(result == 0){
+        if (result == 0) {
             booking.setBookingStatus("PAID");
             bookingRepository.save(booking);
             bookingRepository.flush();
-            userService.sumPointForUserEachBooking(booking.getUser().getId(), totalAmountBooking);
+            if (booking.getUser() != null) {
+                userService.sumPointForUserEachBooking(booking.getUser().getId(), totalAmountBooking);
+                rankService.updateRankUser(booking.getUser().getId());
+            }
+
         }
-        
-        rankService.updateRankUser(booking.getUser().getId());
+
     }
 
-    public BookingDTO checkoutBookingStatus(Long bookingId){
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(()-> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+    public BookingDTO checkoutBookingStatus(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
         Integer totalPayment = bookingRepository.totalPaymentofBooking(bookingId);
         Integer totalAmountBooking = booking.getTotalAmount();
 
         Integer result = totalPayment - totalAmountBooking;
 
-        if(result == 0){
+        if (result == 0) {
             booking.setBookingStatus("CHECKOUT");
 
-            //Đồng thời nếu booking checkout thì sẽ set tất cả Stay của booking đó thành Stay.setStatus("CHECKOUT")
+            // Đồng thời nếu booking checkout thì sẽ set tất cả Stay của booking đó thành
+            // Stay.setStatus("CHECKOUT")
             List<Stay> listStay = stayRepository.listStayOfBooking(bookingId);
             listStay.forEach(stay -> {
                 stay.setStayStatus("CHECKOUT");
@@ -343,14 +397,13 @@ public class BookingService {
                 stayRepository.save(stay);
             });
 
-            
-
             bookingRepository.save(booking);
-        } 
-        
+        }
+
         BookingDTO bookingDTO = bookingMapper.toResponse(booking);
         return bookingDTO;
     }
+
 
     public List<BookingDTO> fetchBookingByUser(User user) {
         List<Booking> bookings = bookingRepository.findByUser(user);
@@ -367,6 +420,57 @@ public class BookingService {
             return null;
         }
         return bookingMapper.toBookingResponse(booking);
+    }
+
+
+    // booking cho user
+    @Transactional
+    public Object orderBookingForUser(GuestBookingRequest guestBookingRequest, BookingRequest bookingRequest,
+            List<BookingDetailRequest> bookingDetailRequest, List<BookingFacilityRequest> bookingFacilityRequest,
+            List<StayRequest> stayRequest) {
+        try {
+            // GỌI HÀM orderBooking GỐC ĐỂ TẠO ĐƠN HÀNG Y HỆT NHƯ CŨ
+            Booking booking1 = this.orderBooking(
+                    guestBookingRequest,
+                    bookingRequest,
+                    bookingDetailRequest,
+                    bookingFacilityRequest,
+                    stayRequest);
+
+            Booking booking = bookingRepository.findById(booking1.getId())
+                    .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+            // KIỂM TRA TRẠNG THÁI ĐẶT CỌC
+
+            if (booking.getIsDeposit()) {
+                return "Đặt cọc đã được thực hiện trước đó.";
+            }
+
+            int depositAmount = 0;
+            List<BookingDetail> bookingDetails = bookingDetailRepository.findByBookingId(booking.getId());
+            if (bookingDetails == null || bookingDetails.isEmpty()) {
+                throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+            }
+            for (BookingDetail detail : bookingDetails) {
+                // Lấy giá từ RoomType liên kết với BookingDetail
+                int roomTypePrice = detail.getRoomType().getPrice();
+                // Cộng dồn tiền cọc = giá phòng * số lượng
+                depositAmount += roomTypePrice * detail.getQuantity();
+            }
+
+
+            CreatePaymentLinkManuallyRequest createPaymentLinkRequest = new CreatePaymentLinkManuallyRequest(
+                    booking.getId(), "Booking Deposit", "Booking Deposit", depositAmount);
+
+
+            booking.setIsDeposit(true);
+            bookingRepository.save(booking);
+
+            return payOSService.createPaymentLinkManually(createPaymentLinkRequest);
+
+        } catch (AppException e) {
+            return new PaymentPayOSResponse<>(-1, "fail", e.getMessage());
+        }
+
     }
 
 }

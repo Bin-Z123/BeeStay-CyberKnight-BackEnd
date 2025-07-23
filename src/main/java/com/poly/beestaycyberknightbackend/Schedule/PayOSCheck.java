@@ -1,17 +1,13 @@
-package com.poly.beestaycyberknightbackend.Schedule;
+package com.poly.beestaycyberknightbackend.schedule;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 import com.poly.beestaycyberknightbackend.domain.Payment;
 import com.poly.beestaycyberknightbackend.repository.PaymentRepository;
 import com.poly.beestaycyberknightbackend.service.PayOSService;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

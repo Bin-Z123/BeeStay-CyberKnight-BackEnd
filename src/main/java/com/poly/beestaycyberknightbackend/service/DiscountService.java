@@ -1,11 +1,8 @@
 package com.poly.beestaycyberknightbackend.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
-
 import com.poly.beestaycyberknightbackend.domain.Discount;
 import com.poly.beestaycyberknightbackend.dto.request.DiscountRequest;
 import com.poly.beestaycyberknightbackend.exception.AppException;
@@ -13,7 +10,6 @@ import com.poly.beestaycyberknightbackend.exception.ErrorCode;
 import com.poly.beestaycyberknightbackend.mapper.DiscountMapper;
 import com.poly.beestaycyberknightbackend.repository.DiscountRepository;
 import com.poly.beestaycyberknightbackend.repository.RoomTypeRepository;
-
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
