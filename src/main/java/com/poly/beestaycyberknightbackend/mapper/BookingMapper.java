@@ -11,4 +11,5 @@ import com.poly.beestaycyberknightbackend.dto.response.BookingResponse;
 public interface BookingMapper {
     Booking toBooking(BookingRequest bookingRequest);
     BookingDTO toResponse(Booking booking);
+    BookingResponse toBookingResponse(Booking booking);
 }

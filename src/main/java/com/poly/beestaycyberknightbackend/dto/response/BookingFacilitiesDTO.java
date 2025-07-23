@@ -1,5 +1,7 @@
 package com.poly.beestaycyberknightbackend.dto.response;
 
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +19,8 @@ public class BookingFacilitiesDTO {
     Long bookingId;
 
     Long facilityId;
+
+    List<FacilitiesDTO> facilities;
 
     Integer quantity;
 }
