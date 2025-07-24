@@ -230,7 +230,7 @@ public class PayOSService {
     public void handleWebhookData(WebhookData data, ObjectNode body) {
         // lấy paymentId từ webhook
         Long paymentId = data.getOrderCode();
-
+        System.out.println("Hook Da Vao Day");
         // Tìm payment trong db
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_EXISTED));
@@ -248,16 +248,20 @@ public class PayOSService {
             payment.setRawResponse(data.toString());
             paymentRepository.save(payment);
 
+            System.out.println("Chuan Bi Lay Booking");
             // lấy booking ra để update trạng thái
             Booking booking = payment.getBooking();
             if (booking != null) {
+
                 if (booking.getBookingStatus().equals("NOTPAID")) {
                     booking.setBookingStatus("CONFIRMED");
                     bookingRepository.save(booking);
                 } else {
                     bookingService.checkTotalPaymentofBooking(booking.getId());
+
                 }
             }
+
         } else {
             // xử lý giao dịch thất bại
             payment.setPaymentStatus("FAILED");

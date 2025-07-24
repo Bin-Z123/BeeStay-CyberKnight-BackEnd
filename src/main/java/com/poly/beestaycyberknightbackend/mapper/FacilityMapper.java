@@ -10,6 +10,8 @@ import com.poly.beestaycyberknightbackend.dto.response.FacilitiesDTO;
 @Mapper(componentModel = "spring")
 public interface FacilityMapper {
     Facility toFacility(FacilityRequest request);
+
     void updateFacility(@MappingTarget Facility facility, FacilityRequest request);
+
     FacilitiesDTO toFacilitiesDTO(Facility facility);
 }
