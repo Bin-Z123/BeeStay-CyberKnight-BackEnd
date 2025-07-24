@@ -185,6 +185,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Integer totalPriceBookingByBookingId(Long bookingId);
 
     @Query(value = """
+            SELECT COALESCE(SUM(rt.price * bd.quantity), 0) FROM RoomTypes rt JOIN BookingDetail bd on rt.id = bd.room_type_id
+            						 JOIN Bookings b on bd.booking_id = b.id
+            						 WHERE b.id = :bookingId
+            """, nativeQuery = true)
+    Integer totalPriceBookingByBookingId2(Long bookingId);
+
+    @Query(value = """
                 SELECT  COALESCE( SUM( rt.price * (d.discountValue/100) ), 0) FROM Discounts d JOIN discounts_roomtypes drt on d.id = drt.discounts_id
             JOIN RoomTypes rt on drt.roomtype_id = rt.id
             JOIN BookingDetail bd on rt.id = bd.room_type_id
