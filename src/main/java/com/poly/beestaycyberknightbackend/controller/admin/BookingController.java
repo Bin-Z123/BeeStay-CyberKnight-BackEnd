@@ -122,6 +122,11 @@ public class BookingController {
         return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.updateTotalPriceBookingAfter(id));
     }
 
+    @PutMapping("/afterUBD2/{id}")
+    public ApiResponse<BookingDTO> updatePriceAfterUpdateBD2(@PathVariable Long id) {
+        return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.updateTotalPriceBookingAfter2(id));
+    }
+
     @PutMapping("/cancel/{id}")
     public ApiResponse<BookingDTO> cancelBooking(@PathVariable Long id) {
         return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.setStatusBookingCancel(id));
