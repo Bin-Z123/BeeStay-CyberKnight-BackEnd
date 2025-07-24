@@ -252,11 +252,13 @@ public class PayOSService {
             // lấy booking ra để update trạng thái
             Booking booking = payment.getBooking();
             if (booking != null) {
-                bookingService.checkTotalPaymentofBooking(booking.getId());
+
                 if (booking.getBookingStatus().equals("NOTPAID")) {
-                    booking.setBookingStatus("COMFIRMED");
-                    System.out.println("bookingStatus: " + booking.getBookingStatus());
+                    booking.setBookingStatus("CONFIRMED");
                     bookingRepository.save(booking);
+                } else {
+                    bookingService.checkTotalPaymentofBooking(booking.getId());
+
                 }
             }
 

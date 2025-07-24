@@ -73,6 +73,7 @@ public class BookingService {
     PayOSService payOSService;
     FacilityMapper facilityMapper;
 
+
     public List<BookingDTO> getAllBookings() {
         List<Booking> listEntity = bookingRepository.findAll();
         List<BookingDTO> listResponse = listEntity.stream().map(
@@ -300,14 +301,16 @@ public class BookingService {
 
         List<BookingFacility> bookingFacilities = bookingFacilityRepository.findByBookingId(bookingId);
         List<BookingFacilitiesDTO> bookingFacilitiesDTOs = bookingFacilities.stream()
-                .map(f -> {
-                    BookingFacilitiesDTO bookingFacilitiesDTO = bookingFacilityMapper.toDto(f);
-                    Optional<Facility> facilities = facilityRepository.findById(f.getFacility().getId());
-                    List<FacilitiesDTO> facilitiesDTOs = facilities.map(facilityMapper::toFacilitiesDTO)
-                            .stream().toList();
-                    bookingFacilitiesDTO.setFacilities(facilitiesDTOs);
-                    return bookingFacilitiesDTO;
-                }).collect(Collectors.toList());
+
+                            .map(f -> {
+                                BookingFacilitiesDTO bookingFacilitiesDTO = bookingFacilityMapper.toDto(f);
+                                Optional<Facility> facilities = facilityRepository.findById(f.getFacility().getId());
+                                List<FacilitiesDTO> facilitiesDTOs = facilities.map(facilityMapper::toFacilitiesDTO)
+                                        .stream().toList();
+                                bookingFacilitiesDTO.setFacilities(facilitiesDTOs);
+                                return bookingFacilitiesDTO;
+                            }).collect(Collectors.toList());
+
 
         resp.setStay(listStayDTOs);
         resp.setBookingFacilities(bookingFacilitiesDTOs);
@@ -512,13 +515,14 @@ public class BookingService {
     public List<BookingDTO> fetchBookingByUser(User user) {
         List<Booking> bookings = bookingRepository.findByUser(user);
         return bookings.stream()
-                .map(bookingMapper::toResponse)
-                .collect(Collectors.toList());
+                    .map(bookingMapper::toResponse)
+                    .collect(Collectors.toList());
+
     }
 
     public BookingResponse getBookingByIdAndUser(Long bookingId, User user) {
-        Booking booking = bookingRepository.findByIdAndUser(bookingId, user)
-                .orElse(null);
+        Booking booking = bookingRepository.findByIdAndUser(bookingId, user).orElse(null);
+
 
         if (booking == null) {
             return null;
