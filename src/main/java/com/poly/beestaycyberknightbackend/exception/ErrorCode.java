@@ -22,6 +22,7 @@ public enum ErrorCode {
     UPLOAD_FAILED(400, "Upload failed"),
     ROOM_IS_OUT_OF_STOCK(400, "Room is out of stock"),
     UNCATEGORIZED_EXCEPTION(500, "An uncategorized error occurred"),
+    BOOKING_ALREADY_PROCESSED_CHECKOUT(400, "Booking already processed checkout"),
     ;
 
     private final int code;

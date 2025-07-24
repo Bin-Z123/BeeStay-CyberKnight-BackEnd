@@ -13,8 +13,9 @@ import com.poly.beestaycyberknightbackend.dto.response.BookingDetailDTO;
 @Mapper(componentModel = "spring")
 public interface BookingDetailMapper {
     BookingDetail toEntity(BookingDetailRequest request);
-    
-    void toUpdateEntity(@MappingTarget Optional<BookingDetail> bookingdetail,BookingDetailUpdateRequest bookingDetailUpdateRequest);
+
+    void toUpdateEntity(@MappingTarget Optional<BookingDetail> bookingdetail,
+            BookingDetailUpdateRequest bookingDetailUpdateRequest);
 
     BookingDetailDTO toResponse(BookingDetail bookingDetail);
 }

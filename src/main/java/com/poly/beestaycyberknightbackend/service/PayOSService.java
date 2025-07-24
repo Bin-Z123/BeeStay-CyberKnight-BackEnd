@@ -2,7 +2,7 @@ package com.poly.beestaycyberknightbackend.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import org.slf4j.Logger; 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -36,8 +36,8 @@ public class PayOSService {
     BookingService bookingService;
 
     public PayOSService(PayOS payOS, BookingRepository bookingRepository,
-                        PaymentRepository paymentRepository, @Lazy BookingService bookingService, 
-                        @Value("${returnUrl}") String returnUrl, @Value("${cancelUrl}") String cancelUrl) {
+            PaymentRepository paymentRepository, @Lazy BookingService bookingService,
+            @Value("${returnUrl}") String returnUrl, @Value("${cancelUrl}") String cancelUrl) {
         this.payOS = payOS;
         this.bookingRepository = bookingRepository;
         this.paymentRepository = paymentRepository;
@@ -60,7 +60,7 @@ public class PayOSService {
 
             cancelExistingPendingPayment(linkRequestBody.getBookingId());
             int totalAmount = booking.getTotalAmount() - bookingRepository.totalPaymentofBooking(booking.getId());
-            if(totalAmount <= 0){
+            if (totalAmount <= 0) {
                 return new PaymentPayOSResponse<>(0, "Đã thanh toán hết", null);
             }
 
@@ -78,7 +78,6 @@ public class PayOSService {
 
             StringBuilder billName = new StringBuilder();
             StringBuilder description = new StringBuilder();
-            
 
             roomTypesList.stream().forEach(row -> {
                 String roomtype = (String) row[0];
@@ -231,7 +230,7 @@ public class PayOSService {
     public void handleWebhookData(WebhookData data, ObjectNode body) {
         // lấy paymentId từ webhook
         Long paymentId = data.getOrderCode();
-
+        System.out.println("Hook Da Vao Day");
         // Tìm payment trong db
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_EXISTED));
@@ -249,11 +248,20 @@ public class PayOSService {
             payment.setRawResponse(data.toString());
             paymentRepository.save(payment);
 
+            System.out.println("Chuan Bi Lay Booking");
             // lấy booking ra để update trạng thái
             Booking booking = payment.getBooking();
             if (booking != null) {
-                bookingService.checkTotalPaymentofBooking(booking.getId());
+
+                if (booking.getBookingStatus().equals("NOTPAID")) {
+                    booking.setBookingStatus("CONFIRMED");
+                    bookingRepository.save(booking);
+                } else {
+                    bookingService.checkTotalPaymentofBooking(booking.getId());
+
+                }
             }
+
         } else {
             // xử lý giao dịch thất bại
             payment.setPaymentStatus("FAILED");
@@ -267,7 +275,8 @@ public class PayOSService {
     @Transactional
     public Object createPaymentLinkManually(CreatePaymentLinkManuallyRequest request) {
         try {
-            Booking booking = bookingRepository.findById(request.getBookingId()).orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+            Booking booking = bookingRepository.findById(request.getBookingId())
+                    .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
             cancelExistingPendingPayment(request.getBookingId());
 
             Payment payment = new Payment();
@@ -279,7 +288,8 @@ public class PayOSService {
             payment.setPaymentType("BOOKING");
             paymentRepository.save(payment);
 
-            ItemData itemData = ItemData.builder().name(request.getBillName()).price(request.getAmount()).quantity(1).build();
+            ItemData itemData = ItemData.builder().name(request.getBillName()).price(request.getAmount()).quantity(1)
+                    .build();
             PaymentData paymentData = PaymentData.builder().orderCode(payment.getId())
                     .description(request.getDescription())
                     .amount(request.getAmount()).item(itemData).returnUrl(returnUrl).cancelUrl(cancelUrl).build();
@@ -290,7 +300,5 @@ public class PayOSService {
             return new PaymentPayOSResponse<>(-1, "fail", e.getMessage());
         }
     }
-        
-
 
 }

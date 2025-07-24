@@ -8,7 +8,7 @@ import com.poly.beestaycyberknightbackend.dto.request.PaymentByCashRequest;
 
 @Mapper(componentModel = "spring")
 public interface PaymentMapper {
-    
+
     @Mapping(target = "paymentCode", ignore = true)
     @Mapping(target = "booking", ignore = true)
     @Mapping(target = "id", ignore = true)

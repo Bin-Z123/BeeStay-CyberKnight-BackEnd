@@ -7,7 +7,7 @@ import com.poly.beestaycyberknightbackend.dto.request.GuestBookingRequest;
 
 @Mapper(componentModel = "spring")
 public interface GuestBookingMapper {
-    
+
     GuestBooking toGuestBooking(GuestBookingRequest request);
 
 }

@@ -10,6 +10,8 @@
 @Mapper(componentModel = "spring")
 public interface BookingMapper {
     Booking toBooking(BookingRequest bookingRequest);
+
     BookingDTO toResponse(Booking booking);
+
     BookingResponse toBookingResponse(Booking booking);
 }
