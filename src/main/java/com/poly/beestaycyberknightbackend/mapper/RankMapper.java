@@ -11,7 +11,6 @@ import com.poly.beestaycyberknightbackend.dto.request.RankRequest;
 public interface RankMapper {
     Rank toRank(RankRequest rankRequest);
 
-
     void updateRank(@MappingTarget Rank rank, RankRequest request);
 
 }

@@ -33,6 +33,7 @@ public interface UserMapper {
     default int mapEBlacklistToInt(EBlacklist eBlacklist) {
         return eBlacklist.ordinal(); // Map EBlacklist enum về đúng giá trị int
     }
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateProfileUser(@MappingTarget User user, UserRequest userRequest);
 
