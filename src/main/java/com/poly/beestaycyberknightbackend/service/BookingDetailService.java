@@ -3,28 +3,20 @@ package com.poly.beestaycyberknightbackend.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.BookingDetail;
 import com.poly.beestaycyberknightbackend.domain.RoomType;
-import com.poly.beestaycyberknightbackend.dto.request.BookingDetailRequest;
 import com.poly.beestaycyberknightbackend.dto.request.BookingDetailUpdateRequest;
 import com.poly.beestaycyberknightbackend.dto.response.BookingDetailDTO;
-import com.poly.beestaycyberknightbackend.dto.response.RoomTypeDTO;
 import com.poly.beestaycyberknightbackend.exception.AppException;
 import com.poly.beestaycyberknightbackend.exception.ErrorCode;
 import com.poly.beestaycyberknightbackend.mapper.BookingDetailMapper;
-import com.poly.beestaycyberknightbackend.mapper.RoomTypeMapper;
 import com.poly.beestaycyberknightbackend.repository.BookingDetailRepository;
 import com.poly.beestaycyberknightbackend.repository.BookingRepository;
 import com.poly.beestaycyberknightbackend.repository.RoomTypeRepository;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

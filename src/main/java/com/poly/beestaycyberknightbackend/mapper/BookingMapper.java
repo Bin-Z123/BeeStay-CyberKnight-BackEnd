@@ -7,8 +7,9 @@
     import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
     import com.poly.beestaycyberknightbackend.dto.response.BookingResponse;
 
-    @Mapper(componentModel = "spring")
-    public interface BookingMapper {
-        Booking toBooking(BookingRequest bookingRequest);
-        BookingDTO toResponse(Booking booking);
-    }
+@Mapper(componentModel = "spring")
+public interface BookingMapper {
+    Booking toBooking(BookingRequest bookingRequest);
+    BookingDTO toResponse(Booking booking);
+    BookingResponse toBookingResponse(Booking booking);
+}

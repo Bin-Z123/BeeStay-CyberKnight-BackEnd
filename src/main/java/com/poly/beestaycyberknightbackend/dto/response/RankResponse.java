@@ -1,6 +1,5 @@
 package com.poly.beestaycyberknightbackend.dto.response;
 
-import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

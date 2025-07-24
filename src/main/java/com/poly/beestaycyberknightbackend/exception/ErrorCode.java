@@ -19,7 +19,10 @@ public enum ErrorCode {
     BOOKINGDETAIL_NOT_EXISTED(404, "BookingDetail not found"),
     ROOM_NOT_EXISTED(404, "Room not found"),
     INVALID_REQUEST(400, "Invalid request"),
-    UPLOAD_FAILED(400, "Upload failed");
+    UPLOAD_FAILED(400, "Upload failed"),
+    ROOM_IS_OUT_OF_STOCK(400, "Room is out of stock"),
+    UNCATEGORIZED_EXCEPTION(500, "An uncategorized error occurred"),
+    ;
 
     private final int code;
     private final String message;

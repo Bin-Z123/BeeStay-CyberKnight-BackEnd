@@ -3,6 +3,9 @@ package com.poly.beestaycyberknightbackend.controller.admin;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,10 +13,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.poly.beestaycyberknightbackend.domain.Booking;
+import com.poly.beestaycyberknightbackend.domain.BookingFacility;
+import com.poly.beestaycyberknightbackend.domain.Facility;
 import com.poly.beestaycyberknightbackend.dto.request.OrderBookingWrapper;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.AvailableTypeRoomDTO;
 import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
+import com.poly.beestaycyberknightbackend.dto.response.BookingFacilitiesDTO;
+import com.poly.beestaycyberknightbackend.dto.response.FacilitiesDTO;
+import com.poly.beestaycyberknightbackend.exception.AppException;
+import com.poly.beestaycyberknightbackend.exception.ErrorCode;
+import com.poly.beestaycyberknightbackend.mapper.BookingFacilityMapper;
+import com.poly.beestaycyberknightbackend.mapper.BookingMapper;
+import com.poly.beestaycyberknightbackend.mapper.FacilityMapper;
+import com.poly.beestaycyberknightbackend.repository.BookingFacilityRepository;
+import com.poly.beestaycyberknightbackend.repository.BookingRepository;
+import com.poly.beestaycyberknightbackend.repository.FacilityRepository;
 import com.poly.beestaycyberknightbackend.service.BookingService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +43,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/api")
 public class BookingController {
     BookingService bookingService;
+    BookingRepository bookingRepository;
+    BookingMapper bookingMapper;
+    BookingFacilityRepository bookingFacilityRepository;
+    BookingFacilityMapper bookingFacilityMapper;
+    FacilityRepository facilityRepository;
+    FacilityMapper facilityMapper;
 
     @GetMapping("/admin/booking/list")
     public ApiResponse<List<BookingDTO>> getBookings() {
@@ -35,13 +56,35 @@ public class BookingController {
     }
 
     @PostMapping("/admin/booking/order")
-    public ApiResponse<Booking> orderBooking(@RequestBody OrderBookingWrapper request) {
-        return new ApiResponse<>(200, null, bookingService.orderBooking(
+    public ApiResponse<BookingDTO> orderBooking(@RequestBody OrderBookingWrapper request) {
+        try {
+            Booking booking = bookingService.orderBooking(
                 request.getGuestBookingRequest(),
                 request.getBookingRequest(),
                 request.getBookingDetailRequest(),
                 request.getBookingFacilityRequest(),
-                request.getStayRequest()));
+                request.getStayRequest());
+            
+            Booking booking2 = bookingRepository.findById(booking.getId()).orElseThrow(() -> new AppException(ErrorCode.BOOKINGDETAIL_NOT_EXISTED));
+            BookingDTO bookingDTO = bookingMapper.toResponse(booking2);
+            List<BookingFacility> bookingFacilities = bookingFacilityRepository.findByBookingId(booking2.getId());
+            List<BookingFacilitiesDTO> bookingFacilitiesDTOs = bookingFacilities.stream()
+                            .map(f -> {
+                                BookingFacilitiesDTO bookingFacilitiesDTO = bookingFacilityMapper.toDto(f);
+                                Optional<Facility> facilities = facilityRepository.findById(f.getFacility().getId());
+                                List<FacilitiesDTO> facilitiesDTOs = facilities.map(facilityMapper::toFacilitiesDTO)
+                                        .stream().toList();
+                                bookingFacilitiesDTO.setFacilities(facilitiesDTOs);
+                                return bookingFacilitiesDTO;
+                            }).collect(Collectors.toList());
+            bookingDTO.setBookingFacilities(bookingFacilitiesDTOs);
+
+            return new ApiResponse<>(HttpStatus.SC_OK, null, bookingDTO);
+        } catch (Exception e) {
+            return new ApiResponse<>(HttpStatus.SC_BAD_REQUEST, e.getMessage(), null);
+        }
+
+        
     }
 
     @GetMapping("/admin/booking/bookingbycheckin")

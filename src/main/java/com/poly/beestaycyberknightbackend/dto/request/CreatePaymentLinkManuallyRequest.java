@@ -7,11 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreatePaymentLinkRequestBody {
+public class CreatePaymentLinkManuallyRequest {
     Long bookingId;
-    // String returnUrl;
-    // String cancelUrl;
+    String billName;
+    String description;
+    Integer amount;
 }

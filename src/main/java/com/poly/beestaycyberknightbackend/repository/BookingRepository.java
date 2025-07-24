@@ -7,6 +7,7 @@ import com.poly.beestaycyberknightbackend.domain.Booking;
 import com.poly.beestaycyberknightbackend.domain.User;
 
 import java.util.List;
+import java.util.Optional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -70,7 +71,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                 FROM Bookings b
                 JOIN BookingDetail bd ON b.id = bd.booking_id
                 WHERE
-                    b.e_booking_status = 'CONFIRMED'  OR b.e_booking_status = 'LATE'
+                    (b.e_booking_status = 'CONFIRMED'  OR b.e_booking_status = 'LATE')
                     AND @fromDate <= b.check_out_date
                     AND @toDate >= b.check_in_date
                 GROUP BY bd.room_type_id
@@ -178,7 +179,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Integer totalPriceFacilitiesByBookingId(Long bookingId);
 
     @Query(value = """
-            SELECT SUM(rt.price * bd.quantity) * DATEDIFF(DAY,b.check_in_date,b.check_out_date) FROM RoomTypes rt JOIN BookingDetail bd on rt.id = bd.room_type_id
+            SELECT COALESCE(SUM(rt.price * bd.quantity) * DATEDIFF(DAY,b.check_in_date,b.check_out_date), 0) FROM RoomTypes rt JOIN BookingDetail bd on rt.id = bd.room_type_id
             						 JOIN Bookings b on bd.booking_id = b.id
             						 WHERE b.id = :bookingId
             						 GROUP BY b.check_in_date, b.check_out_date
@@ -195,7 +196,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Integer totalPriceDiscountEachRoomType(Long bookingId);
 
     @Query(value = """
-               SELECT SUM(rt.price) * DATEDIFF(DAY,s.actualcheckin,s.actualcheckout) FROM RoomTypes rt JOIN Rooms r on rt.id = r.roomtype_id
+               SELECT COALESCE( SUM(rt.price) * DATEDIFF(DAY,s.actualcheckin,s.actualcheckout), 0) FROM RoomTypes rt JOIN Rooms r on rt.id = r.roomtype_id
             JOIN Stays s on r.id = s.room_id
             JOIN Bookings b on s.booking_id = b.id
             WHERE b.id = :bookingId
@@ -210,17 +211,22 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Object[]> bookingCheckinLate(LocalDate date);
 
     @Query(value = """
-            SELECT SUM(p.amount) FROM Payment p JOIN Bookings b ON p.booking_id = b.id
-					  WHERE b.id = :bookingId AND p.payment_status LIKE 'PAID'
+            SELECT COALESCE(
+                (SELECT SUM(p.amount)
+                 FROM Payment p
+                 WHERE p.booking_id = :bookingId AND p.payment_status = 'PAID'),
+            0)
             """, nativeQuery = true)
     Integer totalPaymentofBooking(Long bookingId);
 
     @Query(value = """
-            DECLARE @today1 DATETIME = :today
-            SELECT b.* FROM Rooms r JOIN Stays s on r.id = s.room_id
-					    JOIN Bookings b on s.booking_id = b.id
-		   WHERE b.check_in_date <= @today1 AND @today1 <= b.check_out_date
-				 AND r.id = :roomId
-            """, nativeQuery = true)
+                   DECLARE @today1 DATETIME = :today
+                   SELECT b.* FROM Rooms r JOIN Stays s on r.id = s.room_id
+                JOIN Bookings b on s.booking_id = b.id
+            WHERE b.check_in_date <= @today1 AND @today1 <= b.check_out_date
+            AND r.id = :roomId
+                   """, nativeQuery = true)
     List<Booking> findBookingByRoomId(Long roomId, LocalDateTime today);
+
+    Optional<Booking> findByIdAndUser(Long bookingId, User user);
 }
