@@ -37,13 +37,15 @@ public class PayOSService {
 
     public PayOSService(PayOS payOS, BookingRepository bookingRepository,
             PaymentRepository paymentRepository, @Lazy BookingService bookingService,
-            @Value("${returnUrl}") String returnUrl, @Value("${cancelUrl}") String cancelUrl) {
+            @Value("${returnUrl}") String returnUrl, @Value("${cancelUrl}") String cancelUrl, @Value("${returnUserUrl}") String returnUserUrl,@Value("${cancelUserUrl}") String cancelUserUrl) {
         this.payOS = payOS;
         this.bookingRepository = bookingRepository;
         this.paymentRepository = paymentRepository;
         this.bookingService = bookingService;
         this.returnUrl = returnUrl;
         this.cancelUrl = cancelUrl;
+        this.returnUserUrl = returnUserUrl;
+        this.cancelUserUrl = cancelUserUrl;
     }
 
     @Value("${returnUrl}")
@@ -51,6 +53,12 @@ public class PayOSService {
 
     @Value("${cancelUrl}")
     String cancelUrl;
+
+    @Value("${returnUserUrl}")
+    String returnUserUrl;
+
+    @Value("${cancelUserUrl}")
+    String cancelUserUrl;
 
     @Transactional
     public PaymentPayOSResponse createPaymentLink(CreatePaymentLinkRequestBody linkRequestBody) {
