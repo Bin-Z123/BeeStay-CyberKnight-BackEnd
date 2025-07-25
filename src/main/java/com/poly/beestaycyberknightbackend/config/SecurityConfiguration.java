@@ -63,6 +63,7 @@ public class SecurityConfiguration {
                 // .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 // .authenticationEntryPoint(customAuthenticationEntryPoint)
                 // )
+                // ..
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
@@ -109,7 +110,6 @@ public class SecurityConfiguration {
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, SecurityUtil.JWT_ALGORITHM.getName());
     }
 
-    
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
