@@ -63,3 +63,4 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/beestay:${{ github.ref_name == 'main' && 'latest' || 'develop' }}
 
 # Update yml
+# Fix container Redis
