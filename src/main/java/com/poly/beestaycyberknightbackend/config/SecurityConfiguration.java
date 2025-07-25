@@ -49,12 +49,12 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/login", "/api/register", "/api/change_password", "/api/logout",
-                                "/api/forgot-password/**", "/api/availableRoomsTypeAndDateV2", "/orderPayOS/**",
+                        .requestMatchers("/api/login", "/api/register/**", "/api/change_password", "/api/logout",
+                                "/api/forgot-password/**", "/api/availableRoomsTypeAndDateV2", "/api/orderPayOS/**",
                                 "/api/booking/**",
-                                "/api/**", "/v3/api-docs/**",
+                                "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html","/api/admin/**")
+                                "/swagger-ui.html", "/api/admin/**")
                         .permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/").hasRole("USER")
