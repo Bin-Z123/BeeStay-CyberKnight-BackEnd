@@ -27,7 +27,6 @@ import lombok.experimental.FieldDefaults;
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class RegisterController {
     PasswordEncoder passwordEncoder;
     UserRepository userRepository;
@@ -36,7 +35,7 @@ public class RegisterController {
     UserService userService;
     private final RankRepository rankRepository;
 
-    @PostMapping("/register/send-otp")
+    @PostMapping("/api/register/send-otp")
     public ApiResponse<Void> sendOtpForRegister(@RequestBody RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             return ApiResponse.<Void>builder()
@@ -58,7 +57,7 @@ public class RegisterController {
                 .build();
     }
 
-    @PostMapping("/register/verify-otp")
+    @PostMapping("/api/register/verify-otp")
     public ApiResponse<Void> verifyOtpAndRegister(@RequestBody Map<String, String> body) {
         String email = body.get("email");
         String otp = body.get("otp");
