@@ -6,6 +6,7 @@ import java.util.Random;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nimbusds.jose.shaded.gson.Gson;
@@ -19,7 +20,6 @@ import com.poly.beestaycyberknightbackend.service.EmailService;
 import com.poly.beestaycyberknightbackend.service.RedisService;
 import com.poly.beestaycyberknightbackend.service.UserService;
 
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,6 +27,7 @@ import lombok.experimental.FieldDefaults;
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class RegisterController {
 
     PasswordEncoder passwordEncoder;
@@ -35,18 +36,18 @@ public class RegisterController {
     EmailService emailService;
     UserService userService;
     private final RankRepository rankRepository;
-    
+
     @PostMapping("/register/send-otp")
     public ApiResponse<Void> sendOtpForRegister(@RequestBody RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             return ApiResponse.<Void>builder()
-                .code(400)
-                .message("Email đã được sử dụng")
-                .build();
+                    .code(400)
+                    .message("Email đã được sử dụng")
+                    .build();
         }
 
-        String json = new Gson().toJson(request); 
-        redisService.saveOtp("register:" + request.getEmail(), json, 5); 
+        String json = new Gson().toJson(request);
+        redisService.saveOtp("register:" + request.getEmail(), json, 5);
 
         String otp = String.valueOf(100000 + new Random().nextInt(900000));
         redisService.saveOtp("otp:" + request.getEmail(), otp, 5);
@@ -81,7 +82,7 @@ public class RegisterController {
         }
 
         RegisterRequest registerRequest = new Gson().fromJson(userData, RegisterRequest.class);
-        
+
         User user = new User();
         user.setFullname(registerRequest.getFirstName() + " " + registerRequest.getLastName());
         user.setEmail(registerRequest.getEmail());
@@ -103,6 +104,5 @@ public class RegisterController {
                 .message("Đăng ký thành công")
                 .build();
     }
-
 
 }
