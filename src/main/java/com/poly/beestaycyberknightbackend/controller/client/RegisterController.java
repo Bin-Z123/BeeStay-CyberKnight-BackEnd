@@ -29,7 +29,6 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class RegisterController {
-
     PasswordEncoder passwordEncoder;
     UserRepository userRepository;
     RedisService redisService;
