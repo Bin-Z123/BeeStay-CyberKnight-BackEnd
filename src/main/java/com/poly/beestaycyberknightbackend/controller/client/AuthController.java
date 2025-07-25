@@ -3,7 +3,10 @@ package com.poly.beestaycyberknightbackend.controller.client;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+
+import org.apache.hc.core5.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -35,8 +38,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-
-
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
@@ -48,14 +49,15 @@ public class AuthController {
     TransactionLogRepository logRepository;
     UserRepository userRepository;
 
-    // AuthController(PasswordEncoder passwordEncoder, RankRepository rankRepository) {
-    //     this.passwordEncoder = passwordEncoder;
-    //     this.rankRepository = rankRepository;
+    // AuthController(PasswordEncoder passwordEncoder, RankRepository
+    // rankRepository) {
+    // this.passwordEncoder = passwordEncoder;
+    // this.rankRepository = rankRepository;
     // }
     @PostMapping("/login")
-    public ApiResponse<RestLoginDTO> login(@Valid @RequestBody LoginDTO loginDTO,
-                                        HttpServletRequest httpRequest,
-                                        HttpServletResponse response) {
+     public ApiResponse<RestLoginDTO> login(@Valid @RequestBody LoginDTO loginDTO,
+                                           HttpServletRequest httpRequest,
+                                           HttpServletResponse response) {
 
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
@@ -65,16 +67,18 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // ✅ Thêm cookie chứa token
-        Cookie cookie = new Cookie("jwt", access_token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false); // nên là true nếu dùng HTTPS thực tế
-        cookie.setPath("/");
-        cookie.setMaxAge(30 * 60); // 30 phút
+        // ✅ Sửa đổi CỤ THỂ tại đây: Thay thế cách tạo Cookie cũ
+        ResponseCookie springCookie = ResponseCookie.from("jwt", access_token)
+                .httpOnly(true)
+                .secure(true) // BẮT BUỘC TRUE vì bạn đang dùng HTTPS (qua ngrok)
+                .path("/")
+                .maxAge(30 * 60) // 30 phút
+                .sameSite("None") // Cực kỳ quan trọng cho các yêu cầu cross-site (ngrok)
+                .build();
 
-        response.addCookie(cookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, springCookie.toString()); // Thêm cookie vào response header
 
-        // ✅ Để frontend dùng nếu cần
+        // ✅ Để frontend dùng nếu cần (nếu bạn muốn lưu token vào localStorage ngoài cookie)
         RestLoginDTO restLoginDTO = new RestLoginDTO();
         restLoginDTO.setAccessToken(access_token);
 
@@ -89,54 +93,51 @@ public class AuthController {
         logRepository.save(log);
 
         return ApiResponse.<RestLoginDTO>builder()
-                .code(HttpStatus.OK.value())
-                .message("Đăng nhập thành công")
-                .data(restLoginDTO)
-                .build();
+                    .code(HttpStatus.OK.value())
+                    .message("Đăng nhập thành công")
+                    .data(restLoginDTO)
+                    .build();
     }
 
-
-
     // @PostMapping("/register")
-    // public ApiResponse<Void> handleRegister(@RequestBody @Valid RegisterRequest registerRequest) {
-    //     if (userRepository.existsByEmail(registerRequest.getEmail())) {
-    //         return ApiResponse.<Void>builder()
-    //                 .message("Email đã được sử dụng")
-    //                 .code(HttpStatus.BAD_REQUEST.value())
-    //                 .build();
-    //     }
-
-    //     User user = new User();
-    //     user.setFullname(registerRequest.getFirstName() + " " + registerRequest.getLastName());
-    //     user.setEmail(registerRequest.getEmail());
-    //     user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-
-    //     // ✅ Bạn có thể bật lại các giá trị mặc định khi cần
-    //     // user.setPhone("0000000000");
-    //     // user.setGender(true);
-    //     // user.setBirthday(LocalDate.now().minusYears(18));
-    //     // user.setJoinDate(LocalDateTime.now());
-    //     // user.setUpdateDate(LocalDateTime.now());
-    //     // user.setEBlacklist(User.EBlacklist.NORM);
-    //     // user.setCccd("000000000000");
-    //     // user.setPoint(0);
-
-    //     Role role = userService.getRoleByName("USER");
-    //     user.setRole(role);
-
-    //     user.setRank(rankRepository.findById(1)
-    //             .orElseThrow(() -> new RuntimeException("Rank mặc định không tồn tại")));
-
-    //     userRepository.save(user);
-
-    //     return ApiResponse.<Void>builder()
-    //             .message("Đăng ký thành công")
-    //             .code(HttpStatus.OK.value())
-    //             .build();
+    // public ApiResponse<Void> handleRegister(@RequestBody @Valid RegisterRequest
+    // registerRequest) {
+    // if (userRepository.existsByEmail(registerRequest.getEmail())) {
+    // return ApiResponse.<Void>builder()
+    // .message("Email đã được sử dụng")
+    // .code(HttpStatus.BAD_REQUEST.value())
+    // .build();
     // }
 
-    
+    // User user = new User();
+    // user.setFullname(registerRequest.getFirstName() + " " +
+    // registerRequest.getLastName());
+    // user.setEmail(registerRequest.getEmail());
+    // user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
 
+    // // ✅ Bạn có thể bật lại các giá trị mặc định khi cần
+    // // user.setPhone("0000000000");
+    // // user.setGender(true);
+    // // user.setBirthday(LocalDate.now().minusYears(18));
+    // // user.setJoinDate(LocalDateTime.now());
+    // // user.setUpdateDate(LocalDateTime.now());
+    // // user.setEBlacklist(User.EBlacklist.NORM);
+    // // user.setCccd("000000000000");
+    // // user.setPoint(0);
+
+    // Role role = userService.getRoleByName("USER");
+    // user.setRole(role);
+
+    // user.setRank(rankRepository.findById(1)
+    // .orElseThrow(() -> new RuntimeException("Rank mặc định không tồn tại")));
+
+    // userRepository.save(user);
+
+    // return ApiResponse.<Void>builder()
+    // .message("Đăng ký thành công")
+    // .code(HttpStatus.OK.value())
+    // .build();
+    // }
 
     @PostMapping("/change_password")
     public ApiResponse<Void> changePassword(@RequestBody ChangePasswordRequest request, Principal principal) {
@@ -149,7 +150,6 @@ public class AuthController {
                 .message("Đổi mật khẩu thành công")
                 .build();
     }
-
 
     @GetMapping("/me")
     public ApiResponse<UserResponse> getCurrentUser(HttpServletRequest request) {
@@ -228,23 +228,19 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ApiResponse<Void> logout(HttpServletResponse response) {
+        // Bạn có thể cân nhắc dùng ResponseCookie ở đây cũng được, nhưng Cookie class vẫn hoạt động
         Cookie cookie = new Cookie("jwt", null);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(0); // xoá cookie
+        // Đảm bảo secure = true cho cookie logout nếu môi trường là HTTPS
+        cookie.setSecure(true); // Thêm dòng này để phù hợp với cookie login
         response.addCookie(cookie);
 
         return ApiResponse.<Void>builder()
-                .message("Đăng xuất thành công")
-                .code(200)
-                .build();
+                    .message("Đăng xuất thành công")
+                    .code(200)
+                    .build();
     }
-
-
-
-
-
-
-
 
 }
