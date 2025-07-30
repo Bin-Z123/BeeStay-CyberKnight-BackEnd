@@ -36,6 +36,7 @@ public class UserController {
         userRequest.setPassword(hashPassword);
         response.setCode(201);
         response.setData(userService.handleCreateUser(userRequest));
+        response.setMessage("Tạo người dùng thành công");
         return response;
     }
  
@@ -46,7 +47,7 @@ public class UserController {
         }
         userService.fetchUserById(id);
         userService.handleDeleteUser(id);
-        return new ApiResponse<>(204, null, null);
+        return new ApiResponse<>(204, "Xóa người dùng thành công", null);
     }
 
     @GetMapping("/users/{id}")
@@ -54,6 +55,7 @@ public class UserController {
         ApiResponse response = new ApiResponse<>();
         response.setCode(200);
         response.setData(userService.fetchUserById(id));
+        response.setMessage("Lấy thông tin người dùng thành công");
         return response;
     }
 
@@ -62,17 +64,18 @@ public class UserController {
         ApiResponse response = new ApiResponse<>();
         response.setCode(200);
         response.setData(userService.fetchAllUser());
+        response.setMessage("Lấy danh sách người dùng thành công");
         return response;
     }
 
     @PutMapping("/updateUserRole/{userId}/{roleId}")
     public ApiResponse<User> updateUserRole(@PathVariable Long userId, @PathVariable Long roleId) {
         User updatedUser = userService.updateRoleforUser(userId, roleId);
-        return new ApiResponse<>(200, null, updatedUser);
+        return new ApiResponse<>(200, "Cập nhật vai trò người dùng thành công", updatedUser);
     }
 
     @PutMapping("/updateUser/{id}")
     public ApiResponse<User> updateUser(@PathVariable Long id, @RequestBody UserRequest request) {
-        return new ApiResponse<>(200, null, userService.updateUser(id, request));
+        return new ApiResponse<>(200, "Cập nhật thông tin người dùng thành công", userService.updateUser(id, request));
     }
 }

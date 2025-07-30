@@ -21,13 +21,13 @@ public class TransactionLogController {
     
     @GetMapping("/list")
     public ApiResponse<List<TransactionLog>> getList() {
-        ApiResponse apiResponse = new ApiResponse<>( 200, null, service.getTransactionLogs());
+        ApiResponse apiResponse = new ApiResponse<>( 200, "Lấy danh sách giao dịch thành công", service.getTransactionLogs());
         return apiResponse;
     }
     
     @GetMapping("/userid/{id}")
     public ApiResponse<List<TransactionLog>> getByUser(@PathVariable Long id) {
-        ApiResponse apiResponse = new ApiResponse<>( 200, null, service.getTransactionLogByUser(id));
+        ApiResponse apiResponse = new ApiResponse<>( 200, "Lấy danh sách giao dịch theo người dùng thành công", service.getTransactionLogByUser(id));
         return apiResponse;
     }
 }

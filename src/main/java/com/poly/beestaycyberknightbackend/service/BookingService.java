@@ -41,6 +41,8 @@ import com.poly.beestaycyberknightbackend.mapper.InfoGuestMapper;
 import com.poly.beestaycyberknightbackend.mapper.RoomImageMapper;
 import com.poly.beestaycyberknightbackend.mapper.StayMapper;
 import com.poly.beestaycyberknightbackend.repository.*;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +74,6 @@ public class BookingService {
     UserService userService;
     PayOSService payOSService;
     FacilityMapper facilityMapper;
-
 
     public List<BookingDTO> getAllBookings() {
         List<Booking> listEntity = bookingRepository.findAll();
@@ -302,15 +303,14 @@ public class BookingService {
         List<BookingFacility> bookingFacilities = bookingFacilityRepository.findByBookingId(bookingId);
         List<BookingFacilitiesDTO> bookingFacilitiesDTOs = bookingFacilities.stream()
 
-                            .map(f -> {
-                                BookingFacilitiesDTO bookingFacilitiesDTO = bookingFacilityMapper.toDto(f);
-                                Optional<Facility> facilities = facilityRepository.findById(f.getFacility().getId());
-                                List<FacilitiesDTO> facilitiesDTOs = facilities.map(facilityMapper::toFacilitiesDTO)
-                                        .stream().toList();
-                                bookingFacilitiesDTO.setFacilities(facilitiesDTOs);
-                                return bookingFacilitiesDTO;
-                            }).collect(Collectors.toList());
-
+                .map(f -> {
+                    BookingFacilitiesDTO bookingFacilitiesDTO = bookingFacilityMapper.toDto(f);
+                    Optional<Facility> facilities = facilityRepository.findById(f.getFacility().getId());
+                    List<FacilitiesDTO> facilitiesDTOs = facilities.map(facilityMapper::toFacilitiesDTO)
+                            .stream().toList();
+                    bookingFacilitiesDTO.setFacilities(facilitiesDTOs);
+                    return bookingFacilitiesDTO;
+                }).collect(Collectors.toList());
 
         resp.setStay(listStayDTOs);
         resp.setBookingFacilities(bookingFacilitiesDTOs);
@@ -513,20 +513,54 @@ public class BookingService {
     }
 
     public List<BookingDTO> fetchBookingByUser(User user) {
-        List<Booking> bookings = bookingRepository.findByUser(user);
-        return bookings.stream()
-                    .map(bookingMapper::toResponse)
-                    .collect(Collectors.toList());
+        List<Booking> listEntity = bookingRepository.findByUser(user);
+        List<BookingDTO> listResponse = listEntity.stream().map(
+                list -> {
+                    BookingDTO bookingDTO = bookingMapper.toResponse(list);
+                    List<BookingFacility> bookingFacilities = bookingFacilityRepository.findByBookingId(list.getId());
+                    List<BookingFacilitiesDTO> bookingFacilitiesDTOs = bookingFacilities.stream()
+                            .map(f -> {
+                                BookingFacilitiesDTO bookingFacilitiesDTO = bookingFacilityMapper.toDto(f);
+                                Optional<Facility> facilities = facilityRepository.findById(f.getFacility().getId());
+                                List<FacilitiesDTO> facilitiesDTOs = facilities.map(facilityMapper::toFacilitiesDTO)
+                                        .stream().toList();
+                                bookingFacilitiesDTO.setFacilities(facilitiesDTOs);
+                                return bookingFacilitiesDTO;
+                            }).collect(Collectors.toList());
+
+                    List<StayDTO> listStayDTOs = list.getStay().stream().map(stay -> stayMapper.toDto(stay))
+                            .collect(Collectors.toList());
+                    bookingDTO.setBookingFacilities(bookingFacilitiesDTOs);
+                    bookingDTO.setStay(listStayDTOs);
+                    return bookingDTO;
+                }).collect(Collectors.toList());
+
+        return listResponse;
 
     }
 
-    public BookingResponse getBookingByIdAndUser(Long bookingId, User user) {
-        Booking booking = bookingRepository.findByIdAndUser(bookingId, user).orElse(null);
+    public BookingDTO getBookingByIdAndUser(Long bookingId, User user) {
+        Booking booking = bookingRepository.findByIdAndUser(bookingId, user)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
 
+        BookingDTO bookingDTO = bookingMapper.toResponse(booking);
 
-        if (booking == null) {
-            return null;
-        }
-        return bookingMapper.toBookingResponse(booking);
+        List<BookingFacility> bookingFacilities = bookingFacilityRepository.findByBookingId(booking.getId());
+        List<BookingFacilitiesDTO> bookingFacilitiesDTOs = bookingFacilities.stream()
+                .map(f -> {
+                    BookingFacilitiesDTO bookingFacilitiesDTO = bookingFacilityMapper.toDto(f);
+                    facilityRepository.findById(f.getFacility().getId()).ifPresent(facility -> {
+                        FacilitiesDTO facilitiesDTO = facilityMapper.toFacilitiesDTO(facility);
+                        bookingFacilitiesDTO.setFacilities(List.of(facilitiesDTO));
+                    });
+
+                    return bookingFacilitiesDTO;
+                }).collect(Collectors.toList());
+        List<StayDTO> listStayDTOs = booking.getStay().stream()
+                .map(stayMapper::toDto)
+                .collect(Collectors.toList());
+        bookingDTO.setBookingFacilities(bookingFacilitiesDTOs);
+        bookingDTO.setStay(listStayDTOs);
+        return bookingDTO;
     }
 }

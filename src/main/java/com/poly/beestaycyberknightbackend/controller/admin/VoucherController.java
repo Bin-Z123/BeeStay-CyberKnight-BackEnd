@@ -27,31 +27,31 @@ public class VoucherController {
 
     @PostMapping("/create")
     public ApiResponse<Voucher> createVoucher(@RequestBody VoucherRequest request) {
-        ApiResponse response = new ApiResponse<>(200, null, service.creatVoucher(request));
+        ApiResponse response = new ApiResponse<>(200, "Tạo voucher thành công", service.creatVoucher(request));
         return response;
     }
 
     @GetMapping("/list")
     public ApiResponse<List<Voucher>> getVouchers() {
-        ApiResponse response = new ApiResponse<>(200, null, service.getVouchers());
+        ApiResponse response = new ApiResponse<>(200, "Lấy danh sách voucher thành công", service.getVouchers());
         return response;
     }
 
     @GetMapping("/{id}")
     public ApiResponse<Voucher> getVoucher(@PathVariable Integer id) {
-        ApiResponse response = new ApiResponse<>(200, null, service.getVoucher(id));
+        ApiResponse response = new ApiResponse<>(200, "Lấy thông tin voucher thành công", service.getVoucher(id));
         return response;
     }
 
     @PutMapping("/{id}")
     public ApiResponse<Voucher> updateVoucher(@PathVariable Integer id, @RequestBody VoucherRequest request) {
-        ApiResponse response = new ApiResponse<>(200, null, service.updatVoucher(id, request));
+        ApiResponse response = new ApiResponse<>(200, "Cập nhật voucher thành công", service.updatVoucher(id, request));
         return response;
     }
 
     @DeleteMapping("/{id}")
     public ApiResponse<Voucher> deleteVoucher(@PathVariable Integer id) {
-        ApiResponse response = new ApiResponse<>(200, null, service.deleteVoucher(id));
+        ApiResponse response = new ApiResponse<>(200, "Xóa voucher thành công", service.deleteVoucher(id));
         return response;
     }
 

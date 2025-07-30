@@ -20,37 +20,37 @@ public class StatisticsController {
 
     @GetMapping("/active-room-percentage")
     public ApiResponse<Double> getPercentRoomActive() {
-        return new ApiResponse<>(200, null, statisticsService.getPercentRoomActive());
+        return new ApiResponse<>(200, "Lấy thông tin thành công", statisticsService.getPercentRoomActive());
     }
 
     @GetMapping("/cancel-booking-percentage")
     public ApiResponse<Double> getPercentBookingCancel() {
-        return new ApiResponse<>(200, null, statisticsService.getPercentBookingCancel());
+        return new ApiResponse<>(200, "Lấy thông tin thành công", statisticsService.getPercentBookingCancel());
     }
 
     @GetMapping("/check-in-today-bookings")
     public ApiResponse<Long> getCheckInTodayBookings() {
-        return new ApiResponse<>(200, null, statisticsService.getcheckInTodayBookings());
+        return new ApiResponse<>(200, "Lấy thông tin thành công", statisticsService.getcheckInTodayBookings());
     }
 
     @GetMapping("/check-out-today-bookings")
     public ApiResponse<Long> getCheckOutTodayBookings() {
-        return new ApiResponse<>(200, null, statisticsService.getCheckOutTodayBookings());
+        return new ApiResponse<>(200, "Lấy thông tin thành công", statisticsService.getCheckOutTodayBookings());
     }
 
     @GetMapping("/count-active-rooms")
     public ApiResponse<Long> getCountRoomActive() {
-        return new ApiResponse<>(200, null, statisticsService.getCountRoomActive());
+        return new ApiResponse<>(200, "Lấy thông tin thành công", statisticsService.getCountRoomActive());
     }
 
     @GetMapping("/count-inactive-rooms")
     public ApiResponse<Long> getCountRoomInactive() {
-        return new ApiResponse<>(200, null, statisticsService.getCountRoomInactive());
+        return new ApiResponse<>(200, "Lấy thông tin thành công", statisticsService.getCountRoomInactive());
     }
 
     @GetMapping("/revenue-by-year-and-month/{year}")
     public ApiResponse<List<Object[]>> getRevenueByYearAndMonth(@PathVariable String year) {
-        return new ApiResponse<>(200, null, statisticsService.getRevenueByYearAndMonthForYear(year));
+        return new ApiResponse<>(200, "Lấy thông tin thành công", statisticsService.getRevenueByYearAndMonthForYear(year));
     }
 
 }

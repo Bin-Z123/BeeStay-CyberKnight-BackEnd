@@ -54,9 +54,10 @@ public class SecurityConfiguration {
                                 "/api/booking/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html", "/api/admin/**")
+                                "/swagger-ui.html", "/api/admin/**",
+                                "/api/afterUBD2/**")
                         .permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**","/api/**").hasRole("ADMIN")
                         .requestMatchers("/").hasRole("USER")
                         .anyRequest().authenticated())
                 // .oauth2ResourceServer(oauth2 -> oauth2
