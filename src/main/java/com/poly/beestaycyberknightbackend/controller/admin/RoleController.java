@@ -24,13 +24,13 @@ public class RoleController {
 
     @GetMapping("/list")
     public ApiResponse<List<RoleResponse>> getRoles() {
-        ApiResponse response = new ApiResponse<>(200, null, roleService.getRoles());
+        ApiResponse response = new ApiResponse<>(200, "Lấy danh sách vai trò thành công", roleService.getRoles());
         return response;
     }
 
     @GetMapping("/{id}")
     public ApiResponse<List<Role>> getRoleAndUser(@PathVariable Long id) {
-        ApiResponse response = new ApiResponse<>(200, null, roleService.getRoleAndUser(id));
+        ApiResponse response = new ApiResponse<>(200, "Lấy thông tin vai trò và người dùng thành công", roleService.getRoleAndUser(id));
         return response;
     }
     

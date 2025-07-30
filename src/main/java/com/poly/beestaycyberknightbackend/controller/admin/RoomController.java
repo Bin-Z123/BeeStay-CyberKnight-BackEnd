@@ -30,7 +30,7 @@ public class RoomController {
         System.out.println("rooms: " + roomRequest); // xem JSON tới chưa
         // System.out.println("files: " + multipartFiles.size());
 
-        return new ApiResponse<>(HttpStatus.CREATED.value(), null,
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm phòng thành công",
                 roomService.handleCreateRoom(roomRequest, multipartFiles));
     }
 
@@ -38,17 +38,17 @@ public class RoomController {
     public ApiResponse<Void> deleteRoom(@PathVariable("id") long id) {
         roomService.fetchRoomById(id);
         roomService.handleDeleteRoom(id);
-        return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), null, null);
+        return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), "Xóa phòng thành công", null);
     }
 
     @GetMapping("/rooms")
     public ApiResponse<List<RoomResponse>> getAllRoom() {
-        return new ApiResponse<>(200, null, roomService.fetchAllRooms());
+        return new ApiResponse<>(200, "Lấy danh sách phòng thành công", roomService.fetchAllRooms());
     }
 
     @GetMapping("/rooms/{id}")
     public ApiResponse<RoomResponse> getRoomById(@PathVariable("id") long id) {
-        return new ApiResponse<>(200, null, roomService.fetchRoomById(id));
+        return new ApiResponse<>(200, "Lấy thông tin phòng thành công", roomService.fetchRoomById(id));
     }
 
     @PutMapping(value = "/rooms/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -57,12 +57,12 @@ public class RoomController {
             @RequestPart(name = "file", required = false) List<MultipartFile> multipartFiles) {
         System.out.println("rooms: " + roomUpdateRequest);
         System.out.println("room id: " + id);
-        return new ApiResponse<>(200, null, roomService.handleUpdateRoom(roomUpdateRequest, id, multipartFiles));
+        return new ApiResponse<>(200, "Cập nhật phòng thành công", roomService.handleUpdateRoom(roomUpdateRequest, id, multipartFiles));
     }
 
     @GetMapping("/roomsinactive")
     public ApiResponse<List<Room>> getInactiveRooms(@RequestParam String roomType) {
-        return new ApiResponse<>(200, null, roomService.getInactiveRooms(roomType));
+        return new ApiResponse<>(200, "Lấy danh sách phòng không hoạt động thành công", roomService.getInactiveRooms(roomType));
     }
 
 }

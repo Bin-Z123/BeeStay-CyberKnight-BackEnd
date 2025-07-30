@@ -52,7 +52,7 @@ public class BookingController {
 
     @GetMapping("/admin/booking/list")
     public ApiResponse<List<BookingDTO>> getBookings() {
-        return new ApiResponse<>(200, null, bookingService.getAllBookings());
+        return new ApiResponse<>(200,"Lấy danh sách thành công", bookingService.getAllBookings());
     }
 
     @PostMapping("/admin/booking/order")
@@ -79,7 +79,7 @@ public class BookingController {
                             }).collect(Collectors.toList());
             bookingDTO.setBookingFacilities(bookingFacilitiesDTOs);
 
-            return new ApiResponse<>(HttpStatus.SC_OK, null, bookingDTO);
+            return new ApiResponse<>(HttpStatus.SC_OK, "đặt phòng thành công", bookingDTO);
         } catch (Exception e) {
             return new ApiResponse<>(HttpStatus.SC_BAD_REQUEST, e.getMessage(), null);
         }
@@ -89,53 +89,53 @@ public class BookingController {
 
     @GetMapping("/admin/booking/bookingbycheckin")
     public ApiResponse<List<Booking>> getBookingsByGuest(@RequestParam LocalDate checkInDate) {
-        return new ApiResponse<>(200, null, bookingService.getBookingByCheckInDate(checkInDate));
+        return new ApiResponse<>(200, "Lấy danh sách thành công", bookingService.getBookingByCheckInDate(checkInDate));
     }
 
     @GetMapping("/admin/booking/availableRoomsTypeAndDate")
     public ApiResponse<Long> countAvailableRooms(@RequestParam String nameRoomType, @RequestParam LocalDateTime date) {
-        return new ApiResponse<>(200, null, bookingService.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date));
+        return new ApiResponse<>(200, "Tính toán số lượng phòng còn trống", bookingService.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date));
     }
 
     @GetMapping("/availableRoomsTypeAndDateV2")
     public ApiResponse<List<AvailableTypeRoomDTO>> countAvailableRoomsV2(@RequestParam LocalDateTime fromDate,
             @RequestParam LocalDateTime toDate) {
-        return new ApiResponse<>(200, null, bookingService.getAvailableRooms(fromDate, toDate));
+        return new ApiResponse<>(200, "Lấy danh sách thành công", bookingService.getAvailableRooms(fromDate, toDate));
     }
 
 
     @GetMapping("/booking/{id}")
     public ApiResponse<BookingDTO> getBooking(@PathVariable Long id) {
-        return new ApiResponse<>(200, null, bookingService.getBooking(id));
+        return new ApiResponse<>(200, "Lấy thông tin thành công", bookingService.getBooking(id));
     }
 
 
     // tính tiền ở thực tế
     @PutMapping("/update-booking/{id}")
     public ApiResponse<BookingDTO> updatePriceActual(@PathVariable Long id) {
-        return new ApiResponse<>(200, null, bookingService.updateTotalPriceBooking(id));
+        return new ApiResponse<>(200, "Cập nhật giá thành công", bookingService.updateTotalPriceBooking(id));
     }
 
     // tính tiền sau khi update booking detail
     @PutMapping("/afterUBD/{id}")
     public ApiResponse<BookingDTO> updatePriceAfterUpdateBD(@PathVariable Long id) {
-        return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.updateTotalPriceBookingAfter(id));
+        return new ApiResponse<>(HttpStatus.SC_OK, "Cập nhật giá thành công", bookingService.updateTotalPriceBookingAfter(id));
     }
 
     @PutMapping("/afterUBD2/{id}")
     public ApiResponse<BookingDTO> updatePriceAfterUpdateBD2(@PathVariable Long id) {
-        return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.updateTotalPriceBookingAfter2(id));
+        return new ApiResponse<>(HttpStatus.SC_OK, "Cập nhật giá thành công", bookingService.updateTotalPriceBookingAfter2(id));
     }
 
     @PutMapping("/cancel/{id}")
     public ApiResponse<BookingDTO> cancelBooking(@PathVariable Long id) {
-        return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.setStatusBookingCancel(id));
+        return new ApiResponse<>(HttpStatus.SC_OK, "Hủy đặt phòng thành công", bookingService.setStatusBookingCancel(id));
     }
 
     @PutMapping("/checkout/{id}")
     public ApiResponse<?> checkoutBooking(@PathVariable Long id) {
         try {
-            return new ApiResponse<>(HttpStatus.SC_OK, null, bookingService.checkoutBookingStatus(id));
+            return new ApiResponse<>(HttpStatus.SC_OK, "Checkout thành công", bookingService.checkoutBookingStatus(id));
         } catch (Exception e) {
             return new ApiResponse<>(HttpStatus.SC_BAD_REQUEST, "Insufficient payment, Please pay the full amount",
                     null);
