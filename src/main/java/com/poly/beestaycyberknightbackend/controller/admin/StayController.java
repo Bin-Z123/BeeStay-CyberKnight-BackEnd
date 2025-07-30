@@ -24,7 +24,7 @@ public class StayController {
     @PostMapping("/create")
     public ApiResponse<List<Stay>> createStay(@RequestBody List<StayCreationRequest> request) {
         try {
-            return new ApiResponse<>(HttpStatus.SC_OK, null, service.createMultipleStays(request));
+            return new ApiResponse<>(HttpStatus.SC_OK, "Tạo mới stay thành công", service.createMultipleStays(request));
         } catch (Exception e) {
             return new ApiResponse<>(HttpStatus.SC_OK, e.getMessage(), null);
         }

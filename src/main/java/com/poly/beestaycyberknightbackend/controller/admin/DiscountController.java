@@ -28,37 +28,37 @@ public class DiscountController {
 
     @PostMapping("/create")
     public ApiResponse<Discount> createDiscount(@RequestBody DiscountRequest request) {
-        ApiResponse response = new ApiResponse<>(200, null, discountService.createDiscount(request));
+        ApiResponse response = new ApiResponse<>(200, "Tạo mới giảm giá thành công", discountService.createDiscount(request));
         return response;
     }
 
     @GetMapping("/list")
     public ApiResponse<List<Discount>> getDiscounts() {
-        ApiResponse response = new ApiResponse<>(200, null, discountService.getDiscounts());
+        ApiResponse response = new ApiResponse<>(200, "Lấy danh sách giảm giá thành công", discountService.getDiscounts());
         return response;
     }
 
     @GetMapping("/{id}")
     public ApiResponse<Discount> getDiscount(@PathVariable Integer id) {
-        ApiResponse response = new ApiResponse<>(200, null, discountService.getDiscount(id));
+        ApiResponse response = new ApiResponse<>(200, "Lấy thông tin giảm giá thành công", discountService.getDiscount(id));
         return response;
     }
 
     @PutMapping("/{id}")
     public ApiResponse<Discount> updateDiscount(@PathVariable Integer id, @RequestBody DiscountRequest request) {
-        ApiResponse response = new ApiResponse<>(200, null, discountService.updateDiscount(id, request));
+        ApiResponse response = new ApiResponse<>(200, "Cập nhật giảm giá thành công", discountService.updateDiscount(id, request));
         return response;
     }
 
     @DeleteMapping("/{id}")
     public ApiResponse<Discount> deleteDiscount(@PathVariable Integer id) {
-        ApiResponse response = new ApiResponse<>(200, null, discountService.deleteDiscount(id));
+        ApiResponse response = new ApiResponse<>(200, "Xóa giảm giá thành công", discountService.deleteDiscount(id));
         return response;
     }
 
     @GetMapping("/discountbyroomtypeid/{id}")
     public ApiResponse<List<Discount>> listDiscountByRoomTypeId(@PathVariable Long id) {
-        ApiResponse response = new ApiResponse<>(200, null, discountService.findDiscountByRoomTypeId(id));
+        ApiResponse response = new ApiResponse<>(200, "Lấy danh sách giảm giá theo loại phòng thành công", discountService.findDiscountByRoomTypeId(id));
         return response;
     }
     

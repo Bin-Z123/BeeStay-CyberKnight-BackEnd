@@ -29,7 +29,7 @@ public class BookingDetailController {
     public ApiResponse<?> updateBookingDetail(@PathVariable Long bookingId,
             @RequestBody List<BookingDetailUpdateRequest> request) {
 
-        return new ApiResponse<>(HttpStatus.OK.value(), null,
+        return new ApiResponse<>(HttpStatus.OK.value(), "Booking details cập nhật thành công",
                 bookingDetailService.updateBookingDetails(bookingId, request));
     }
 

@@ -28,12 +28,12 @@ public class PaymentController {
 
     @PostMapping("/pay")
     public ApiResponse<Payment> createPaymentByCast(@RequestBody PaymentByCashRequest request) {
-        return new ApiResponse<>(HttpStatus.SC_OK, null, paymentByCastService.createPaymentByCast(request));
+        return new ApiResponse<>(HttpStatus.SC_OK, "Tạo mới thanh toán bằng tiền mặt thành công", paymentByCastService.createPaymentByCast(request));
     }
 
     @GetMapping("/calculatePaymentofBooking/{bookingId}")
     public ApiResponse<Integer> calculatePaymentofBooking(@PathVariable Long bookingId) {
-        return new ApiResponse<>(HttpStatus.SC_OK, null, paymentService.sumPaymentPAIDOfBooking(bookingId));
+        return new ApiResponse<>(HttpStatus.SC_OK, "Tính toán thanh toán của đặt phòng thành công", paymentService.sumPaymentPAIDOfBooking(bookingId));
     }
     
     

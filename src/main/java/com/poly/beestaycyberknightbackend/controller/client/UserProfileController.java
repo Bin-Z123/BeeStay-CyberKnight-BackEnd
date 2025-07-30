@@ -13,11 +13,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import java.util.List;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -59,10 +57,10 @@ public class UserProfileController {
     }
 
     @GetMapping("/booking/{id}")
-    public ApiResponse<BookingResponse> getBookingById(@PathVariable("id") long id) {
+    public ApiResponse<BookingDTO> getBookingById(@PathVariable("id") long id) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUsser = userRepository.findByEmail(email);
-        BookingResponse booking = bookingService.getBookingByIdAndUser(id, currentUsser);
+        BookingDTO booking = bookingService.getBookingByIdAndUser(id, currentUsser);
         if (booking == null) {
             return new ApiResponse<>(404, "Không tìm thấy đơn đặt phòng", null);
         }
