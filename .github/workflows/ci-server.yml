@@ -42,7 +42,7 @@ jobs:
         run: echo "${{ secrets.PROD_YML }}" > src/main/resources/application.yml
 
       - name: Build with Maven (synchronizing dependencies)
-        run: mvn clean install -U
+        run: mvn clean install -e
 
       # Đăng nhập Docker Hub và push Image
       - name: Login to Docker Hub
