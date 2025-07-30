@@ -52,6 +52,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/login", "/api/register/**", "/api/change_password", "/api/logout",
                                 "/api/forgot-password/**", "/api/availableRoomsTypeAndDateV2", "/api/orderPayOS/**",
                                 "/api/booking/**",
+                                "/api/afterUBD2/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html", "/api/admin/**",
@@ -114,7 +115,8 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("https://f6f4c7ef15dd.ngrok-free.app"));
+        // corsConfiguration.setAllowedOrigins(List.of("https://f6f4c7ef15dd.ngrok-free.app"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173/"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setAllowCredentials(true);
