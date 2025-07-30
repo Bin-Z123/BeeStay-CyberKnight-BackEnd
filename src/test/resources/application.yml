@@ -8,3 +8,31 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: adfds@gmail.com
+    password: 23sdfsdgfd234
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true    
+
+security:
+  authentication:
+    jwt:
+      base64-secret: HRFjbjWiwCnvhq/HiFFZpEek5pbJMSg8o4o0wE8v3bqb7W4r5hHc8oJq0/oUz68EMYQ9iY3zlJFY1cwuijsFGRDG
+      token-validity-in-seconds: 123
+cloudinary:
+  cloud-name: abc
+  api-key: 456
+  api-secret: cbdsasda
+
+PAYOS_CLIENT_ID: sdfdsf-sdfsdf-asdas
+PAYOS_API_KEY: ssdfds-sdfsdf-sdfsdfsd-sdfsdfds
+PAYOS_CHECKSUM_KEY: asdasdw534534
+
+returnUrl: abc
+cancelUrl: abc
