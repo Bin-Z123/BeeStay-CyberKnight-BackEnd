@@ -21,7 +21,23 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     long countByCheckOutDateBetween(LocalDateTime start, LocalDateTime end);
 
+    @Query(
+        value = "SELECT count(b.id) FROM [dbo].[Bookings] b " +
+                "WHERE b.check_out_date >= :start AND b.check_in_date < :end " +
+                "AND b.e_booking_status = :status",
+        nativeQuery = true
+    )
+    long countCheckOutsByStatus( LocalDateTime start, LocalDateTime end, String status);
+
     List<Booking> findByCheckInDateBetween(LocalDateTime start, LocalDateTime end);
+
+    @Query(
+        value = "SELECT count(b.id) FROM [dbo].[Bookings] b " +
+                "WHERE b.check_in_date >= :start AND b.check_in_date < :end " +
+                "AND b.e_booking_status = :status",
+        nativeQuery = true
+    )
+    long countCheckInsByStatus( LocalDateTime start, LocalDateTime end, String status);
 
     @Query(value = """
                     SELECT YEAR(b.booking_date) AS BookingYear, NULL AS BookingMonth, SUM(b.total_amount) AS Revenue, 'TOTAL YEAR' AS Type FROM Bookings b
