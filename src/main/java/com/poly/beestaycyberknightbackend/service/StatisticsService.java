@@ -1,5 +1,6 @@
 package com.poly.beestaycyberknightbackend.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,16 +18,16 @@ public class StatisticsService {
     RoomRepository roomRepository;
     BookingRepository bookingRepository;
 
-    public Double getPercentRoomActive(){
+    public Double getPercentRoomActive() {
         long totalRooms = roomRepository.count();
         long activeRooms = roomRepository.countByRoomStatus("ACTIVE");
-        
+
         if (totalRooms == 0) {
-            return 0.0; 
+            return 0.0;
         }
         double percentActive = (double) activeRooms / totalRooms * 100;
 
-        return Math.round(percentActive * 100.0) / 100.0; 
+        return Math.round(percentActive * 100.0) / 100.0;
     }
 
     public Double getPercentBookingCancel() {
@@ -34,31 +35,47 @@ public class StatisticsService {
         long canceledBookings = bookingRepository.countByBookingStatus("CANCEL");
 
         if (totalBookings == 0) {
-            return 0.0; 
+            return 0.0;
         }
         double percentCanceled = (double) canceledBookings / totalBookings * 100;
 
-        return Math.round(percentCanceled * 100.0) / 100.0; 
+        return Math.round(percentCanceled * 100.0) / 100.0;
     }
 
-    public Long getcheckInTodayBookings(){
+    public Long getcheckInTodayBookings() {
         LocalDateTime start = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime end = start.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
 
         return bookingRepository.countByCheckInDateBetween(start, end);
     }
 
-    public Long getCheckOutTodayBookings(){
+    public Long getCheckOutTodayWithStayStatus() {
+        LocalDateTime start = LocalDate.now().atStartOfDay();
+        LocalDateTime end = start.plusDays(1);
+        String stayStatus = "STAY";
+
+        return bookingRepository.countCheckOutsByStatus(start, end, stayStatus);
+    }
+
+    public Long getCheckOutTodayBookings() {
         LocalDateTime start = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime end = start.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
 
         return bookingRepository.countByCheckOutDateBetween(start, end);
     }
 
+    public Long getCheckInTodayConfirmed() {
+        LocalDateTime start = LocalDate.now().atStartOfDay();
+        LocalDateTime end = start.plusDays(1);
+        String bookingStatus = "CONFIRMED";
+
+        return bookingRepository.countCheckInsByStatus(start, end, bookingStatus);
+    }
+
     public Long getCountRoomActive() {
         return roomRepository.countByRoomStatus("ACTIVE");
     }
-    
+
     public Long getCountRoomInactive() {
         return roomRepository.countByRoomStatus("INACTIVE");
     }
@@ -66,8 +83,5 @@ public class StatisticsService {
     public List<Object[]> getRevenueByYearAndMonthForYear(String year) {
         return bookingRepository.getRevenueByYearAndMonthForYear(year);
     }
-
-
-
 
 }

@@ -30,12 +30,12 @@ public class StatisticsController {
 
     @GetMapping("/check-in-today-bookings")
     public ApiResponse<Long> getCheckInTodayBookings() {
-        return new ApiResponse<>(200, "Lấy thông tin thành công", statisticsService.getcheckInTodayBookings());
+        return new ApiResponse<>(200, "Lấy thông tin thành công", statisticsService.getCheckInTodayConfirmed());
     }
 
     @GetMapping("/check-out-today-bookings")
     public ApiResponse<Long> getCheckOutTodayBookings() {
-        return new ApiResponse<>(200, "Lấy thông tin thành công", statisticsService.getCheckOutTodayBookings());
+        return new ApiResponse<>(200, "Lấy thông tin thành công", statisticsService.getCheckOutTodayWithStayStatus());
     }
 
     @GetMapping("/count-active-rooms")

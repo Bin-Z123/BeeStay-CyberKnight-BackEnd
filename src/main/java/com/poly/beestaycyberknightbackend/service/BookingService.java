@@ -393,6 +393,7 @@ public class BookingService {
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
         booking.setBookingStatus("CANCEL");
         BookingDTO bookingDTO = bookingMapper.toResponse(booking);
+        bookingRepository.save(booking);
         return bookingDTO;
     }
 
