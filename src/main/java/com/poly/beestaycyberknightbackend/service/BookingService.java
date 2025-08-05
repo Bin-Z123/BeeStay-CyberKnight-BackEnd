@@ -520,13 +520,13 @@ public class BookingService {
 
     }
 
-    public BookingResponse getBookingByIdAndUser(Long bookingId, User user) {
+    public BookingDTO getBookingByIdAndUser(Long bookingId, User user) {
         Booking booking = bookingRepository.findByIdAndUser(bookingId, user).orElse(null);
 
 
         if (booking == null) {
             return null;
         }
-        return bookingMapper.toBookingResponse(booking);
+        return bookingMapper.toResponse(booking);
     }
 }
