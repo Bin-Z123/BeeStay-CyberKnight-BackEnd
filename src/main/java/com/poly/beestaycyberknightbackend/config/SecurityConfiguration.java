@@ -55,6 +55,9 @@ public class SecurityConfiguration {
                                 "/api/afterUBD2/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
+                                "/ws/**",
+                                "/chat/**",
+                                "/topic/**",
                                 "/swagger-ui.html", "/api/admin/**",
                                 "/api/afterUBD2/**")
                         .permitAll()
