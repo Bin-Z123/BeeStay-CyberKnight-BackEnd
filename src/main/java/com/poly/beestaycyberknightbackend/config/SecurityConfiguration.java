@@ -61,7 +61,7 @@ public class SecurityConfiguration {
                                 "/swagger-ui.html", "/api/admin/**",
                                 "/api/afterUBD2/**")
                         .permitAll()
-                        .requestMatchers("/api/admin/**", "/api/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/").hasRole("USER")
                         .anyRequest().authenticated())
                 // .oauth2ResourceServer(oauth2 -> oauth2
