@@ -1,11 +1,11 @@
-package com.poly.beestaycyberknightbackend.mapper;
+    package com.poly.beestaycyberknightbackend.mapper;
 
-import org.mapstruct.Mapper;
+    import org.mapstruct.Mapper;
 
-import com.poly.beestaycyberknightbackend.domain.Booking;
-import com.poly.beestaycyberknightbackend.dto.request.BookingRequest;
-import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
-import com.poly.beestaycyberknightbackend.dto.response.BookingResponse;
+    import com.poly.beestaycyberknightbackend.domain.Booking;
+    import com.poly.beestaycyberknightbackend.dto.request.BookingRequest;
+    import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
+    import com.poly.beestaycyberknightbackend.dto.response.BookingResponse;
 
 @Mapper(componentModel = "spring")
 public interface BookingMapper {

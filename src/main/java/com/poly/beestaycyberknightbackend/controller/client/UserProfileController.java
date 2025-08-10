@@ -66,6 +66,4 @@ public class UserProfileController {
         }
         return new ApiResponse<>(200, "Lấy thông tin thành công",booking);
     }
-    
-    
 }
