@@ -50,7 +50,8 @@ public class StatisticsController {
 
     @GetMapping("/revenue-by-year-and-month/{year}")
     public ApiResponse<List<Object[]>> getRevenueByYearAndMonth(@PathVariable String year) {
-        return new ApiResponse<>(200, "Lấy thông tin thành công", statisticsService.getRevenueByYearAndMonthForYear(year));
+        return new ApiResponse<>(200, "Lấy thông tin thành công",
+                statisticsService.getRevenueByYearAndMonthForYear(year));
     }
 
 }
