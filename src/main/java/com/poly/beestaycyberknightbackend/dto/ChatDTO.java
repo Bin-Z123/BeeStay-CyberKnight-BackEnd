@@ -17,9 +17,13 @@ public class ChatDTO {
     private long senderId;
     private String senderFullName;
 
+    // Loại chat
     public enum MessageType {
         CHAT,
         JOIN,
         LEAVE
     }
+
+    // Thông tin người nhận
+    private long recipientId;
 }
