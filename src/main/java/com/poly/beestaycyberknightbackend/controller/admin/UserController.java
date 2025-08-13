@@ -3,6 +3,7 @@ package com.poly.beestaycyberknightbackend.controller.admin;
 import org.springframework.web.bind.annotation.RestController;
 import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.dto.request.UserRequest;
+import com.poly.beestaycyberknightbackend.dto.request.UserUpdateRequest;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
 import com.poly.beestaycyberknightbackend.service.UserService;
@@ -75,7 +76,7 @@ public class UserController {
     }
 
     @PutMapping("/updateUser/{id}")
-    public ApiResponse<User> updateUser(@PathVariable Long id, @RequestBody UserRequest request) {
+    public ApiResponse<User> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
         return new ApiResponse<>(200, "Cập nhật thông tin người dùng thành công", userService.updateUser(id, request));
     }
 }

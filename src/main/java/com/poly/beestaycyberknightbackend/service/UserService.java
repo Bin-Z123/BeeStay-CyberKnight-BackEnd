@@ -10,6 +10,7 @@ import com.poly.beestaycyberknightbackend.domain.Role;
 import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.dto.request.RegisterRequest;
 import com.poly.beestaycyberknightbackend.dto.request.UserRequest;
+import com.poly.beestaycyberknightbackend.dto.request.UserUpdateRequest;
 import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
 import com.poly.beestaycyberknightbackend.exception.AppException;
 import com.poly.beestaycyberknightbackend.exception.ErrorCode;
@@ -87,12 +88,12 @@ public User handleGetUserByUsername(String username) {
         return userRepository.save(user);
     }
 
-    public User updateUser(Long id,UserRequest request){
+    public User updateUser(Long id,UserUpdateRequest request){
         User user = userRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
         Role role = roleRepository.findById(request.getRoleId()).orElseThrow(()-> new AppException(ErrorCode.ROLE_NOT_EXISTED));
         Rank rank = rankRepository.findById(request.getRankId()).orElseThrow(()-> new AppException(ErrorCode.RANK_NOT_EXISTED));
         userMapper.updateUser(user, request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        // user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(role);
         user.setRank(rank);
         
@@ -117,7 +118,7 @@ public User handleGetUserByUsername(String username) {
     }
 
 
-    public UserResponse updateUserProfileByEmail(String email, UserRequest request) {
+    public UserResponse updateUserProfileByEmail(String email, UserUpdateRequest request) {
     User user = userRepository.findByEmail(email);
     if (user == null) {
         throw new AppException(ErrorCode.USER_NOT_EXISTED);

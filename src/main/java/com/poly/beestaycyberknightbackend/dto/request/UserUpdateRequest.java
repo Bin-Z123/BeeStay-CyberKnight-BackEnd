@@ -13,10 +13,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
-public class UserRequest {
+public class UserUpdateRequest {
     String phone;
     String email;
-    String password;
     Boolean gender;
     LocalDate birthday;
     LocalDateTime updateDate = LocalDateTime.now();

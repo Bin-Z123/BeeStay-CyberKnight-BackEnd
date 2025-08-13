@@ -2,6 +2,7 @@ package com.poly.beestaycyberknightbackend.controller.client;
 
 import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.dto.request.UserRequest;
+import com.poly.beestaycyberknightbackend.dto.request.UserUpdateRequest;
 import com.poly.beestaycyberknightbackend.dto.response.ApiResponse;
 import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
 import com.poly.beestaycyberknightbackend.dto.response.BookingResponse;
@@ -15,7 +16,6 @@ import lombok.experimental.FieldDefaults;
 import java.util.List;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
 
 
 
@@ -30,7 +30,7 @@ public class UserProfileController {
     BookingService bookingService;
 
     @PutMapping("/update-profile")
-    public ApiResponse<UserResponse> updateProfile(@RequestBody UserRequest request) {
+    public ApiResponse<UserResponse> updateProfile(@RequestBody UserUpdateRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserResponse updatedUser = userService.updateUserProfileByEmail(email, request);
         return new ApiResponse<>(200, "Cập nhật thông tin thành công", updatedUser);
