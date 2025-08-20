@@ -21,4 +21,10 @@ public interface RoomMapper {
 
     @Mapping(source = "roomTypeId", target = "roomType")
     void updateRoom(RoomUpdateRequest req, @MappingTarget Room room);
+
+    default RoomType map(long id) {
+        RoomType rt = new RoomType();
+        rt.setId(id);
+        return rt;
+    }
 }
