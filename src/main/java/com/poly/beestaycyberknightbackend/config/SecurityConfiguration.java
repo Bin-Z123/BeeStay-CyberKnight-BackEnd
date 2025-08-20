@@ -119,8 +119,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         // corsConfiguration.setAllowedOrigins(List.of("https://ebe17e61a378.ngrok-free.app"));
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173/",
-        "https://c2bf2aab8fc2.ngrok-free.app/"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173/"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setAllowCredentials(true);
