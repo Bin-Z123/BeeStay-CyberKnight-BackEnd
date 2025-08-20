@@ -41,11 +41,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(value = """
                     SELECT YEAR(b.booking_date) AS BookingYear, NULL AS BookingMonth, SUM(b.total_amount) AS Revenue, 'TOTAL YEAR' AS Type FROM Bookings b
-            WHERE YEAR(b.booking_date) = :year
+            WHERE YEAR(b.booking_date) = :year AND (b.e_booking_status = 'PAID' OR b.e_booking_status = 'CHECKOUT')
             GROUP BY YEAR(b.booking_date)
             UNION ALL
             SELECT YEAR(b.booking_date) AS BookingYear, MONTH(b.booking_date) AS BookingMonth, SUM(b.total_amount) AS TOTAL,'TOTAL MONTH' AS Type FROM Bookings b
-            WHERE YEAR(b.booking_date) = :year
+            WHERE YEAR(b.booking_date) = :year AND (b.e_booking_status = 'PAID' OR b.e_booking_status = 'CHECKOUT')
             GROUP BY MONTH(b.booking_date), YEAR(b.booking_date)
             ORDER BY BookingMonth;
                 """, nativeQuery = true)
