@@ -139,6 +139,7 @@ public class RoomService {
             roomImageRepository.deleteByUrl(publicId);
         }
         roomMapper.updateRoom(roomUpdateRequest, room);
+        room.setRoomType(new RoomType(roomUpdateRequest.getRoomTypeId()));
         room.setRoomImages(new ArrayList<>());// Xóa list ảnh tạm thời để lưu phòng
         Room getSavedRoom = roomRepository.save(room);
         // Lưu RoomImages mới nếu có file

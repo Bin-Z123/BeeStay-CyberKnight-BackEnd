@@ -7,6 +7,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
 import com.poly.beestaycyberknightbackend.domain.Room;
+import com.poly.beestaycyberknightbackend.domain.RoomType;
 import com.poly.beestaycyberknightbackend.dto.request.RoomRequest;
 import com.poly.beestaycyberknightbackend.dto.response.RoomResponse;
 
@@ -18,6 +19,6 @@ public interface RoomMapper {
 
     Room toRoom(RoomRequest roomreq);
 
-    @Mapping(source = "roomTypeId", target = "roomType.id")
+    @Mapping(source = "roomTypeId", target = "roomType")
     void updateRoom(RoomUpdateRequest req, @MappingTarget Room room);
 }
