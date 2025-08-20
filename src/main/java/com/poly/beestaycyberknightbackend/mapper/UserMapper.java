@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 import com.poly.beestaycyberknightbackend.domain.User;
 import com.poly.beestaycyberknightbackend.domain.User.EBlacklist;
 import com.poly.beestaycyberknightbackend.dto.request.UserRequest;
+import com.poly.beestaycyberknightbackend.dto.request.UserUpdateRequest;
 import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
 
 @Mapper(componentModel = "spring")
@@ -19,7 +20,7 @@ public interface UserMapper {
     User toUser(UserRequest request);
 
     @Mapping(source = "EBlacklist", target = "EBlacklist", qualifiedByName = "mapEBlacklist")
-    void updateUser(@MappingTarget User user, UserRequest request);
+    void updateUser(@MappingTarget User user, UserUpdateRequest request);
 
     @Named("mapEBlacklist")
     default EBlacklist mapEBlacklist(int idBlacklist) {
@@ -35,6 +36,6 @@ public interface UserMapper {
     }
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateProfileUser(@MappingTarget User user, UserRequest userRequest);
+    void updateProfileUser(@MappingTarget User user, UserUpdateRequest userRequest);
 
 }

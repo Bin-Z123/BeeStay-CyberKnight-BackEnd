@@ -23,6 +23,7 @@ import com.poly.beestaycyberknightbackend.dto.response.LoginDTO;
 import com.poly.beestaycyberknightbackend.dto.response.RankResponse;
 import com.poly.beestaycyberknightbackend.dto.response.RoleResponse;
 import com.poly.beestaycyberknightbackend.dto.response.UserResponse;
+import com.poly.beestaycyberknightbackend.mapper.UserMapper;
 import com.poly.beestaycyberknightbackend.repository.TransactionLogRepository;
 import com.poly.beestaycyberknightbackend.repository.UserRepository;
 import com.poly.beestaycyberknightbackend.util.SecurityUtil;
@@ -48,6 +49,7 @@ public class AuthController {
     SecurityUtil securityUtil;
     TransactionLogRepository logRepository;
     UserRepository userRepository;
+    UserMapper  userMapper;
 
     // AuthController(PasswordEncoder passwordEncoder, RankRepository
     // rankRepository) {
@@ -199,18 +201,20 @@ public class AuthController {
                 rankRes.setNameRank(user.getRank().getNameRank());
             }
 
-            UserResponse response = new UserResponse();
-            response.setId(user.getId());
-            response.setPhone(user.getPhone());
-            response.setEmail(user.getEmail());
-            response.setGender(user.getGender());
-            response.setBirthday(user.getBirthday());
-            response.setJoinDate(user.getJoinDate());
-            response.setFullname(user.getFullname());
-            response.setCccd(user.getCccd());
-            response.setPoint(user.getPoint());
-            response.setRole(roleRes);
-            response.setRank(rankRes);
+            // UserResponse response = new UserResponse();
+            // response.setId(user.getId());
+            // response.setPhone(user.getPhone());
+            // response.setEmail(user.getEmail());
+            // response.setGender(user.getGender());
+            // response.setBirthday(user.getBirthday());
+            // response.setJoinDate(user.getJoinDate());
+            // response.setFullname(user.getFullname());
+            // response.setCccd(user.getCccd());
+            // response.setPoint(user.getPoint());
+            // response.setRole(roleRes);
+            // response.setRank(rankRes);
+
+            UserResponse response = userMapper.toUserResponse(user);
 
             return ApiResponse.<UserResponse>builder()
                     .code(HttpStatus.OK.value())

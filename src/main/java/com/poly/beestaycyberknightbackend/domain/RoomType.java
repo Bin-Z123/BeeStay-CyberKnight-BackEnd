@@ -2,7 +2,6 @@ package com.poly.beestaycyberknightbackend.domain;
 
 import java.util.List;
 
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
@@ -53,12 +52,16 @@ public class RoomType {
     @JsonManagedReference
     private List<Room> rooms;
 
-
-    @ManyToMany(mappedBy = "roomTypes") // không cần tạo bảng trung gian nữa vì Discount đã làm rồi, giờ chỉ cần map qua.
+    @ManyToMany(mappedBy = "roomTypes") // không cần tạo bảng trung gian nữa vì Discount đã làm rồi, giờ chỉ cần map
+                                        // qua.
     @JsonBackReference
     private List<Discount> discounts;
 
     @OneToMany(mappedBy = "roomType")
     @JsonManagedReference
     List<BookingDetail> bookingDetails;
+
+    public RoomType(Long id) {
+        this.id = id;
+    }
 }
