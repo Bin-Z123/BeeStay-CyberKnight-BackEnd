@@ -18,5 +18,6 @@ public interface RoomMapper {
 
     Room toRoom(RoomRequest roomreq);
 
+    @Mapping(source = "roomTypeId", target = "roomType.id")
     void updateRoom(RoomUpdateRequest req, @MappingTarget Room room);
 }

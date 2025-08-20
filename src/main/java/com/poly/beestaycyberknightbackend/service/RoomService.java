@@ -50,8 +50,8 @@ public class RoomService {
         room.setRoomNumber(roomRequest.getRoomNumber());
         room.setRoomStatus(roomRequest.getRoomStatus());
         int floor = roomRequest.getFloor();
-        if (floor > 8 || floor < 1) {
-            throw new RuntimeException("Floor must be between 1 and 8");
+        if (floor > 6 || floor < 1) {
+            throw new RuntimeException("Floor must be between 1 and 6");
         }
         room.setFloor(roomRequest.getFloor());
 

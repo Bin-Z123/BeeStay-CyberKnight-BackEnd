@@ -438,6 +438,27 @@ public class BookingService {
         System.out.println("booking: " + booking);
         return bookingMapper.toResponse(booking);
     }
+
+    @Transactional
+    public BookingDTO checkoutBookingStatusCheckout(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+
+        // if (booking.getBookingStatus().equals("CHECKOUT")) {
+        // throw new AppException(ErrorCode.BOOKING_ALREADY_PROCESSED_CHECKOUT);
+        // }
+        LocalDateTime actualCheckoutTime = LocalDateTime.now();
+        List<Stay> listStay = stayRepository.listStayOfBooking(bookingId);
+        listStay.forEach(stay -> {
+            stay.setActualCheckOut(actualCheckoutTime);
+        });
+        booking.setBookingStatus("CHECKOUT");
+
+        stayRepository.saveAll(listStay);
+        bookingRepository.save(booking);
+        System.out.println("booking: " + booking);
+        return bookingMapper.toResponse(booking);
+    }
     // @Transactional
     // public BookingDTO checkoutBookingStatus(Long bookingId) {
     // Booking booking = bookingRepository.findById(bookingId)
