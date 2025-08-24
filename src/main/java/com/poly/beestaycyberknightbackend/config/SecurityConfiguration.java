@@ -55,13 +55,19 @@ public class SecurityConfiguration {
                                 "/api/afterUBD2/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
+                                "/api/facility/**",
+                                "/api/rooms/**",
+                                "/api/roomTypes/**",
                                 "/ws/**",
                                 "/chat/**",
                                 "/topic/**",
-                                "/swagger-ui.html", "/api/admin/**",
+                                "/swagger-ui.html",
                                 "/api/afterUBD2/**")
                         .permitAll()
+                        .requestMatchers("/api/office/**").hasAnyRole("ADMIN", "REP", "MANA")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/rep/**").hasRole("REP")
+                        .requestMatchers("/api/mana/**", "/api/rep/**").hasRole("MANA")
                         .requestMatchers("/").hasRole("USER")
                         .anyRequest().authenticated())
                 // .oauth2ResourceServer(oauth2 -> oauth2

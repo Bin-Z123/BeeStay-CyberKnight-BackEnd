@@ -17,26 +17,26 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 public class RoomTypeController {
-    
+
     private final RoomTypeService roomTypeService;
 
-    @PostMapping("/roomTypes")
+    @PostMapping("/mana/roomTypes")
 
-    public ApiResponse<RoomTypeResponse> createNewRoomType (@RequestBody RoomTypeRequest roomTypeRequest) {
+    public ApiResponse<RoomTypeResponse> createNewRoomType(@RequestBody RoomTypeRequest roomTypeRequest) {
         ApiResponse response = new ApiResponse<>();
         response.setCode(201);
         response.setData(roomTypeService.handleCreateRoomType(roomTypeRequest));
         return response;
 
-    } 
-    
-    @DeleteMapping("/roomTypes/{id}")
+    }
+
+    @DeleteMapping("/mana/roomTypes/{id}")
     public ApiResponse<Void> deleteRoomType(@PathVariable("id") long id) {
         roomTypeService.fetchRoomTypeById(id);
         roomTypeService.handleDeleteRoomType(id);
-        return new ApiResponse<>(204,null,null); // Trả về 204 No Content, không có body
+        return new ApiResponse<>(204, null, null); // Trả về 204 No Content, không có body
     }
 
     @GetMapping("/roomTypes")
@@ -55,15 +55,12 @@ public class RoomTypeController {
         return response;
     }
 
-    @PutMapping("/roomTypes/{id}")
-    public ApiResponse<RoomTypeResponse> handleUpdateRoomType (@PathVariable("id") long id, @RequestBody RoomTypeRequest roomTypeRequest) {
+    @PutMapping("/mana/roomTypes/{id}")
+    public ApiResponse<RoomTypeResponse> handleUpdateRoomType(@PathVariable("id") long id,
+            @RequestBody RoomTypeRequest roomTypeRequest) {
         ApiResponse<RoomTypeResponse> response = new ApiResponse<>();
         response.setCode(200);
         response.setData(roomTypeService.handleUpdateRoomType(roomTypeRequest, id));
         return response;
     }
 }
-
-    
-
-

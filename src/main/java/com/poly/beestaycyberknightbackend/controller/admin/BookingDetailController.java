@@ -19,7 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("/api/admin/bookingDetail")
+@RequestMapping("/api/rep/bookingDetail")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class BookingDetailController {

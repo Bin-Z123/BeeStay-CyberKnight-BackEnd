@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/api/admin/stay")
+@RequestMapping("/api/rep/stay")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class StayController {
@@ -28,7 +28,7 @@ public class StayController {
         } catch (Exception e) {
             return new ApiResponse<>(HttpStatus.SC_OK, e.getMessage(), null);
         }
-        
+
     }
 
 }

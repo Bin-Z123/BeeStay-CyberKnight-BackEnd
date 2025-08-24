@@ -22,11 +22,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/rank")
+@RequestMapping("/api")
 public class RankController {
     RankService rankService;
 
-    @PostMapping("/create")
+    @PostMapping("/mana/rank/create")
     public ApiResponse<Rank> createRank(@RequestBody RankRequest request) {
         ApiResponse response = new ApiResponse<>();
         response.setData(rankService.createRank(request));
@@ -35,7 +35,7 @@ public class RankController {
         return response;
     }
 
-    @GetMapping("/list")
+    @GetMapping("/rank/list")
     public ApiResponse<List<Rank>> getRanks() {
         ApiResponse response = new ApiResponse<>();
         response.setData(rankService.getRanks());
@@ -44,7 +44,7 @@ public class RankController {
         return response;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/rank/{id}")
     public ApiResponse<Rank> getRank(@PathVariable Integer id) {
         ApiResponse response = new ApiResponse<>();
         response.setCode(HttpStatus.SC_OK);
@@ -52,9 +52,8 @@ public class RankController {
         response.setMessage("Lấy rank thành công");
         return response;
     }
-    
-    
-    @PutMapping("/{id}")
+
+    @PutMapping("/mana/rank/{id}")
     public ApiResponse<Rank> updateRank(@PathVariable Integer id, @RequestBody RankRequest request) {
         ApiResponse response = new ApiResponse<>();
         response.setCode(HttpStatus.SC_OK);
@@ -63,7 +62,7 @@ public class RankController {
         return response;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/mana/rank/{id}")
     public ApiResponse<Rank> deleteRank(@PathVariable Integer id) {
         ApiResponse response = new ApiResponse<>();
         response.setCode(HttpStatus.SC_OK);
@@ -71,6 +70,5 @@ public class RankController {
         response.setMessage("Xóa rank thành công");
         return response;
     }
-
 
 }

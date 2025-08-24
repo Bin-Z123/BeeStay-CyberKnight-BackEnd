@@ -16,25 +16,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/payment")
+@RequestMapping("/api/rep/payment")
 public class PaymentController {
     PaymentByCashService paymentByCastService;
     PaymentService paymentService;
 
-
     @PostMapping("/pay")
     public ApiResponse<Payment> createPaymentByCast(@RequestBody PaymentByCashRequest request) {
-        return new ApiResponse<>(HttpStatus.SC_OK, "Tạo mới thanh toán bằng tiền mặt thành công", paymentByCastService.createPaymentByCast(request));
+        return new ApiResponse<>(HttpStatus.SC_OK, "Tạo mới thanh toán bằng tiền mặt thành công",
+                paymentByCastService.createPaymentByCast(request));
     }
 
     @GetMapping("/calculatePaymentofBooking/{bookingId}")
     public ApiResponse<Integer> calculatePaymentofBooking(@PathVariable Long bookingId) {
-        return new ApiResponse<>(HttpStatus.SC_OK, "Tính toán thanh toán của đặt phòng thành công", paymentService.sumPaymentPAIDOfBooking(bookingId));
+        return new ApiResponse<>(HttpStatus.SC_OK, "Tính toán thanh toán của đặt phòng thành công",
+                paymentService.sumPaymentPAIDOfBooking(bookingId));
     }
-    
-    
+
 }

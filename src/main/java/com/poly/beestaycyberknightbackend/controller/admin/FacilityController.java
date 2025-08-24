@@ -21,42 +21,44 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @FieldDefaults(level = AccessLevel.PACKAGE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/facility")
+@RequestMapping("/api")
 public class FacilityController {
     FacilityService service;
 
-    @PostMapping("/create")
+    @PostMapping("/mana/facility/create")
     public ApiResponse<Facility> createFacility(@RequestPart("facility") FacilityRequest request,
             @RequestPart(required = false) MultipartFile file) {
         System.out.println("Facility: " + request);
-        ApiResponse response = new ApiResponse<>(200, "Tạo mới dịch vụ thành công", service.createFacility(request, file));
+        ApiResponse response = new ApiResponse<>(200, "Tạo mới dịch vụ thành công",
+                service.createFacility(request, file));
 
         return response;
     }
 
-    @GetMapping("/list")
+    @GetMapping("/facility/list")
     public ApiResponse<List<Facility>> getFacilites() {
         ApiResponse response = new ApiResponse<>(200, "Lấy danh sách dịch vụ thành công", service.getFacilities());
 
         return response;
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/mana/facility/{id}")
     public ApiResponse<Facility> updateFacility(@PathVariable Long id,
             @RequestPart("facility") FacilityRequest request,
             @RequestPart(required = false) MultipartFile file) {
-        ApiResponse response = new ApiResponse<>(200, "Cập nhật dịch vụ thành công", service.updateFacility(id, request, file));
+        ApiResponse response = new ApiResponse<>(200, "Cập nhật dịch vụ thành công",
+                service.updateFacility(id, request, file));
         return response;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/facility/{id}")
     public ApiResponse<Facility> getFacility(@PathVariable Long id) {
         ApiResponse response = new ApiResponse<>(200, "Lấy thông tin dịch vụ thành công", service.getFacilityById(id));
 
         return response;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/mana/facility/{id}")
     public ApiResponse<?> deleteFacility(@PathVariable Long id) {
         ApiResponse response = new ApiResponse<>(200, "delete sucessfully", service.deleteFacility(id));
         return response;
