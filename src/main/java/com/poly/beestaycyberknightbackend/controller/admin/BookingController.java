@@ -50,7 +50,7 @@ public class BookingController {
     FacilityRepository facilityRepository;
     FacilityMapper facilityMapper;
 
-    @GetMapping("/rep/booking/list")
+    @GetMapping("/office/booking/list")
     public ApiResponse<List<BookingDTO>> getBookings() {
         return new ApiResponse<>(200, "Lấy danh sách thành công", bookingService.getAllBookings());
     }
@@ -92,7 +92,7 @@ public class BookingController {
         return new ApiResponse<>(200, "Lấy danh sách thành công", bookingService.getBookingByCheckInDate(checkInDate));
     }
 
-    @GetMapping("/rep/booking/availableRoomsTypeAndDate")
+    @GetMapping("/office/booking/availableRoomsTypeAndDate")
     public ApiResponse<Long> countAvailableRooms(@RequestParam String nameRoomType, @RequestParam LocalDateTime date) {
         return new ApiResponse<>(200, "Tính toán số lượng phòng còn trống",
                 bookingService.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date));

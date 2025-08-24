@@ -64,10 +64,10 @@ public class SecurityConfiguration {
                                 "/swagger-ui.html",
                                 "/api/afterUBD2/**")
                         .permitAll()
-                        .requestMatchers("/api/office/**").hasAnyRole("ADMIN", "REP", "MANA")
+                        .requestMatchers("/api/office/**").hasAnyRole("ADMIN", "RECEPTIONIST", "MANAGER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/rep/**").hasRole("REP")
-                        .requestMatchers("/api/mana/**", "/api/rep/**").hasRole("MANA")
+                        .requestMatchers("/api/rep/**").hasAnyRole("RECEPTIONIST", "MANAGER")
+                        .requestMatchers("/api/mana/**").hasRole("MANAGER")
                         .requestMatchers("/").hasRole("USER")
                         .anyRequest().authenticated())
                 // .oauth2ResourceServer(oauth2 -> oauth2

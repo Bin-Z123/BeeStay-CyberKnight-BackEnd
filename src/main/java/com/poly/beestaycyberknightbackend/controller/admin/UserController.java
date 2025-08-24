@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
@@ -30,7 +30,7 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping(value = "/users", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/admin/users", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<UserResponse> createNewUser(@RequestBody UserRequest userRequest) {
         ApiResponse response = new ApiResponse<>();
         String hashPassword = this.passwordEncoder.encode(userRequest.getPassword());
@@ -41,7 +41,7 @@ public class UserController {
         return response;
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/admin/users/{id}")
     public ApiResponse<Void> deleteUser(@PathVariable("id") long id) {
         if (id >= 10000) {
             throw new RuntimeException("Id không lớn hơn 10000");
@@ -51,7 +51,7 @@ public class UserController {
         return new ApiResponse<>(204, "Xóa người dùng thành công", null);
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/office/users/{id}")
     public ApiResponse<UserResponse> getUserById(@PathVariable("id") long id) {
         ApiResponse response = new ApiResponse<>();
         response.setCode(200);
@@ -60,7 +60,7 @@ public class UserController {
         return response;
     }
 
-    @GetMapping("/users")
+    @GetMapping("/office/users")
     public ApiResponse<List<UserResponse>> getAllUser() {
         ApiResponse response = new ApiResponse<>();
         response.setCode(200);
@@ -69,13 +69,13 @@ public class UserController {
         return response;
     }
 
-    @PutMapping("/updateUserRole/{userId}/{roleId}")
+    @PutMapping("/admin/updateUserRole/{userId}/{roleId}")
     public ApiResponse<User> updateUserRole(@PathVariable Long userId, @PathVariable Long roleId) {
         User updatedUser = userService.updateRoleforUser(userId, roleId);
         return new ApiResponse<>(200, "Cập nhật vai trò người dùng thành công", updatedUser);
     }
 
-    @PutMapping("/updateUser/{id}")
+    @PutMapping("/admin/updateUser/{id}")
     public ApiResponse<User> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
         return new ApiResponse<>(200, "Cập nhật thông tin người dùng thành công", userService.updateUser(id, request));
     }
