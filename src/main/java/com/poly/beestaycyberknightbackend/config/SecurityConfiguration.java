@@ -66,7 +66,7 @@ public class SecurityConfiguration {
                         .permitAll()
                         .requestMatchers("/api/office/**")
                         .hasAnyRole("ADMIN", "RECEPTIONIST", "MANAGER")
-                        .requestMatchers("/api/admin/updateUserRole/**", "/api/admin/updateUser/**")
+                        .requestMatchers("/api/admin/updateUserRole/**", "/api/admin/updateUser/**", "/api/admin/updatePassword/**")
                         .hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers("/api/mana/**")
                         .hasRole("MANAGER")

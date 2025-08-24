@@ -79,4 +79,9 @@ public class UserController {
     public ApiResponse<User> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
         return new ApiResponse<>(200, "Cập nhật thông tin người dùng thành công", userService.updateUser(id, request));
     }
+
+    @PutMapping("/admin/updatePassword/{id}")
+    public ApiResponse<User> upadatePassword(@PathVariable Long id, @RequestBody UserRequest request) {
+        return new ApiResponse<>(200, "Cập nhật mật khẩu thành công", userService.updatePassword(id, request));
+    }
 }

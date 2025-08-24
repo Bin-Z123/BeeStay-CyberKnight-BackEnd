@@ -148,4 +148,10 @@ public User handleGetUserByUsername(String username) {
         userRepository.flush();
     }
 
+    public User updatePassword(Long id, UserRequest request) {
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setUpdateDate(LocalDateTime.now());
+        return userRepository.save(user);
+    }
 }
