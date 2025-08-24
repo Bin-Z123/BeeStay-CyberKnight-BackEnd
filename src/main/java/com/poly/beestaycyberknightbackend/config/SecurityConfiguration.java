@@ -66,7 +66,8 @@ public class SecurityConfiguration {
                         .permitAll()
                         .requestMatchers("/api/office/**")
                         .hasAnyRole("ADMIN", "RECEPTIONIST", "MANAGER")
-                        .requestMatchers("/api/admin/updateUserRole/**", "/api/admin/updateUser/**", "/api/admin/updatePassword/**")
+                        .requestMatchers("/api/admin/updateUserRole/**", "/api/admin/updateUser/**",
+                                "/api/admin/updatePassword/**")
                         .hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers("/api/mana/**")
                         .hasRole("MANAGER")
@@ -131,8 +132,8 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        // corsConfiguration.setAllowedOrigins(List.of("https://ebe17e61a378.ngrok-free.app"));
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173/"));
+        // corsConfiguration.setAllowedOrigins(List.of("https://a192e3260812.ngrok-free.app/"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173", "https://a192e3260812.ngrok-free.app"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setAllowCredentials(true);

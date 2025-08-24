@@ -80,7 +80,7 @@ public class PaymentPayOSController {
             String str = payOS.confirmWebhook(requestBody.get("webhookUrl"));
             response.set("data", objectMapper.valueToTree(str));
             response.put("error", 0);
-            response.put("message", "ok");
+            response.put("message", "Webhook Successfully");
             return response;
         } catch (Exception e) {
             e.printStackTrace();

@@ -55,7 +55,7 @@ public class BookingController {
         return new ApiResponse<>(200, "Lấy danh sách thành công", bookingService.getAllBookings());
     }
 
-    @PostMapping("/rep/booking/order")
+    @PostMapping("/booking/order")
     public ApiResponse<BookingDTO> orderBooking(@RequestBody OrderBookingWrapper request) {
         try {
             Booking booking = bookingService.orderBooking(
