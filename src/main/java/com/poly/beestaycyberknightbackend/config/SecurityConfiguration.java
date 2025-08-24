@@ -65,9 +65,11 @@ public class SecurityConfiguration {
                                 "/api/afterUBD2/**")
                         .permitAll()
                         .requestMatchers("/api/office/**").hasAnyRole("ADMIN", "RECEPTIONIST", "MANAGER")
+                        .requestMatchers("/admin/updateUserRole/**", "/admin/updateUser/**")
+                        .hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers("/api/mana/**").hasRole("MANAGER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/rep/**").hasAnyRole("RECEPTIONIST", "MANAGER")
-                        .requestMatchers("/api/mana/**").hasRole("MANAGER")
                         .requestMatchers("/").hasRole("USER")
                         .anyRequest().authenticated())
                 // .oauth2ResourceServer(oauth2 -> oauth2
