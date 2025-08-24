@@ -2,6 +2,7 @@ package com.poly.beestaycyberknightbackend.config;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
 import com.poly.beestaycyberknightbackend.service.UserService;
@@ -24,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import java.util.List;
 
 @Configuration
@@ -33,52 +35,74 @@ public class SecurityConfiguration {
     @Value("${security.authentication.jwt.base64-secret}")
     private String jwtKey;
 
+    // Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // Security filter chain
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
-            CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
             CorsConfigurationSource corsConfigurationSource,
             JwtAuthFilter jwtAuthFilter) throws Exception {
 
         http.csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/login", "/api/register/**", "/api/change_password", "/api/logout",
-                                "/api/forgot-password/**", "/api/availableRoomsTypeAndDateV2", "/api/orderPayOS/**",
-                                "/api/booking/**",
-                                "/api/afterUBD2/**",
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html", "/api/admin/**")
-                        .permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/").hasRole("USER")
-                        .anyRequest().authenticated())
-                // .oauth2ResourceServer(oauth2 -> oauth2
-                // .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                // .authenticationEntryPoint(customAuthenticationEntryPoint)
-                // )
-                // ..
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
-                .formLogin(form -> form.disable())
-                .logout(logout -> logout.disable());
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(authz -> authz
+
+                // Public
+                .requestMatchers("/api/login","/api/me", "/api/register/**", "/api/forgot-password/**",
+                                 "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                .permitAll()
+
+                // RECEPTIONIST: chỉ booking
+                .requestMatchers("/api/admin/booking/**")
+                .hasAnyRole("RECEPTIONIST", "MANAGER")
+
+                // ADMIN: toàn /api/admin, trừ booking
+                .requestMatchers("/api/admin/**")
+                .hasAnyRole("ADMIN", "MANAGER")
+
+                // USER: các endpoint user
+                .requestMatchers("/api/user/**")
+                .hasAnyRole("USER", "MANAGER")
+
+                // ORDER / PAYOS: mọi role có thể gọi tuỳ business
+                .requestMatchers("/api/orderPayOS/**")
+                .hasAnyRole("USER", "RECEPTIONIST", "MANAGER")
+
+                // Rooms availability (public)
+                .requestMatchers("/api/availableRoomsTypeAndDateV2")
+                .permitAll()
+
+                // Default: MANAGER toàn quyền
+                .requestMatchers("/api/**")
+                .hasRole("MANAGER")
+
+                .anyRequest().authenticated()
+            )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+            )
+            .formLogin(form -> form.disable())
+            .logout(logout -> logout.disable());
+
+        // Add JWT filter
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    // JWT converter
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthorityPrefix("");
+        // prefix để match hasRole/hasAnyRole
+        grantedAuthoritiesConverter.setAuthorityPrefix(""); // JWT claim "authorities": ["ADMIN","USER","MANAGER","RECEPTIONIST"]
         grantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
@@ -86,6 +110,7 @@ public class SecurityConfiguration {
         return jwtAuthenticationConverter;
     }
 
+    // JWT decoder
     @Bean
     public JwtDecoder jwtDecoder() {
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
@@ -101,6 +126,7 @@ public class SecurityConfiguration {
         };
     }
 
+    // JWT encoder
     @Bean
     public JwtEncoder jwtEncoder() {
         return new NimbusJwtEncoder(new ImmutableSecret<>(getSecretKey()));
@@ -111,12 +137,12 @@ public class SecurityConfiguration {
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, SecurityUtil.JWT_ALGORITHM.getName());
     }
 
+    // CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        // corsConfiguration.setAllowedOrigins(List.of("https://f6f4c7ef15dd.ngrok-free.app"));
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173/"));
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
+        corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setAllowCredentials(true);
 
@@ -125,9 +151,9 @@ public class SecurityConfiguration {
         return source;
     }
 
+    // JWT Auth Filter
     @Bean
     public JwtAuthFilter jwtAuthFilter(JwtDecoder jwtDecoder, UserService userService) {
         return new JwtAuthFilter(jwtDecoder, userService);
     }
-
 }

@@ -59,10 +59,10 @@ public class UserProfileController {
     }
 
     @GetMapping("/booking/{id}")
-    public ApiResponse<BookingResponse> getBookingById(@PathVariable("id") long id) {
+    public ApiResponse<BookingDTO> getBookingById(@PathVariable("id") long id) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUsser = userRepository.findByEmail(email);
-        BookingResponse booking = bookingService.getBookingByIdAndUser(id, currentUsser);
+        BookingDTO booking = bookingService.getBookingByIdAndUser(id, currentUsser);
         if (booking == null) {
             return new ApiResponse<>(404, "Không tìm thấy đơn đặt phòng", null);
         }

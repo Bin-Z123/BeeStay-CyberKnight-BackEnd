@@ -11,8 +11,7 @@ import com.poly.beestaycyberknightbackend.dto.request.VoucherRequest;
 public interface VoucherMapper {
 
     @Mapping(target = "EStatus", ignore = true)
-    Voucher toVoucher(VoucherRequest request);
-
+    Voucher toVoucher(VoucherRequest request);  
     @Mapping(target = "EStatus", ignore = true)
     void updatVoucher(@MappingTarget Voucher voucher, VoucherRequest request);
 }
