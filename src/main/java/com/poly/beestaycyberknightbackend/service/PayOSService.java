@@ -244,7 +244,7 @@ public class PayOSService {
 
         // Xử lý webhook
         if (body.get("success").asBoolean(true)) {
-            payment.setPaymentStatus("PAID"); // Cập nhật trạng thái Payment
+            payment.setPaymentStatus("PAID");
             payment.setPaymentCode(data.getCode());
             payment.setRawResponse(data.toString());
             paymentRepository.save(payment);
@@ -253,9 +253,14 @@ public class PayOSService {
             // lấy booking ra để update trạng thái
             Booking booking = payment.getBooking();
             if (booking != null) {
-                // Sau khi Payment đã được xác nhận là PAID, kiểm tra lại tổng thanh toán của
-                // Booking
-                bookingService.checkTotalPaymentofBooking(booking.getId());
+
+                if (booking.getBookingStatus().equals("NOTPAID")) {
+                    booking.setBookingStatus("CONFIRMED");
+                    bookingRepository.save(booking);
+                } else {
+                    bookingService.checkTotalPaymentofBooking(booking.getId());
+
+                }
             }
 
         } else {
@@ -265,6 +270,7 @@ public class PayOSService {
             payment.setPaymentCode(data.getCode());
             paymentRepository.save(payment);
         }
+
     }
 
     @Transactional
