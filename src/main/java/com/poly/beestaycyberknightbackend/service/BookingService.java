@@ -26,6 +26,7 @@ import com.poly.beestaycyberknightbackend.dto.response.AvailableTypeRoomDTO;
 import com.poly.beestaycyberknightbackend.dto.response.BookingDTO;
 import com.poly.beestaycyberknightbackend.dto.response.BookingFacilitiesDTO;
 import com.poly.beestaycyberknightbackend.dto.response.BookingResponse;
+import com.poly.beestaycyberknightbackend.dto.response.BookingUserResponse;
 import com.poly.beestaycyberknightbackend.dto.response.FacilitiesDTO;
 import com.poly.beestaycyberknightbackend.dto.response.PaymentPayOSResponse;
 import com.poly.beestaycyberknightbackend.dto.response.RoomImageResponse;
@@ -525,8 +526,10 @@ public class BookingService {
 
             booking.setIsDeposit(true);
             bookingRepository.save(booking);
+            
+            Object payos = payOSService.createPaymentLinkManually(createPaymentLinkRequest);
 
-            return payOSService.createPaymentLinkManually(createPaymentLinkRequest);
+            return new BookingUserResponse(booking.getId(), payos);
 
         } catch (AppException e) {
             return new PaymentPayOSResponse<>(-1, "fail", e.getMessage());
