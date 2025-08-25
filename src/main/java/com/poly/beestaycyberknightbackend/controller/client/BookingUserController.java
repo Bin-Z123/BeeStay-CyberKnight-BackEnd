@@ -22,7 +22,8 @@ public class BookingUserController {
     @PostMapping("/booking")
     public ApiResponse<?> orderBookingForUser(@RequestBody OrderBookingWrapper request) {
         try {
-            Object object = bookingService.orderBookingForUser(request.getGuestBookingRequest(), request.getBookingRequest(),
+            Object object = bookingService.orderBookingForUser(request.getGuestBookingRequest(),
+                    request.getBookingRequest(),
                     request.getBookingDetailRequest(), request.getBookingFacilityRequest(), request.getStayRequest());
 
             return new ApiResponse<>(HttpStatus.SC_OK, "success", object);

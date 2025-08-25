@@ -49,7 +49,7 @@ public class AuthController {
     SecurityUtil securityUtil;
     TransactionLogRepository logRepository;
     UserRepository userRepository;
-    UserMapper  userMapper;
+    UserMapper userMapper;
 
     // AuthController(PasswordEncoder passwordEncoder, RankRepository
     // rankRepository) {
@@ -57,12 +57,12 @@ public class AuthController {
     // this.rankRepository = rankRepository;
     // }
     @PostMapping("/login")
-     public ApiResponse<RestLoginDTO> login(@Valid @RequestBody LoginDTO loginDTO,
-                                           HttpServletRequest httpRequest,
-                                           HttpServletResponse response) {
+    public ApiResponse<RestLoginDTO> login(@Valid @RequestBody LoginDTO loginDTO,
+            HttpServletRequest httpRequest,
+            HttpServletResponse response) {
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginDTO.getUsername(), loginDTO.getPassword());
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         String access_token = this.securityUtil.createToken(authentication);
@@ -74,13 +74,14 @@ public class AuthController {
                 .httpOnly(true)
                 .secure(true) // BẮT BUỘC TRUE vì bạn đang dùng HTTPS (qua ngrok)
                 .path("/")
-                .maxAge(30 * 60) // 30 phút
+                .maxAge(30 * 3600) // 30 phút
                 .sameSite("None") // Cực kỳ quan trọng cho các yêu cầu cross-site (ngrok)
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, springCookie.toString()); // Thêm cookie vào response header
 
-        // ✅ Để frontend dùng nếu cần (nếu bạn muốn lưu token vào localStorage ngoài cookie)
+        // ✅ Để frontend dùng nếu cần (nếu bạn muốn lưu token vào localStorage ngoài
+        // cookie)
         RestLoginDTO restLoginDTO = new RestLoginDTO();
         restLoginDTO.setAccessToken(access_token);
 
@@ -95,10 +96,10 @@ public class AuthController {
         logRepository.save(log);
 
         return ApiResponse.<RestLoginDTO>builder()
-                    .code(HttpStatus.OK.value())
-                    .message("Đăng nhập thành công")
-                    .data(restLoginDTO)
-                    .build();
+                .code(HttpStatus.OK.value())
+                .message("Đăng nhập thành công")
+                .data(restLoginDTO)
+                .build();
     }
 
     // @PostMapping("/register")
@@ -232,19 +233,20 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ApiResponse<Void> logout(HttpServletResponse response) {
-        // Bạn có thể cân nhắc dùng ResponseCookie ở đây cũng được, nhưng Cookie class vẫn hoạt động
-        Cookie cookie = new Cookie("jwt", null);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0); // xoá cookie
-        // Đảm bảo secure = true cho cookie logout nếu môi trường là HTTPS
-        cookie.setSecure(true); // Thêm dòng này để phù hợp với cookie login
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(true) // 🔑 bắt buộc trong https
+                .path("/")
+                .sameSite("None") // ⚡ phải trùng với cookie khi login
+                .maxAge(0) // xoá ngay lập tức
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
 
         return ApiResponse.<Void>builder()
-                    .message("Đăng xuất thành công")
-                    .code(200)
-                    .build();
+                .message("Đăng xuất thành công")
+                .code(200)
+                .build();
     }
 
 }

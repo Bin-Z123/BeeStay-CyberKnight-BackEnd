@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 public class RoomController {
 
     private final RoomService roomService;
 
-    @PostMapping(value = "/rooms", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/mana/rooms", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<RoomResponse> createNewRoom(@RequestPart(name = "rooms") RoomRequest roomRequest,
             @RequestPart(name = "file", required = false) List<MultipartFile> multipartFiles)
             throws JsonProcessingException {
@@ -34,7 +34,7 @@ public class RoomController {
                 roomService.handleCreateRoom(roomRequest, multipartFiles));
     }
 
-    @DeleteMapping("/rooms/{id}")
+    @DeleteMapping("/mana/rooms/{id}")
     public ApiResponse<Void> deleteRoom(@PathVariable("id") long id) {
         roomService.fetchRoomById(id);
         roomService.handleDeleteRoom(id);
@@ -51,18 +51,19 @@ public class RoomController {
         return new ApiResponse<>(200, "Lấy thông tin phòng thành công", roomService.fetchRoomById(id));
     }
 
-    @PutMapping(value = "/rooms/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/mana/rooms/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<RoomResponse> updateRoom(@PathVariable("id") long id,
             @RequestPart(name = "rooms") RoomUpdateRequest roomUpdateRequest,
             @RequestPart(name = "file", required = false) List<MultipartFile> multipartFiles) {
         System.out.println("rooms: " + roomUpdateRequest);
         System.out.println("room id: " + id);
-        return new ApiResponse<>(200, "Cập nhật phòng thành công", roomService.handleUpdateRoom(roomUpdateRequest, id, multipartFiles));
+        return new ApiResponse<>(200, "Cập nhật phòng thành công",
+                roomService.handleUpdateRoom(roomUpdateRequest, id, multipartFiles));
     }
 
-    @GetMapping("/roomsinactive")
+    @GetMapping("/rooms/roomsinactive")
     public ApiResponse<List<Room>> getInactiveRooms(@RequestParam String roomType) {
-        return new ApiResponse<>(200, "Lấy danh sách phòng không hoạt động thành công", roomService.getInactiveRooms(roomType));
+        return new ApiResponse<>(200, "Lấy danh sách phòng không hoạt động thành công",
+                roomService.getInactiveRooms(roomType));
     }
-
 }

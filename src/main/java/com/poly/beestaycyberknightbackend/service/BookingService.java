@@ -369,6 +369,7 @@ public class BookingService {
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
 
         booking.setTotalAmount(TotalPrice);
+        System.out.println("Total PriceBooking First Night: " + TotalPrice);
         return bookingMapper.toResponse(booking);
 
     }

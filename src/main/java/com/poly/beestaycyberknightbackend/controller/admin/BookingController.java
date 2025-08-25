@@ -50,12 +50,12 @@ public class BookingController {
     FacilityRepository facilityRepository;
     FacilityMapper facilityMapper;
 
-    @GetMapping("/admin/booking/list")
+    @GetMapping("/office/booking/list")
     public ApiResponse<List<BookingDTO>> getBookings() {
         return new ApiResponse<>(200, "Lấy danh sách thành công", bookingService.getAllBookings());
     }
 
-    @PostMapping("/admin/booking/order")
+    @PostMapping("/booking/order")
     public ApiResponse<BookingDTO> orderBooking(@RequestBody OrderBookingWrapper request) {
         try {
             Booking booking = bookingService.orderBooking(
@@ -87,12 +87,12 @@ public class BookingController {
 
     }
 
-    @GetMapping("/admin/booking/bookingbycheckin")
+    @GetMapping("/rep/booking/bookingbycheckin")
     public ApiResponse<List<Booking>> getBookingsByGuest(@RequestParam LocalDate checkInDate) {
         return new ApiResponse<>(200, "Lấy danh sách thành công", bookingService.getBookingByCheckInDate(checkInDate));
     }
 
-    @GetMapping("/admin/booking/availableRoomsTypeAndDate")
+    @GetMapping("/office/booking/availableRoomsTypeAndDate")
     public ApiResponse<Long> countAvailableRooms(@RequestParam String nameRoomType, @RequestParam LocalDateTime date) {
         return new ApiResponse<>(200, "Tính toán số lượng phòng còn trống",
                 bookingService.countAvailableRoomsByRoomTypeAndDate(nameRoomType, date));

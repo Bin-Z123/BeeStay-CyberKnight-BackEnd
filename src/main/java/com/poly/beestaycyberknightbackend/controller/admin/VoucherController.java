@@ -21,35 +21,35 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/voucher")
+@RequestMapping("/api")
 public class VoucherController {
     VoucherService service;
 
-    @PostMapping("/create")
+    @PostMapping("/mana/voucher/create")
     public ApiResponse<Voucher> createVoucher(@RequestBody VoucherRequest request) {
         ApiResponse response = new ApiResponse<>(200, "Tạo voucher thành công", service.creatVoucher(request));
         return response;
     }
 
-    @GetMapping("/list")
+    @GetMapping("/voucher/list")
     public ApiResponse<List<Voucher>> getVouchers() {
         ApiResponse response = new ApiResponse<>(200, "Lấy danh sách voucher thành công", service.getVouchers());
         return response;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/voucher/{id}")
     public ApiResponse<Voucher> getVoucher(@PathVariable Integer id) {
         ApiResponse response = new ApiResponse<>(200, "Lấy thông tin voucher thành công", service.getVoucher(id));
         return response;
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/mana/voucher/{id}")
     public ApiResponse<Voucher> updateVoucher(@PathVariable Integer id, @RequestBody VoucherRequest request) {
         ApiResponse response = new ApiResponse<>(200, "Cập nhật voucher thành công", service.updatVoucher(id, request));
         return response;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/mana/voucher/{id}")
     public ApiResponse<Voucher> deleteVoucher(@PathVariable Integer id) {
         ApiResponse response = new ApiResponse<>(200, "Xóa voucher thành công", service.deleteVoucher(id));
         return response;
