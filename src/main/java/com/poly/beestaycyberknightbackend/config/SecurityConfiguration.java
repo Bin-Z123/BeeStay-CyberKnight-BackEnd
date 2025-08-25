@@ -52,6 +52,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/login", "/api/register/**", "/api/change_password", "/api/logout",
                                 "/api/forgot-password/**", "/api/availableRoomsTypeAndDateV2", "/api/orderPayOS/**",
                                 "/api/booking/**",
+                                "/api/user/booking/**",
                                 "/api/afterUBD2/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
@@ -69,14 +70,10 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/admin/updateUserRole/**", "/api/admin/updateUser/**",
                                 "/api/admin/updatePassword/**")
                         .hasAnyRole("ADMIN", "MANAGER")
-                        .requestMatchers("/api/mana/**")
-                        .hasRole("MANAGER")
-                        .requestMatchers("/api/admin/**")
-                        .hasRole("ADMIN")
-                        .requestMatchers("/api/rep/**")
-                        .hasAnyRole("RECEPTIONIST", "MANAGER")
-                        .requestMatchers("/")
-                        .hasRole("USER")
+                        .requestMatchers("/api/mana/**").hasRole("MANAGER")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/rep/**").hasAnyRole("RECEPTIONIST", "MANAGER")
+                        .requestMatchers("/").hasRole("USER")
                         .anyRequest().authenticated())
                 // .oauth2ResourceServer(oauth2 -> oauth2
                 // .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))

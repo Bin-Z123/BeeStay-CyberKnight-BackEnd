@@ -53,7 +53,6 @@ public class PayOSService {
     @Value("${cancelUrl}")
     String cancelUrl;
 
-
     @Transactional
     public PaymentPayOSResponse createPaymentLink(CreatePaymentLinkRequestBody linkRequestBody) {
         try {
@@ -245,7 +244,7 @@ public class PayOSService {
 
         // Xử lý webhook
         if (body.get("success").asBoolean(true)) {
-            payment.setPaymentStatus("PAID");
+            payment.setPaymentStatus("PAID"); // Cập nhật trạng thái Payment
             payment.setPaymentCode(data.getCode());
             payment.setRawResponse(data.toString());
             paymentRepository.save(payment);
@@ -254,14 +253,9 @@ public class PayOSService {
             // lấy booking ra để update trạng thái
             Booking booking = payment.getBooking();
             if (booking != null) {
-
-                if (booking.getBookingStatus().equals("NOTPAID")) {
-                    booking.setBookingStatus("CONFIRMED");
-                    bookingRepository.save(booking);
-                } else {
-                    bookingService.checkTotalPaymentofBooking(booking.getId());
-
-                }
+                // Sau khi Payment đã được xác nhận là PAID, kiểm tra lại tổng thanh toán của
+                // Booking
+                bookingService.checkTotalPaymentofBooking(booking.getId());
             }
 
         } else {
@@ -271,7 +265,6 @@ public class PayOSService {
             payment.setPaymentCode(data.getCode());
             paymentRepository.save(payment);
         }
-
     }
 
     @Transactional
