@@ -24,7 +24,7 @@ public class PaymentController {
     PaymentByCashService paymentByCastService;
     PaymentService paymentService;
 
-    @PostMapping("/rep/payment/pay")
+    @PostMapping("/office/payment/pay")
     public ApiResponse<Payment> createPaymentByCast(@RequestBody PaymentByCashRequest request) {
         return new ApiResponse<>(HttpStatus.SC_OK, "Tạo mới thanh toán bằng tiền mặt thành công",
                 paymentByCastService.createPaymentByCast(request));

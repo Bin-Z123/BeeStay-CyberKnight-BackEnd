@@ -57,16 +57,17 @@ public class SecurityConfiguration {
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/api/facility/**",
+                                "/api/payment/**",
                                 "/api/rooms/**",
                                 "/api/roomTypes/**",
+                                "/api//office/payment/pay/**",
                                 "/ws/**",
                                 "/chat/**",
                                 "/topic/**",
                                 "/swagger-ui.html",
                                 "/api/afterUBD2/**")
                         .permitAll()
-                        .requestMatchers("/api/office/**")
-                        .hasAnyRole("ADMIN", "RECEPTIONIST", "MANAGER")
+                        .requestMatchers("/api/office/**").hasAnyRole("ADMIN", "RECEPTIONIST", "MANAGER")
                         .requestMatchers("/api/admin/updateUserRole/**", "/api/admin/updateUser/**",
                                 "/api/admin/updatePassword/**")
                         .hasAnyRole("ADMIN", "MANAGER")
@@ -130,7 +131,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         // corsConfiguration.setAllowedOrigins(List.of("https://a192e3260812.ngrok-free.app/"));
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173", "https://a192e3260812.ngrok-free.app"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173", "https://de0336464cfe.ngrok-free.app"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setAllowCredentials(true);
