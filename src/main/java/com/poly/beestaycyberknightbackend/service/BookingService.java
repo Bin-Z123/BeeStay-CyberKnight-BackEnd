@@ -421,10 +421,11 @@ public class BookingService {
 
     @Transactional
     public BookingDTO checkoutBookingStatus(Long bookingId) {
+        System.out.println("Checkout Ngay bay Gio");
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
 
-        if (booking.getBookingStatus().equals("CHECK")) {
+        if (booking.getBookingStatus().equals("CHECKOUT")) {
             throw new AppException(ErrorCode.BOOKING_ALREADY_PROCESSED_CHECKOUT);
         }
         LocalDateTime actualCheckoutTime = LocalDateTime.now();
@@ -436,7 +437,7 @@ public class BookingService {
 
         stayRepository.saveAll(listStay);
         bookingRepository.save(booking);
-        System.out.println("booking: " + booking);
+        System.out.println("booking: " + booking.toString());
         return bookingMapper.toResponse(booking);
     }
 

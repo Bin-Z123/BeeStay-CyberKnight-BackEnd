@@ -61,6 +61,7 @@ public class SecurityConfiguration {
                                 "/api/rooms/**",
                                 "/api/roomTypes/**",
                                 "/api//office/payment/pay/**",
+                                "/api/admin/log/**",
                                 "/ws/**",
                                 "/chat/**",
                                 "/topic/**",
@@ -131,7 +132,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         // corsConfiguration.setAllowedOrigins(List.of("https://a192e3260812.ngrok-free.app/"));
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173", "https://de0336464cfe.ngrok-free.app"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173", "https://a181164ff701.ngrok-free.app"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setAllowCredentials(true);

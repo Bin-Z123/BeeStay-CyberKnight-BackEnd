@@ -21,6 +21,8 @@ public class StayDTO {
 
     Long roomId;
 
+    String roomNumber;
+
     LocalDateTime actualCheckIn;
 
     LocalDateTime actualCheckOut;
